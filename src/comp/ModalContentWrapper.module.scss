@@ -1,0 +1,19 @@
+@import '../style/vars.scss';
+
+.modalContentWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  background-color: $color-white;
+  position: relative;
+  box-sizing: border-box;
+  height: $modal-height;
+  width: $modal-width;
+  max-height: 100%;
+  max-width: 100%;
+  overflow: auto;
+  border-radius: $modal-border-radius;
+  box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.5);
+  padding: 26px 38px;
+}

@@ -1,16 +1,17 @@
+import './style/index.scss';
 import {render} from 'solid-js/web';
-import App, {AppProps} from './components/App'
+import Setup, {SetupProps} from './modal/Setup';
 
-const mount = (props: AppProps, el?: HTMLElement) => {
+const init = (props: SetupProps, el?: HTMLElement) => {
   if (!el) {
     el = document.createElement("div");
     document.body.append(el);
   }
-  render(() => <App {...props}/>, el);
+  render(() => <Setup {...props}/>, el);
 }
 
 const Payment = {
-  mount
+  init
 }
 
 export {Payment};
