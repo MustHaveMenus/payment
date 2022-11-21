@@ -15,5 +15,9 @@
   overflow: auto;
   border-radius: $modal-border-radius;
   box-shadow: 0 3px 10px 0 rgba(0, 0, 0, 0.5);
-  padding: 26px 38px;
+  //padding: 26px 38px;
+
+  &.mobile {
+    height: 100%;
+  }
 }

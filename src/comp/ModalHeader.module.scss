@@ -1,17 +1,42 @@
 @import '../style/vars.scss';
 
 .headerWrapper {
+  position: absolute;
+  top: 0;
   display: flex;
-  width: 100%;
+  width: calc(100% - $margin-md * 2);
+  padding: $margin-md $margin-md 0;
 
   .back, .close {
     cursor: pointer;
     z-index: 1;
+
+    &:hover {
+      opacity: 0.8;
+    }
   }
   .back {
     margin-right: auto;
   }
   .close {
     margin-left: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .closeSecondary {
+    background: $color-medium-grey;
+    border-radius: 30px;
+    opacity: .6;
+    padding: 4px;
+    svg {
+      path {
+        fill: $color-white !important;
+      }
+    }
+
+    &:hover {
+      opacity: .8;
+    }
   }
 }

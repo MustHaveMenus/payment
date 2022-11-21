@@ -5,7 +5,7 @@ interface ModalContentProps {
   children?: JSXElement
 }
 
-const ModalContent = ({children}: ModalContentProps) => {
-  return <div class={styles.modalContent}>{children}</div>
+const ModalContent = (props: ModalContentProps) => {
+  return <div class={styles.modalContent}>{props.children}</div>
 }
 export default ModalContent;

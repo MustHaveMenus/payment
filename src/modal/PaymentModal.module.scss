@@ -1,0 +1,32 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  color: $color-dark-grey;
+
+  > div {
+    flex: 1;
+    padding: $modal-content-padding;
+  }
+
+  .left {
+    .topHeader {
+      @include mediumTextBold();
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .topSubheader {
+      @include normalText();
+      display: block;
+      line-height: 1.4;
+    }
+  }
+
+  .right {
+    background-color: $color-light-grey;
+  }
+}

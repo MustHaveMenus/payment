@@ -1,2 +1,11 @@
 @import "fonts";
 @import "vars";
+
+#mob-detect {
+  display: none;
+}
+@media (max-width: 768px) {
+  #mob-detect {
+    display: block;
+  }
+}

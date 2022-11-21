@@ -5,6 +5,11 @@
   color: $color-dark-grey;
 }
 
+@mixin mediumText() {
+  font-size: $text-size-medium;
+  color: $color-dark-grey;
+}
+
 @mixin largeText() {
   font-size: $text-size-large;
   color: $color-dark-grey;
@@ -19,3 +24,9 @@
   @include normalText();
   font-weight: bold;
 }
+
+@mixin mediumTextBold() {
+  @include mediumText();
+  font-weight: bold;
+}
+

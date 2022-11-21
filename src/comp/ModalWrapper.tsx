@@ -6,12 +6,12 @@ interface ModalWrapperProps {
   onClose?: () => void;
 }
 
-const ModalWrapper = ({children, onClose}: ModalWrapperProps) => {
+const ModalWrapper = (props: ModalWrapperProps) => {
   function onClick(e: MouseEvent) {
     if ((e.target as HTMLElement).classList.contains(styles.modalWrapper)) {
-      onClose?.();
+      props.onClose?.();
     }
   }
-  return <div class={styles.modalWrapper} onClick={onClick}>{children}</div>
+  return <div class={styles.modalWrapper} onClick={onClick}>{props.children}</div>
 }
 export default ModalWrapper;

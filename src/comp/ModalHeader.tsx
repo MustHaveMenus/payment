@@ -5,15 +5,15 @@ import CloseIcon from "./svg/CloseIcon";
 import BackIcon from "./svg/BackIcon";
 
 interface ModalHeaderProps extends GenericModalProps {
-  children?: JSXElement
+  children?: JSXElement,
 }
 
-const ModalHeader = ({children, onClose, onBack}: ModalHeaderProps) => {
+const ModalHeader = (props: ModalHeaderProps) => {
   return <div class={styles.headerWrapper}>
-    {children}
-    {!children && <>
-      {onBack && <div class={styles.back} onClick={onBack}><BackIcon/></div>}
-      {onClose && <div class={styles.close} onClick={onClose}><CloseIcon/></div>}
+    {props.children}
+    {!props.children && <>
+      {props.onBack && <div class={styles.back} onClick={props.onBack}><BackIcon/></div>}
+      {props.onClose && <div class={`${styles.close} ${props.secondaryCloseBtn ? styles.closeSecondary : ''}`} onClick={props.onClose}><CloseIcon/></div>}
     </>}
   </div>
 }

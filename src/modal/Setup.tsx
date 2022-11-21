@@ -1,6 +1,6 @@
 import {View} from "../type/types";
 import OverviewModal from "./OverviewModal";
-import {createSignal, Show} from "solid-js";
+import {createEffect, createSignal, onCleanup, onMount, Show} from "solid-js";
 import PaymentModal from "./PaymentModal";
 
 export interface SetupProps {
@@ -8,9 +8,24 @@ export interface SetupProps {
   open?: boolean
 }
 
-const Setup = ({view, open}: SetupProps) => {
-  const [opened, setOpened] = createSignal(open ?? true);
-  const [currentView, setCurrentView] = createSignal(view ?? View.OVERVIEW);
+const Setup = (props: SetupProps) => {
+  const [opened, setOpened] = createSignal(props.open ?? true);
+  const [currentView, setCurrentView] = createSignal(props.view ?? View.OVERVIEW);
+  const [mobile, setMobile] = createSignal(false);
+
+  const detectMobile = () => {
+    const elem = document.getElementById('mob-detect');
+    if (!elem) return;
+    setMobile(window.getComputedStyle(elem).display === 'block');
+  };
+
+  createEffect(() => {
+    const event = 'resize';
+    window.addEventListener(event, detectMobile);
+    onCleanup(() => window.removeEventListener(event, detectMobile));
+  });
+
+  onMount(detectMobile);
 
   function onNext() {
     setCurrentView(View.PAYMENT);
@@ -25,8 +40,10 @@ const Setup = ({view, open}: SetupProps) => {
   }
 
   return <Show when={opened()} keyed>
-    {View.OVERVIEW === currentView() && <OverviewModal onNext={onNext} onClose={onModalClose}/>}
-    {View.PAYMENT === currentView() && <PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}/>}
+    <div id={'mob-detect'}/>
+
+    {View.OVERVIEW === currentView() && <OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
+    {View.PAYMENT === currentView() && <PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose} mobile={mobile()}/>}
   </Show>
 }
 export default Setup;
