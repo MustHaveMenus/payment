@@ -24,6 +24,15 @@
       display: block;
       line-height: 1.4;
     }
+
+    .agreement {
+      margin-top: $margin * 3;
+      font-size: $text-size-small;
+    }
+
+    .btnWrapper {
+      margin: 15px 0;
+    }
   }
 
   .right {
