@@ -29,6 +29,7 @@
     "@types/node": "^18.11.9"
   },
   "dependencies": {
-    "solid-js": "^1.5.1"
+    "solid-js": "^1.5.1",
+    "vite-plugin-css-injected-by-js": "^2.1.1"
   }
 }
