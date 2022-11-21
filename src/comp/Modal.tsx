@@ -5,16 +5,22 @@ import ModalWrapper from "./ModalWrapper";
 import ModalContent from "./ModalContent";
 import ModalContentWrapper from "./ModalContentWrapper";
 
-interface ModalProps {
+export interface GenericModalProps {
+  onBack?: () => void;
+  onNext?: () => void;
+  onClose?: () => void;
+}
+
+interface ModalProps extends GenericModalProps {
   header?: JSXElement,
   content?: JSXElement,
   footer?: JSXElement,
 }
 
-const Modal = ({header, footer, content}: ModalProps) => {
-  return <ModalWrapper>
+const Modal = ({header, footer, content, onBack, onClose}: ModalProps) => {
+  return <ModalWrapper onClose={onClose}>
     <ModalContentWrapper>
-      <ModalHeader>{header}</ModalHeader>
+      <ModalHeader onBack={onBack} onClose={onClose}>{header}</ModalHeader>
       <ModalContent>{content}</ModalContent>
       <ModalFooter>{footer}</ModalFooter>
     </ModalContentWrapper>

@@ -1,0 +1,87 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+$margin: 25px;
+
+.wrapper {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  color: $color-dark-grey;
+
+  .leftSide {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: calc(50% - 75px);
+    padding: 30px 37.5px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    header {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: $margin;
+      @include normalBoldText();
+    }
+
+    .topSection {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      align-items: flex-start;
+      width: 100%;
+      margin-bottom: $margin;
+
+      .topHeader {
+        @include largeBoldText();
+        display: block;
+      }
+
+      .topSubheader {
+        @include normalText();
+      }
+    }
+
+    .featureSection {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+
+      > span {
+        @include normalBoldText();
+        line-height: 1.4;
+      }
+
+      .featureList {
+        margin-top: 12px;
+        display: flex;
+        flex-direction: column;
+        row-gap: $margin;
+
+        div {
+          display: flex;
+          column-gap: 5px;
+        }
+      }
+    }
+
+    .footer {
+      margin-top: calc($margin - 5px);
+      width: 100%;
+    }
+  }
+
+  .rightSide {
+    background-image: url('../assets/benefits.jpg');
+    background-size: cover;
+    height: 100%;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 50%;
+  }
+}

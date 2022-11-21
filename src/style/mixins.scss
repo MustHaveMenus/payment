@@ -1,0 +1,21 @@
+@import './vars.scss';
+
+@mixin normalText() {
+  font-size: $text-size-normal;
+  color: $color-dark-grey;
+}
+
+@mixin largeText() {
+  font-size: $text-size-large;
+  color: $color-dark-grey;
+}
+
+@mixin largeBoldText() {
+  @include largeText();
+  font-weight: bold;
+}
+
+@mixin normalBoldText() {
+  @include normalText();
+  font-weight: bold;
+}

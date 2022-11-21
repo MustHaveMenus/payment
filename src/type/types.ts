@@ -1,3 +1,4 @@
 export enum View {
-  BENEFITS = 'benefits'
+  OVERVIEW = 'overview',
+  PAYMENT = 'payment',
 }
