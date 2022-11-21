@@ -27,7 +27,7 @@
 
     .agreement {
       margin-top: $margin * 3;
-      font-size: $text-size-small;
+      font-size: $text-size-sm;
     }
 
     .btnWrapper {
@@ -37,5 +37,53 @@
 
   .right {
     background-color: $color-light-grey;
+
+    .topHeader {
+      @include mmediumTextBold();
+      display: block;
+      margin-bottom: 7px;
+    }
+
+    .paymentDetails {
+      display: flex;
+      flex-direction: column;
+      row-gap: 8px;
+      margin-top: $margin * 2;
+
+      &.topBorder {
+        border-top: 1px solid $color-medium-grey2;
+        padding-top: $margin;
+        margin-top: $margin;
+      }
+
+      .paymentDetailsHeader {
+        @include smallTextBold();
+        display: flex;
+        justify-content: space-between;
+
+        > span {
+          flex: 1;
+        }
+      }
+
+      .paymentDetailsEntry {
+        display: flex;
+        justify-content: space-between;
+        font-size: $text-size;
+
+        > div {
+          flex: 1;
+
+          &:nth-child(2) {
+            margin-left: 10px;
+          }
+
+          &:last-child {
+            display: flex;
+            justify-content: flex-end;
+          }
+        }
+      }
+    }
   }
 }

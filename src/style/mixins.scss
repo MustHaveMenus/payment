@@ -1,17 +1,27 @@
 @import './vars.scss';
 
+@mixin smallText() {
+  font-size: $text-size-sm;
+  color: $color-dark-grey;
+}
+
 @mixin normalText() {
-  font-size: $text-size-normal;
+  font-size: $text-size;
   color: $color-dark-grey;
 }
 
 @mixin mediumText() {
-  font-size: $text-size-medium;
+  font-size: $text-size-md;
+  color: $color-dark-grey;
+}
+
+@mixin mmediumText() {
+  font-size: $text-size-mmd;
   color: $color-dark-grey;
 }
 
 @mixin largeText() {
-  font-size: $text-size-large;
+  font-size: $text-size-lg;
   color: $color-dark-grey;
 }
 
@@ -19,6 +29,12 @@
   @include largeText();
   font-weight: bold;
 }
+
+@mixin smallTextBold() {
+  @include smallText();
+  font-weight: bold;
+}
+
 
 @mixin normalBoldText() {
   @include normalText();
@@ -30,3 +46,7 @@
   font-weight: bold;
 }
 
+@mixin mmediumTextBold() {
+  @include mmediumText();
+  font-weight: bold;
+}
