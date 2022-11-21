@@ -1,12 +1,12 @@
 import {render} from 'solid-js/web';
-import Component, {ComponentProps} from './components/Component'
+import App, {AppProps} from './components/App'
 
-const mount = (props: ComponentProps, el?: HTMLElement) => {
+const mount = (props: AppProps, el?: HTMLElement) => {
   if (!el) {
     el = document.createElement("div");
     document.body.append(el);
   }
-  render(() => <Component {...props}/>, el);
+  render(() => <App {...props}/>, el);
 }
 
 const Payment = {
