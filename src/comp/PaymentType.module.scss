@@ -12,22 +12,6 @@
     align-items: flex-start;
     column-gap: 5px;
 
-    input {
-      cursor: pointer;
-      box-shadow: 0 0 0 1px $color-gold;
-      border: 2px solid white;
-      appearance: none;
-      background-color: #fff;
-      transition: all ease-in 0.1s;
-      border-radius: 50%;
-      width: 12px;
-      height: 12px;
-
-      &:checked {
-        background-color: $color-gold;
-      }
-    }
-
     label {
       cursor: pointer;
     }

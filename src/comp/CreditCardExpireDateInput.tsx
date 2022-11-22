@@ -1,5 +1,5 @@
-import {formatCreditCard, formatCreditCardExpireDate} from "../util/util";
-import {createEffect, createSignal} from "solid-js";
+import {formatCreditCardExpireDate} from "../util/util";
+import Input from "./Input";
 
 interface CreditCardNumberInputProps {
   value: string;
@@ -11,11 +11,7 @@ const CreditCardNumberInput = (props: CreditCardNumberInputProps) => {
     props.onChange(formatCreditCardExpireDate(e));
   }
 
-  createEffect(() => {
-    // setDisplayedValue(formatCreditCard(props.value));
-  });
-
-  return <input type={'text'} value={props.value} placeholder={'MM / YY'} maxLength={5}
+  return <Input type={'text'} value={props.value} placeholder={'MM / YY'} maxLength={5}
                 onKeyUp={e => onInputChange(e)}/>;
 }
 

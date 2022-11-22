@@ -26,8 +26,8 @@ const PaymentModal = (props: PaymentModalProps) => {
           <Button label={'Subscribe'} disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
         </div>
         <div class={styles.agreement}>
-          <span>By continuing, you agree to our <a href={'https://www.musthavemenus.com'}>Terms of Use</a>, confirm you have read our <a
-            href={'https://www.musthavemenus.com'}>Privacy Policy</a>, and agree to the recurring charges for your subscription plan until you cancel.</span>
+          <span>By continuing, you agree to our <a href={'https://www.musthavemenus.com'} target={'_blank'}>Terms of Use</a>, confirm you have read our <a
+            href={'https://www.musthavemenus.com'} target={'_blank'}>Privacy Policy</a>, and agree to the recurring charges for your subscription plan until you cancel.</span>
         </div>
       </div>
 

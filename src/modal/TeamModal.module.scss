@@ -1,0 +1,58 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: $modal-content-padding;
+  color: $color-dark-grey;
+
+  .topHeader {
+    @include topHeader();
+  }
+
+  .topSubheader {
+    @include normalText();
+    line-height: 1.4;
+  }
+
+  .btn {
+    width: 164px;
+  }
+
+  .form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-top: $margin;
+
+    > div {
+      display: flex;
+      column-gap: 12px;
+
+      > div {
+        flex: 1;
+
+        .formHeader {
+          @include normalBoldText();
+          display: flex;
+          align-items: center;
+
+          svg {
+            margin-left: auto;
+            cursor: pointer;
+            &:hover {
+              opacity: $hover-opacity;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.mobile {
+
+  }
+}

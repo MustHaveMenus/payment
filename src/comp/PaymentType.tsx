@@ -1,5 +1,6 @@
 import styles from './PaymentType.module.scss';
 import {JSXElement} from "solid-js";
+import RadioInput from "./RadioInput";
 
 interface PaymentTypeProps {
 
@@ -17,7 +18,7 @@ const PaymentType = (props: PaymentTypeProps) => {
 
   const getEntry = (value: PaymentTypeEnum, defaultChecked: boolean, label: string, sublabel: JSXElement) =>
     <div class={styles.radioEntry}>
-      <input type="radio" name="drone" id={value} value={value} checked={defaultChecked}/>
+      <RadioInput name="drone" id={value} value={value} defaultChecked={defaultChecked}/>
       <label for={value}>
         <span><b>{label}</b></span>
         {sublabel}

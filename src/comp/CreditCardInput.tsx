@@ -1,5 +1,6 @@
 import {formatCreditCard} from "../util/util";
 import {createEffect, createSignal} from "solid-js";
+import Input from "./Input";
 
 interface CreditCardNumberInputProps {
   value: string;
@@ -17,7 +18,7 @@ const CreditCardNumberInput = (props: CreditCardNumberInputProps) => {
     setDisplayedValue(formatCreditCard(props.value));
   });
 
-  return <input type={"text"} placeholder={'Card Number'} value={displayedValue()} maxlength={23}
+  return <Input type={"text"} placeholder={'Card Number'} value={displayedValue()} maxLength={23}
                 onKeyUp={e => onInputChange((e.target as HTMLInputElement).value)}/>;
 }
 

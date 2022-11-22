@@ -3,6 +3,7 @@ import OverviewModal from "./OverviewModal";
 import {createEffect, createSignal, onCleanup, onMount, Show} from "solid-js";
 import PaymentModal from "./PaymentModal";
 import ConfirmationModal from "./ConfirmationModal";
+import TeamModal from "./TeamModal";
 
 export interface SetupProps {
   view?: View;
@@ -50,6 +51,7 @@ const Setup = (props: SetupProps) => {
     {View.OVERVIEW === currentView() && <OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
     {View.PAYMENT === currentView() && <PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose} mobile={mobile()}/>}
     {View.CONFIRMATION === currentView() && <ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
+    {View.TEAM === currentView() && <TeamModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
   </Show>
 }
 export default Setup;

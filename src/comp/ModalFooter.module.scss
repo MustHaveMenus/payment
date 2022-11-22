@@ -1,6 +1,30 @@
 @import '../style/vars.scss';
+@import '../style/mixins.scss';
 
 .modalFooter {
   margin-top: auto;
   padding: 31px 0 $margin-md 0;
+  width: 100%;
+
+  .teamFooter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    button {
+      width: 164px;
+    }
+
+    span {
+      @include normalBoldText();
+      position: absolute;
+      right: $margin-xxl;
+      color: $color-dark-grey3;
+      cursor: pointer;
+
+      &:hover {
+        opacity: $hover-opacity;
+      }
+    }
+  }
 }

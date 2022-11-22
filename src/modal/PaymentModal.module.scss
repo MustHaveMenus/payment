@@ -14,9 +14,7 @@
 
   .left {
     .topHeader {
-      @include mediumTextBold();
-      display: block;
-      margin-bottom: 7px;
+      @include topHeader();
     }
 
     .topSubheader {
@@ -39,9 +37,7 @@
     background-color: $color-light-grey;
 
     .topHeader {
-      @include mmediumTextBold();
-      display: block;
-      margin-bottom: 7px;
+      @include topHeader();
     }
 
     .paymentDetails {
