@@ -23,7 +23,7 @@ const Modal = (props: ModalProps) => {
   return <ModalWrapper onClose={props.onClose}>
     <ModalContentWrapper mobile={props.mobile}>
       <ModalHeader onBack={props.onBack} onClose={props.onClose} secondaryCloseBtn={props.secondaryCloseBtn}>{props.header}</ModalHeader>
-      <ModalContent>{props.content}</ModalContent>
+      <ModalContent withFooter={!!props.footer} withHeader={!!props.header}>{props.content}</ModalContent>
       {props.footer && <ModalFooter>{props.footer}</ModalFooter>}
     </ModalContentWrapper>
   </ModalWrapper>

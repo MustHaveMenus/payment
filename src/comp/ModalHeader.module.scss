@@ -1,4 +1,5 @@
 @import '../style/vars.scss';
+@import '../style/mixins.scss';
 
 .headerWrapper {
   position: absolute;
@@ -8,36 +9,57 @@
   padding: $margin-md $margin-md 0;
 
   .back, .close {
+    align-items: flex-start;
     cursor: pointer;
     z-index: 1;
 
-    &:hover {
-      opacity: $hover-opacity;
-    }
+    @include hover();
   }
+
   .back {
     margin-right: auto;
   }
+
   .close {
     margin-left: auto;
     display: flex;
     justify-content: center;
-    align-items: center;
+    //align-items: center;
   }
+
   .closeSecondary {
     background: $color-medium-grey;
     border-radius: 30px;
     opacity: .6;
     padding: 7px;
     transform: translate(5px, -5px);
+
     svg {
       path {
         fill: $color-white !important;
       }
     }
 
-    &:hover {
-      opacity: $hover-opacity;
-    }
+    @include hover();
   }
+}
+
+.header {
+  @include topHeader();
+}
+
+.subheader {
+  @include normalText();
+  line-height: 1.4;
+}
+
+.wrapper {
+  margin-top: 38px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  padding-bottom: $margin;
+  background: $color-white;
 }

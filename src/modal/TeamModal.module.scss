@@ -7,20 +7,8 @@
   justify-content: center;
   align-items: center;
   padding: $modal-content-padding;
+  padding-top: 0;
   color: $color-dark-grey;
-
-  .topHeader {
-    @include topHeader();
-  }
-
-  .topSubheader {
-    @include normalText();
-    line-height: 1.4;
-  }
-
-  .btn {
-    width: 164px;
-  }
 
   .form {
     display: flex;
@@ -28,31 +16,79 @@
     width: 100%;
     margin-top: $margin;
 
-    > div {
+    .entry {
       display: flex;
       column-gap: 12px;
 
+      &:not(:first-child) {
+        margin-top: $margin;
+      }
+
       > div {
         flex: 1;
+
+        svg {
+          cursor: pointer;
+          @include hover();
+        }
 
         .formHeader {
           @include normalBoldText();
           display: flex;
           align-items: center;
 
-          svg {
+          span:has(svg) {
             margin-left: auto;
-            cursor: pointer;
-            &:hover {
-              opacity: $hover-opacity;
+          }
+        }
+
+        .formContent {
+          margin-top: 4px;
+
+          .locationEntry {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            column-gap: 5px;
+
+            &:not(:first-child) {
+              margin-top: 12px;
+            }
+          }
+
+          .addLocation {
+            @include normalBoldText();
+            color: $color-purple;
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 5px;
+            margin-right: $margin;
+
+            span {
+              @include hover();
+              cursor: pointer;
             }
           }
         }
       }
+    }
+    .addUser {
+      @include hover();
+      @include smallTextBold();
+      margin-top: 10px;
+      height: 32px;
+      width: 146px;
+      background-color: $color-orange;
+      color: $color-white;
+      padding: 0;
     }
   }
 
   &.mobile {
 
   }
+}
+
+.invisible {
+  visibility: hidden;
 }

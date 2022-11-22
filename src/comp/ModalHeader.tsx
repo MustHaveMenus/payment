@@ -11,10 +11,9 @@ interface ModalHeaderProps extends GenericModalProps {
 const ModalHeader = (props: ModalHeaderProps) => {
   return <div class={styles.headerWrapper}>
     {props.children}
-    {!props.children && <>
-      {props.onBack && <div class={styles.back} onClick={props.onBack}><BackIcon/></div>}
-      {props.onClose && <div class={`${styles.close} ${props.secondaryCloseBtn ? styles.closeSecondary : ''}`} onClick={props.onClose}><CloseIcon/></div>}
-    </>}
+    {props.onBack && <div class={styles.back} onClick={props.onBack}><BackIcon/></div>}
+    {props.onClose &&
+        <div class={`${styles.close} ${props.secondaryCloseBtn ? styles.closeSecondary : ''}`} onClick={props.onClose}><CloseIcon/></div>}
   </div>
 }
 export default ModalHeader;

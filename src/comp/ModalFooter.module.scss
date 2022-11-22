@@ -22,9 +22,7 @@
       color: $color-dark-grey3;
       cursor: pointer;
 
-      &:hover {
-        opacity: $hover-opacity;
-      }
+      @include hover();
     }
   }
 }

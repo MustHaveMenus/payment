@@ -3,4 +3,13 @@
 .modalContent {
   width: 100%;
   height: 100%;
+
+  &.withFooter {
+    max-height: $modal-height-content;
+    overflow: auto;
+  }
+
+  &.withHeader {
+    margin-top: 150px;
+  }
 }
