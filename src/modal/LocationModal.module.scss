@@ -1,0 +1,16 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: $modal-content-padding;
+  padding-top: 0;
+  color: $color-dark-grey;
+
+  &.mobile {
+
+  }
+}

@@ -3,5 +3,5 @@ export enum View {
   PAYMENT = 'payment',
   CONFIRMATION = 'confirmation',
   TEAM = 'team',
-  USERS = 'users',
+  LOCATION = 'location',
 }

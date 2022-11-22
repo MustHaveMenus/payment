@@ -4,12 +4,10 @@ import PaymentInformation from "../comp/PaymentInformation";
 import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
 import {createSignal} from "solid-js";
+import {productType, subscriptionTotal} from "../util/prices";
 
 interface PaymentModalProps extends GenericModalProps {
 }
-
-const productType = 'Pro Annual';
-const subscriptionTotal = '$276.00 / year';
 
 const PaymentModal = (props: PaymentModalProps) => {
   const [btnDisabled, setBtnDisabled] = createSignal(true);

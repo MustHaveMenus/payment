@@ -9,6 +9,7 @@ import Input from "../comp/Input";
 import Select from "../comp/Select";
 import {createStore} from "solid-js/store";
 import {removeIndex, replaceAtIndex} from "../util/util";
+import {teamPricePerMonth} from "../util/prices";
 
 interface TeamModalProps extends GenericModalProps {
 }
@@ -20,6 +21,7 @@ interface User {
 
 const USERS = 'users';
 const LOCATIONS = 'locations';
+
 const TeamModal = (props: TeamModalProps) => {
   const [locations, setLocations] = createSignal([] as string[]);
 
@@ -84,7 +86,7 @@ const TeamModal = (props: TeamModalProps) => {
                 header={
                   <div class={headerStyles.wrapper}>
                     <span class={headerStyles.header}>Add Your Team</span>
-                    <span class={headerStyles.subheader}>Try Teams for free for 30 days. Only $10/month per user after that.</span>
+                    <span class={headerStyles.subheader}>Try Teams for free for 30 days. Only ${teamPricePerMonth}/month per user after that.</span>
                     <span class={headerStyles.subheader}>New users will get an email invite.</span>
                   </div>
                 }

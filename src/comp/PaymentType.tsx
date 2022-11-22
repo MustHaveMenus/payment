@@ -1,6 +1,7 @@
 import styles from './PaymentType.module.scss';
 import {JSXElement} from "solid-js";
 import RadioInput from "./RadioInput";
+import {fullAmount, fullAmountPerMo, monthlyAmount} from "../util/prices";
 
 interface PaymentTypeProps {
 
@@ -9,10 +10,6 @@ interface PaymentTypeProps {
 enum PaymentTypeEnum {
   Annually = 'a', Monthly = 'm'
 }
-
-const fullAmount = 276;
-const fullAmountPerMo = 23;
-const monthlyAmount = 30;
 
 const PaymentType = (props: PaymentTypeProps) => {
 
