@@ -31,3 +31,11 @@ export function formatCreditCardExpireDate(event: KeyboardEvent) {
     /\/\//g, '/' // Prevent entering more than 1 `/`
   );
 }
+
+export function removeIndex<T>(array: readonly T[], index: number): T[] {
+  return [...array.slice(0, index), ...array.slice(index + 1)];
+}
+
+export function replaceAtIndex<T>(array: readonly T[], index: number, value: T): T[] {
+  return [...array.slice(0, index), value, ...array.slice(index + 1)];
+}

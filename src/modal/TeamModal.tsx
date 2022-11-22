@@ -3,28 +3,82 @@ import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal, For} from "solid-js";
+import {createSignal, For, onMount} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
+import {createStore} from "solid-js/store";
+import {removeIndex, replaceAtIndex} from "../util/util";
 
 interface TeamModalProps extends GenericModalProps {
 }
 
+interface User {
+  email: string;
+  locations: string[]
+}
+
+const USERS = 'users';
+const LOCATIONS = 'locations';
 const TeamModal = (props: TeamModalProps) => {
-  const [locations, setLocations] = createSignal(['caca', 'maca']);
+  const [locations, setLocations] = createSignal([] as string[]);
+
+  onMount(() => {
+    setTimeout(() => {
+      onAddUser();
+      setLocations(['caca', 'maca', 'vaca', 'laca']);
+    }, 1000);
+  })
+
+  const [state, setState] = createStore({
+    [USERS]: [] as User[]
+  });
+
+  function newUser() {
+    return {
+      email: '',
+      [LOCATIONS]: [newLocation()]
+    } as User;
+  }
+
+  function newLocation(user?: User) {
+    if (!user) return locations().at(0)!;
+    return locations().filter(it => !user.locations.includes(it)).at(0)!;
+  }
 
   function validateAndProceed() {
 
   }
 
-  const [users, setUsers] = createSignal([{
-    email: 'aa@nn.com',
-    locations: ['caca', 'maca']
-  }, {
-    email: 'xxx@nn.com',
-    locations: ['caca', 'maca']
-  }]);
+  function onAddLocation(user: User) {
+    const idx = state[USERS].indexOf(user);
+    setState(USERS, idx, LOCATIONS, prev => [...prev, newLocation(user)]);
+  }
+
+  function onLocationChange(user: User, oldLoc: string, loc: string) {
+    const userIdx = state[USERS].indexOf(user);
+    const locationIdx = state[USERS].at(userIdx)?.locations.indexOf(oldLoc) ?? -1;
+    setState(USERS, userIdx, LOCATIONS, prev => replaceAtIndex(prev, locationIdx, loc));
+  }
+
+  function onDeleteLocation(user: User, loc: string) {
+    const userIdx = state[USERS].indexOf(user);
+    const locationIdx = state[USERS].at(userIdx)?.locations.indexOf(loc) ?? -1;
+    setState(USERS, userIdx, LOCATIONS, prev => removeIndex(prev, locationIdx));
+  }
+
+  function onAddUser() {
+    setState(USERS, users => [...users, newUser()]);
+  }
+
+  function onDeleteUser(user: User) {
+    const idx = state[USERS].indexOf(user);
+    setState(USERS, users => removeIndex(users, idx));
+  }
+
+  function remainingLocations(user: User) {
+    return locations().filter(it => !user.locations.includes(it));
+  }
 
   return <Modal onClose={props.onClose}
                 header={
@@ -37,49 +91,54 @@ const TeamModal = (props: TeamModalProps) => {
                 content={
                   <div class={styles.wrapper}>
                     <div class={styles.form}>
-                      <For each={users()}>{(user, i) =>
+                      <For each={state[USERS]}>{(user, i) =>
                         <div class={styles.entry}>
                           <div>
                             <div class={styles.formHeader}>
                               <span>New User Info</span>
-                              <span class={`${i() === 0 ? styles.invisible : ''}`}>
+                              <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={[onDeleteUser, user]}>
                                 <TrashIcon/>
                               </span>
                             </div>
 
                             <div class={styles.formContent}>
-                              <Input type={'text'} value={user.email}/>
+                              <Input type={'text'} value={user.email} placeholder={'Email address'}/>
                             </div>
                           </div>
                           <div>
                             <div class={styles.formHeader}>
                               <span>Location Assignment</span>
+                              <span class={styles.invisible}>
+                                <TrashIcon/>
+                              </span>
                             </div>
                             <div class={styles.formContent}>
                               <For each={user.locations}>{(loc, i) =>
                                 <div class={styles.locationEntry}>
-                                  <Select values={locations()} value={loc}/>
-                                  <span class={`${i() === 0 ? styles.invisible : ''}`}>
+                                  <Select values={locations()} disabledValues={user.locations} value={loc}
+                                          onChange={(newLoc) => onLocationChange(user, loc, newLoc)}/>
+                                  <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={() => onDeleteLocation(user, loc)}>
                                     <TrashIcon/>
                                   </span>
                                 </div>
                               }</For>
-                              <div class={styles.addLocation}>
-                                <span>+ Location Assignment</span>
-                              </div>
+                              {remainingLocations(user).length && <div class={styles.addLocation}>
+                                  <span onClick={[onAddLocation, user]}>+ Location Assignment</span>
+                              </div>}
                             </div>
                           </div>
                         </div>
                       }</For>
 
-                      <Button class={styles.addUser} label={'+ Add Another User'}/>
+                      <Button class={styles.addUser} label={'+ Add Another User'} onClick={onAddUser}/>
                     </div>
                   </div>
-                } footer={
-    <div class={footerStyles.teamFooter}>
-      <Button onClick={validateAndProceed} label={'Next'}></Button>
-      <span onClick={props.onNext}>Skip this step {'>'}</span>
-    </div>
-  }/>
+                }
+                footer={
+                  <div class={footerStyles.teamFooter}>
+                    <Button onClick={validateAndProceed} label={'Next'}></Button>
+                    <span onClick={props.onNext}>Skip this step {'>'}</span>
+                  </div>
+                }/>
 }
 export default TeamModal;
