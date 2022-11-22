@@ -28,7 +28,8 @@
     background: $color-medium-grey;
     border-radius: 30px;
     opacity: .6;
-    padding: 4px;
+    padding: 7px;
+    transform: translate(5px, -5px);
     svg {
       path {
         fill: $color-white !important;
