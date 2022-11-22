@@ -23,7 +23,7 @@ const PaymentModal = (props: PaymentModalProps) => {
         <PaymentType/>
         <PaymentInformation/>
         <div class={styles.btnWrapper}>
-          <Button label={'Subscribe'} disabled={btnDisabled()}/>
+          <Button label={'Subscribe'} disabled={btnDisabled()} onClick={props.onNext}/>
         </div>
         <div class={styles.agreement}>
           <span>By continuing, you agree to our <a href={'https://www.musthavemenus.com'}>Terms of Use</a>, confirm you have read our <a

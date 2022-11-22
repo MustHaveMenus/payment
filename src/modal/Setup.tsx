@@ -2,6 +2,7 @@ import {View} from "../type/types";
 import OverviewModal from "./OverviewModal";
 import {createEffect, createSignal, onCleanup, onMount, Show} from "solid-js";
 import PaymentModal from "./PaymentModal";
+import ConfirmationModal from "./ConfirmationModal";
 
 export interface SetupProps {
   view?: View;
@@ -28,6 +29,10 @@ const Setup = (props: SetupProps) => {
   onMount(detectMobile);
 
   function onNext() {
+    if (currentView() === View.PAYMENT) {
+      setCurrentView(View.CONFIRMATION)
+      return;
+    }
     setCurrentView(View.PAYMENT);
   }
 
@@ -44,6 +49,7 @@ const Setup = (props: SetupProps) => {
 
     {View.OVERVIEW === currentView() && <OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
     {View.PAYMENT === currentView() && <PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose} mobile={mobile()}/>}
+    {View.CONFIRMATION === currentView() && <ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
   </Show>
 }
 export default Setup;
