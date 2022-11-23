@@ -1,12 +1,13 @@
 import styles from './ModalContentWrapper.module.scss';
 import {JSXElement} from "solid-js";
+import {mobileState} from "../state/state";
 
 interface ModalContentWrapperProps {
   children?: JSXElement;
-  mobile?: boolean;
 }
 
 const ModalContentWrapper = (props: ModalContentWrapperProps) => {
-  return <div class={`${styles.modalContentWrapper} ${props.mobile ? styles.mobile : ''}`}>{props.children}</div>
+  const {mobile} = mobileState;
+  return <div classList={{[styles.mobile]: mobile(), [styles.modalContentWrapper]: true}}>{props.children}</div>
 }
 export default ModalContentWrapper;

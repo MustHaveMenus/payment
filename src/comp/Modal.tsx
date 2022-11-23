@@ -10,7 +10,6 @@ export interface GenericModalProps {
   onNext?: () => void;
   onClose?: () => void;
   secondaryCloseBtn?: boolean;
-  mobile?: boolean;
 }
 
 interface ModalProps extends GenericModalProps {
@@ -21,7 +20,7 @@ interface ModalProps extends GenericModalProps {
 
 const Modal = (props: ModalProps) => {
   return <ModalWrapper onClose={props.onClose}>
-    <ModalContentWrapper mobile={props.mobile}>
+    <ModalContentWrapper>
       <ModalHeader onBack={props.onBack} onClose={props.onClose} secondaryCloseBtn={props.secondaryCloseBtn}>{props.header}</ModalHeader>
       <ModalContent withFooter={!!props.footer} withHeader={!!props.header}>{props.content}</ModalContent>
       {props.footer && <ModalFooter>{props.footer}</ModalFooter>}

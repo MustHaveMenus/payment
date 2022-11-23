@@ -6,6 +6,7 @@ import ConfirmationModal from "./ConfirmationModal";
 import TeamModal from "./TeamModal";
 import LocationModal from "./LocationModal";
 import {Portal} from "solid-js/web";
+import {mobileState} from "../state/state";
 
 export interface SetupProps {
   view?: View;
@@ -15,7 +16,7 @@ export interface SetupProps {
 const Setup = (props: SetupProps) => {
   const [opened, setOpened] = createSignal(props.open ?? true);
   const [currentView, setCurrentView] = createSignal(props.view ?? View.OVERVIEW);
-  const [mobile, setMobile] = createSignal(false);
+  const {mobile, setMobile} = mobileState;
 
   const detectMobile = () => {
     const elem = document.getElementById('mob-detect');
@@ -52,12 +53,11 @@ const Setup = (props: SetupProps) => {
       <div id={'mob-detect'}/>
 
       <Switch>
-        <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-        <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}
-                                                                         mobile={mobile()}/></Match>
-        <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-        <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-        <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+        <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext} onClose={onModalClose}/></Match>
+        <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}/></Match>
+        <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext} onClose={onModalClose}/></Match>
+        <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext} onClose={onModalClose}/></Match>
+        <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onClose={onModalClose}/></Match>
       </Switch>
     </Portal>
   </Show>

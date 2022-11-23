@@ -7,17 +7,19 @@ import QRIcon from "../comp/svg/QRIcon";
 import TeamIcon from "../comp/svg/TeamIcon";
 import HeartIcon from "../comp/svg/HeartIcon";
 import Button from "../comp/Button";
+import {mobileState} from "../state/state";
 
 interface OverviewModalProps extends GenericModalProps {
 }
 
 const OverviewModal = (props: OverviewModalProps) => {
+  const {mobile} = mobileState;
   const footer = <footer class={styles.footer}>
     <Button label={'Try it free for 30 days'} onClick={props.onNext}/>
   </footer>;
 
-  const modalFooter = () => props.mobile ? footer : null;
-  const leftSideFooter = () => !props.mobile ? footer : null;
+  const modalFooter = () => mobile() ? footer : null;
+  const leftSideFooter = () => !mobile() ? footer : null;
 
   const leftSideContent = <>
     <header>
@@ -55,7 +57,7 @@ const OverviewModal = (props: OverviewModalProps) => {
     </section>
   </>
 
-  const desktopContent = () => props.mobile ? null : <>
+  const desktopContent = () => mobile() ? null : <>
     <div class={styles.left}>
       {leftSideContent}
       {leftSideFooter()}
@@ -63,7 +65,7 @@ const OverviewModal = (props: OverviewModalProps) => {
     <div class={styles.right}></div>
   </>
 
-  const mobileContent = () => !props.mobile ? null : <>
+  const mobileContent = () => !mobile() ? null : <>
     <div class={styles.right}></div>
     <div class={styles.left}>
       {leftSideContent}
@@ -71,8 +73,8 @@ const OverviewModal = (props: OverviewModalProps) => {
     </div>
   </>
 
-  return <Modal onClose={props.onClose} secondaryCloseBtn footer={modalFooter()} mobile={props.mobile} content={
-    <div class={`${styles.wrapper} ${props.mobile ? styles.mobile : ''}`}>
+  return <Modal onClose={props.onClose} secondaryCloseBtn footer={modalFooter()} content={
+    <div classList={{[styles.mobile]: mobile(), [styles.wrapper]: true}}>
       {desktopContent()}
       {mobileContent()}
     </div>
