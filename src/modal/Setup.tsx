@@ -63,8 +63,8 @@ const Setup = (props: PrivateSetupProps) => {
       setCurrentView(View.CONFIRMATION)
       return;
     }
-    if (currentView() === View.TEAM) {
-      setCurrentView(View.LOCATION)
+    if (currentView() === View.LOCATION) {
+      setCurrentView(View.TEAM)
       return;
     }
     setCurrentView(View.PAYMENT);

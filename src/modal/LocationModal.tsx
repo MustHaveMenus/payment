@@ -4,28 +4,41 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
-import {createSignal} from "solid-js";
+import {createEffect, createSignal, For, Show} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
 import locationsState from "../state/location";
 import {countryValues, stateValues} from "../util/util";
 import {LocationDto} from "../generated/client";
+import {LOCATIONS} from "../util/constants";
 
 interface LocationModalProps extends GenericModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
   const {locations, addLocation} = locationsState;
+  const [currentLocation, setCurrentLocation] = createSignal({} as LocationDto);
   const [state, setState] = createSignal('');
   const [country, setCountry] = createSignal('');
+  const [newLocations, setNewLocations] = createSignal([] as LocationDto[]);
 
+  createEffect(() => {
+    const locs = locations[LOCATIONS];
+    if (!locs) return;
+    setNewLocations(locs.filter(it => it.id === it.name));
+  })
 
   function validateAndProceed() {
-
+    props.onNext?.();
   }
 
   function onNameChange(e: KeyboardEvent) {
-
+    setCurrentLocation(old => {
+      return {
+        ...old,
+        name: (e.target as HTMLInputElement).value
+      }
+    });
   }
 
   function onStateChange() {
@@ -45,7 +58,11 @@ const LocationModal = (props: LocationModalProps) => {
   }
 
   function addNewLocation() {
-    addLocation(newLocation());
+    addLocation({
+      ...currentLocation(),
+      id: currentLocation().name
+    });
+    setCurrentLocation(newLocation());
   }
 
   return <Modal
@@ -64,7 +81,7 @@ const LocationModal = (props: LocationModalProps) => {
           </div>
 
           <div class={styles.formContent}>
-            <Input type={'text'} value={''} placeholder={'Business Name'} onKeyUp={onNameChange}/>
+            <Input type={'text'} value={currentLocation().name} placeholder={'Business Name'} onKeyUp={onNameChange}/>
             <div class={styles.split}>
               <Input type={'text'} value={''} placeholder={'Street Address 1'} onKeyUp={onNameChange}/>
               <Input type={'text'} value={''} placeholder={'Street Address 2'} onKeyUp={onNameChange}/>
@@ -78,7 +95,19 @@ const LocationModal = (props: LocationModalProps) => {
               <Input type={'text'} value={''} placeholder={'Zip'} onKeyUp={onZipChange}/>
             </div>
           </div>
+        </div>
 
+        <div class={styles.form}>
+          <Show when={newLocations().length} keyed>
+            <div class={styles.formHeader}>
+              <span>Location Info</span>
+            </div>
+            <div class={styles.formContent}>
+              <For each={newLocations()}>{(loc, i) =>
+                <div>{loc.name}</div>
+              }</For>
+            </div>
+          </Show>
           <Button class={styles.addLocation} label={'+ Add Another Location'} onClick={addNewLocation}/>
         </div>
       </div>
