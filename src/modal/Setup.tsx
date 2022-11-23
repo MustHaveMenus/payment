@@ -1,6 +1,6 @@
 import {View} from "../type/types";
 import OverviewModal from "./OverviewModal";
-import {createEffect, createSignal, onCleanup, onMount, Show} from "solid-js";
+import {createEffect, createSignal, Match, onCleanup, onMount, Show, Switch} from "solid-js";
 import PaymentModal from "./PaymentModal";
 import ConfirmationModal from "./ConfirmationModal";
 import TeamModal from "./TeamModal";
@@ -49,11 +49,14 @@ const Setup = (props: SetupProps) => {
   return <Show when={opened()} keyed>
     <div id={'mob-detect'}/>
 
-    {View.OVERVIEW === currentView() && <OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
-    {View.PAYMENT === currentView() && <PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose} mobile={mobile()}/>}
-    {View.CONFIRMATION === currentView() && <ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
-    {View.TEAM === currentView() && <TeamModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
-    {View.LOCATION === currentView() && <LocationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/>}
+    <Switch>
+      <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+      <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}
+                                                                       mobile={mobile()}/></Match>
+      <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+      <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+      <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+    </Switch>
   </Show>
 }
 export default Setup;
