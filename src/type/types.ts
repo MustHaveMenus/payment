@@ -1,3 +1,5 @@
+import {LocationDto} from "../generated/client";
+
 export enum View {
   OVERVIEW = 'overview',
   PAYMENT = 'payment',
@@ -7,16 +9,11 @@ export enum View {
 }
 
 export interface Option {
-  value: string;
-  label: string;
+  id?: string;
+  name?: string;
 }
 
 export interface User extends Option {
   email: string;
-  locations: Location[]
+  locations: LocationDto[]
 }
-
-export interface Location extends Option {
-  name: string;
-}
-

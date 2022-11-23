@@ -3,7 +3,7 @@ import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {For, onMount, Show} from "solid-js";
+import {createEffect, For, onMount, Show} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
@@ -12,6 +12,7 @@ import {EMAIL, LOCATIONS, USERS} from "../util/constants";
 import {User} from "../type/types";
 import teamState from "../state/team";
 import locationState from "../state/location";
+import {LocationDto} from "../generated/client";
 
 interface TeamModalProps extends GenericModalProps {
 }
@@ -20,16 +21,10 @@ const TeamModal = (props: TeamModalProps) => {
   const {locations, addLocations} = locationState;
   const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail} = teamState;
 
-  onMount(() => {
-    setTimeout(() => {
-      addLocations([
-        {name: 'caca', value: 'caca', label: 'caca'},
-        {name: 'maca', value: 'maca', label: 'maca'},
-        {name: 'vaca', label: 'vaca', value: 'vaca'},
-        {name: 'laca', value: 'laca', label: 'laca'}]);
-      addNewUser();
-    }, 1000);
-  });
+  createEffect(() => {
+    if (!locations[LOCATIONS].length) return;
+    addNewUser();
+  })
 
   function newUser() {
     return {
@@ -93,7 +88,7 @@ const TeamModal = (props: TeamModalProps) => {
                   <For each={user.locations}>{(loc, i) =>
                     <div class={styles.locationEntry}>
                       <Select values={locations[LOCATIONS]} disabledValues={user.locations} value={loc}
-                              onChange={(newLoc) => updateLocation(user, loc, newLoc)}/>
+                              onChange={(newLoc) => updateLocation(user, loc, newLoc as LocationDto)}/>
                       <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={() => deleteLocation(user, loc)}>
                                     <TrashIcon/>
                                   </span>

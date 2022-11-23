@@ -44,14 +44,14 @@ export function replaceAtIndex<T>(array: readonly T[], index: number, value: T):
 
 export const countryValues = Countries.map(it => {
   return {
-    value: it,
-    label: it
+    id: it,
+    name: it
   }
 });
 
 export const stateValues = Object.keys(States).map(it => {
   return {
-    value: States[it],
-    label: it
+    id: States[it],
+    name: it
   }
 });

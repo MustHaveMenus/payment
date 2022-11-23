@@ -18,7 +18,7 @@ const PaymentInformation = (props: PaymentInformationProps) => {
   const [country, setCountry] = createSignal(Countries.at(0));
 
   function onCountryChange(c: Option) {
-    setCountry(c.value);
+    setCountry(c.id);
   }
 
   return <div class={styles.paymentWrapper}>
@@ -28,7 +28,7 @@ const PaymentInformation = (props: PaymentInformationProps) => {
       <Input type={'text'} placeholder={'CVC'} maxLength={4}/>
     </div>
 
-    <Select values={countryValues} onChange={onCountryChange} value={{value: (country() ?? ''), label: (country() ?? '')}}/>
+    <Select values={countryValues} onChange={onCountryChange} value={{id: (country() ?? ''), name: (country() ?? '')}}/>
     <Input type={'text'} placeholder={'ZIP'}/>
   </div>
 }
