@@ -7,7 +7,6 @@ import {For, onMount, Show} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
-import {removeIndex, replaceAtIndex} from "../util/util";
 import {teamPricePerMonth} from "../util/prices";
 import {EMAIL, LOCATIONS, USERS} from "../util/constants";
 import {User} from "../type/types";
@@ -18,12 +17,12 @@ interface TeamModalProps extends GenericModalProps {
 
 const TeamModal = (props: TeamModalProps) => {
   const {locations, setLocations} = locationState;
-  const [team, setTeam] = teamState;
+  const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail} = teamState;
 
   onMount(() => {
     setTimeout(() => {
       setLocations(['caca', 'maca', 'vaca', 'laca']);
-      onAddUser();
+      addNewUser();
     }, 1000);
   })
 
@@ -34,6 +33,10 @@ const TeamModal = (props: TeamModalProps) => {
     } as User;
   }
 
+  function addNewUser() {
+    addUser(newUser());
+  }
+
   function newLocation(user?: User) {
     if (!user) return locations().at(0)!;
     return remainingLocations(user).at(0)!;
@@ -41,37 +44,6 @@ const TeamModal = (props: TeamModalProps) => {
 
   function validateAndProceed() {
 
-  }
-
-  function onAddLocation(user: User) {
-    const idx = team[USERS].indexOf(user);
-    setTeam(USERS, idx, LOCATIONS, prev => [...prev, newLocation(user)]);
-  }
-
-  function onLocationChange(user: User, oldLoc: string, loc: string) {
-    const userIdx = team[USERS].indexOf(user);
-    const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(oldLoc) ?? -1;
-    setTeam(USERS, userIdx, LOCATIONS, prev => replaceAtIndex(prev, locationIdx, loc));
-  }
-
-  function onDeleteLocation(user: User, loc: string) {
-    const userIdx = team[USERS].indexOf(user);
-    const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(loc) ?? -1;
-    setTeam(USERS, userIdx, LOCATIONS, prev => removeIndex(prev, locationIdx));
-  }
-
-  function onAddUser() {
-    setTeam(USERS, users => [...users, newUser()]);
-  }
-
-  function onDeleteUser(user: User) {
-    const idx = team[USERS].indexOf(user);
-    setTeam(USERS, users => removeIndex(users, idx));
-  }
-
-  function onEmailChange(e: KeyboardEvent, user: User) {
-    const idx = team[USERS].indexOf(user);
-    setTeam(USERS, idx, EMAIL, () => (e.target as HTMLInputElement)?.value ?? '');
   }
 
   function remainingLocations(user: User) {
@@ -95,13 +67,14 @@ const TeamModal = (props: TeamModalProps) => {
                           <div>
                             <div class={styles.formHeader}>
                               <span>New User Info</span>
-                              <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={[onDeleteUser, user]}>
+                              <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={[deleteUser, user]}>
                                 <TrashIcon/>
                               </span>
                             </div>
 
                             <div class={styles.formContent}>
-                              <Input type={'text'} value={user.email} placeholder={'Email address'} onKeyUp={(e) => onEmailChange(e, user)}/>
+                              <Input type={'text'} value={user.email} placeholder={'Email address'}
+                                     onKeyUp={(e) => updateEmail(user, (e.target as HTMLInputElement)?.value ?? '')}/>
                             </div>
                           </div>
                           <div>
@@ -115,15 +88,15 @@ const TeamModal = (props: TeamModalProps) => {
                               <For each={user.locations}>{(loc, i) =>
                                 <div class={styles.locationEntry}>
                                   <Select values={locations()} disabledValues={user.locations} value={loc}
-                                          onChange={(newLoc) => onLocationChange(user, loc, newLoc)}/>
-                                  <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={() => onDeleteLocation(user, loc)}>
+                                          onChange={(newLoc) => updateLocation(user, loc, newLoc)}/>
+                                  <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={() => deleteLocation(user, loc)}>
                                     <TrashIcon/>
                                   </span>
                                 </div>
                               }</For>
                               <Show when={remainingLocations(user).length} keyed>
                                 <div class={styles.addLocation}>
-                                  <span onClick={[onAddLocation, user]}>+ Location Assignment</span>
+                                  <span onClick={() => addLocation(user, newLocation(user))}>+ Location Assignment</span>
                                 </div>
                               </Show>
                             </div>
@@ -131,7 +104,7 @@ const TeamModal = (props: TeamModalProps) => {
                         </div>
                       }</For>
 
-                      <Button class={styles.addUser} label={'+ Add Another User'} onClick={onAddUser}/>
+                      <Button class={styles.addUser} label={'+ Add Another User'} onClick={addNewUser}/>
                     </div>
                   </div>
                 }

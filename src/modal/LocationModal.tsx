@@ -4,22 +4,37 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
-import {locationState, teamState} from "../state/state";
-import {USERS} from "../util/constants";
-import {createEffect} from "solid-js";
+import {locationState} from "../state/state";
+import {createSignal} from "solid-js";
+import Input from "../comp/Input";
+import Select from "../comp/Select";
+import {Countries, States} from "../util/countries";
 
 interface LocationModalProps extends GenericModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
-  const [state, setState] = teamState;
   const {locations, setLocations} = locationState;
-
-  createEffect(() => {
-    console.log(state[USERS].at(0));
-  })
+  const [state, setState] = createSignal('');
+  const [country, setCountry] = createSignal('');
 
   function validateAndProceed() {
+
+  }
+
+  function onNameChange(e: KeyboardEvent) {
+
+  }
+
+  function onStateChange() {
+
+  }
+
+  function onCountryChange() {
+
+  }
+
+  function onZipChange() {
 
   }
 
@@ -33,7 +48,27 @@ const LocationModal = (props: LocationModalProps) => {
                 }
                 content={
                   <div class={styles.wrapper}>
-                    content {state[USERS].at(0)?.email} {locations().at(0)}
+                    <div class={styles.form}>
+                      <div class={styles.formHeader}>
+                        <span>Location Info</span>
+                      </div>
+
+                      <div class={styles.formContent}>
+                        <Input type={'text'} value={''} placeholder={'Business Name'} onKeyUp={onNameChange}/>
+                        <div class={styles.split}>
+                          <Input type={'text'} value={''} placeholder={'Street Address 1'} onKeyUp={onNameChange}/>
+                          <Input type={'text'} value={''} placeholder={'Street Address 2'} onKeyUp={onNameChange}/>
+                        </div>
+                        <div class={styles.split}>
+                          <Input type={'text'} value={''} placeholder={'City'} onKeyUp={onNameChange}/>
+                          <Select values={Object.keys(States)} value={state()} onChange={onStateChange}/>
+                        </div>
+                        <div class={styles.split}>
+                          <Select values={Countries} onChange={onCountryChange} value={country()}/>
+                          <Input type={'text'} value={''} placeholder={'Zip'} onKeyUp={onZipChange}/>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 }
                 footer={

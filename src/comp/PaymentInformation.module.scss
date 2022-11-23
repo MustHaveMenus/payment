@@ -4,12 +4,12 @@
 .paymentWrapper {
   display: flex;
   flex-direction: column;
-  row-gap: 12px;
+  row-gap: $margin-xs;
   margin-top: $margin;
 
   .split {
     display: flex;
-    column-gap: 12px;
+    column-gap: $margin-xs;
 
     input {
       flex: 1;

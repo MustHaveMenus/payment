@@ -10,6 +10,35 @@
   padding-top: 0;
   color: $color-dark-grey;
 
+  .form {
+    margin-top: $margin-sm;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    .formHeader {
+      @include normalBoldText();
+      display: flex;
+      align-items: center;
+    }
+
+    .formContent {
+      margin-top: 4px;
+      display: flex;
+      flex-direction: column;
+      row-gap: $margin-sm;
+
+      .split {
+        display: flex;
+        column-gap: $margin-xs;
+
+        > div {
+          flex: 1;
+        }
+      }
+    }
+  }
+
   &.mobile {
 
   }
