@@ -3,7 +3,7 @@ import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal, For, onMount} from "solid-js";
+import {createSignal, For, onMount, Show} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
@@ -27,8 +27,8 @@ const TeamModal = (props: TeamModalProps) => {
 
   onMount(() => {
     setTimeout(() => {
-      onAddUser();
       setLocations(['caca', 'maca', 'vaca', 'laca']);
+      onAddUser();
     }, 1000);
   })
 
@@ -45,7 +45,7 @@ const TeamModal = (props: TeamModalProps) => {
 
   function newLocation(user?: User) {
     if (!user) return locations().at(0)!;
-    return locations().filter(it => !user.locations.includes(it)).at(0)!;
+    return remainingLocations(user).at(0)!;
   }
 
   function validateAndProceed() {
@@ -79,7 +79,8 @@ const TeamModal = (props: TeamModalProps) => {
   }
 
   function remainingLocations(user: User) {
-    return locations().filter(it => !user.locations.includes(it));
+    if (locations().length === user.locations.length) return [];
+    return locations().filter(it => !user?.locations.includes(it));
   }
 
   return <Modal onClose={props.onClose}
@@ -124,9 +125,11 @@ const TeamModal = (props: TeamModalProps) => {
                                   </span>
                                 </div>
                               }</For>
-                              {remainingLocations(user).length && <div class={styles.addLocation}>
+                              <Show when={remainingLocations(user).length} keyed>
+                                <div class={styles.addLocation}>
                                   <span onClick={[onAddLocation, user]}>+ Location Assignment</span>
-                              </div>}
+                                </div>
+                              </Show>
                             </div>
                           </div>
                         </div>
