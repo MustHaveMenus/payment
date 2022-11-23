@@ -5,11 +5,14 @@ import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
 import {createSignal} from "solid-js";
 import {productType, subscriptionTotal} from "../util/prices";
+import {teamState} from "../state/state";
+import {USERS} from "../util/constants";
 
 interface PaymentModalProps extends GenericModalProps {
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
+  const [team, setTeam] = teamState;
   const [btnDisabled, setBtnDisabled] = createSignal(true);
 
   return <Modal onClose={props.onClose} onBack={props.onBack} content={
@@ -50,7 +53,7 @@ const PaymentModal = (props: PaymentModalProps) => {
           </div>
           <div class={styles.paymentDetailsEntry}>
             <div>Users</div>
-            <div>2</div>
+            <div>{team[USERS].length}</div>
             <div>$240.00 / year</div>
           </div>
           <div class={styles.paymentDetailsEntry}>

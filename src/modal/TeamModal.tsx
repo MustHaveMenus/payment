@@ -18,7 +18,7 @@ interface TeamModalProps extends GenericModalProps {
 
 const TeamModal = (props: TeamModalProps) => {
   const {locations, setLocations} = locationState;
-  const [state, setState] = teamState;
+  const [team, setTeam] = teamState;
 
   onMount(() => {
     setTimeout(() => {
@@ -44,34 +44,34 @@ const TeamModal = (props: TeamModalProps) => {
   }
 
   function onAddLocation(user: User) {
-    const idx = state[USERS].indexOf(user);
-    setState(USERS, idx, LOCATIONS, prev => [...prev, newLocation(user)]);
+    const idx = team[USERS].indexOf(user);
+    setTeam(USERS, idx, LOCATIONS, prev => [...prev, newLocation(user)]);
   }
 
   function onLocationChange(user: User, oldLoc: string, loc: string) {
-    const userIdx = state[USERS].indexOf(user);
-    const locationIdx = state[USERS].at(userIdx)?.locations.indexOf(oldLoc) ?? -1;
-    setState(USERS, userIdx, LOCATIONS, prev => replaceAtIndex(prev, locationIdx, loc));
+    const userIdx = team[USERS].indexOf(user);
+    const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(oldLoc) ?? -1;
+    setTeam(USERS, userIdx, LOCATIONS, prev => replaceAtIndex(prev, locationIdx, loc));
   }
 
   function onDeleteLocation(user: User, loc: string) {
-    const userIdx = state[USERS].indexOf(user);
-    const locationIdx = state[USERS].at(userIdx)?.locations.indexOf(loc) ?? -1;
-    setState(USERS, userIdx, LOCATIONS, prev => removeIndex(prev, locationIdx));
+    const userIdx = team[USERS].indexOf(user);
+    const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(loc) ?? -1;
+    setTeam(USERS, userIdx, LOCATIONS, prev => removeIndex(prev, locationIdx));
   }
 
   function onAddUser() {
-    setState(USERS, users => [...users, newUser()]);
+    setTeam(USERS, users => [...users, newUser()]);
   }
 
   function onDeleteUser(user: User) {
-    const idx = state[USERS].indexOf(user);
-    setState(USERS, users => removeIndex(users, idx));
+    const idx = team[USERS].indexOf(user);
+    setTeam(USERS, users => removeIndex(users, idx));
   }
 
   function onEmailChange(e: KeyboardEvent, user: User) {
-    const idx = state[USERS].indexOf(user);
-    setState(USERS, idx, EMAIL, () => (e.target as HTMLInputElement)?.value ?? '');
+    const idx = team[USERS].indexOf(user);
+    setTeam(USERS, idx, EMAIL, () => (e.target as HTMLInputElement)?.value ?? '');
   }
 
   function remainingLocations(user: User) {
@@ -90,7 +90,7 @@ const TeamModal = (props: TeamModalProps) => {
                 content={
                   <div class={styles.wrapper}>
                     <div class={styles.form}>
-                      <For each={state[USERS]}>{(user, i) =>
+                      <For each={team[USERS]}>{(user, i) =>
                         <div class={styles.entry}>
                           <div>
                             <div class={styles.formHeader}>
