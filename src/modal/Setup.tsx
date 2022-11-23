@@ -1,22 +1,25 @@
 import {View} from "../type/types";
 import OverviewModal from "./OverviewModal";
-import {createEffect, createSignal, Match, onCleanup, onMount, Show, Switch} from "solid-js";
+import {createEffect, createSignal, Match, onCleanup, onMount, Switch} from "solid-js";
 import PaymentModal from "./PaymentModal";
 import ConfirmationModal from "./ConfirmationModal";
 import TeamModal from "./TeamModal";
 import LocationModal from "./LocationModal";
-import {Portal} from "solid-js/web";
-import {mobileState} from "../state/state";
+import mobileState from "../state/mobile";
+import openState from "../state/open";
 
 export interface SetupProps {
   view?: View;
-  open?: boolean
 }
 
-const Setup = (props: SetupProps) => {
-  const [opened, setOpened] = createSignal(props.open ?? true);
+export interface PrivateSetupProps extends SetupProps {
+  onClose: () => void;
+}
+
+const Setup = (props: PrivateSetupProps) => {
   const [currentView, setCurrentView] = createSignal(props.view ?? View.OVERVIEW);
   const {setMobile} = mobileState;
+  const {opened, openModal} = openState;
 
   const detectMobile = () => {
     const elem = document.getElementById('mob-detect');
@@ -24,13 +27,20 @@ const Setup = (props: SetupProps) => {
     setMobile(window.getComputedStyle(elem).display === 'block');
   };
 
+  onMount(detectMobile);
+
   createEffect(() => {
     const event = 'resize';
     window.addEventListener(event, detectMobile);
     onCleanup(() => window.removeEventListener(event, detectMobile));
   });
 
-  onMount(detectMobile);
+  createEffect(() => {
+    if (!opened()) {
+      props.onClose();
+      openModal();
+    }
+  })
 
   function onNext() {
     if (currentView() === View.PAYMENT) {
@@ -48,22 +58,16 @@ const Setup = (props: SetupProps) => {
     setCurrentView(View.OVERVIEW);
   }
 
-  function onModalClose() {
-    setOpened(false);
-  }
+  return <>
+    <div id={'mob-detect'}/>
 
-  return <Show when={opened()} keyed>
-    <Portal>
-      <div id={'mob-detect'}/>
-
-      <Switch>
-        <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext} onClose={onModalClose}/></Match>
-        <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}/></Match>
-        <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext} onClose={onModalClose}/></Match>
-        <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext} onClose={onModalClose}/></Match>
-        <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onClose={onModalClose}/></Match>
-      </Switch>
-    </Portal>
-  </Show>
+    <Switch>
+      <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext}/></Match>
+      <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack}/></Match>
+      <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext}/></Match>
+      <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext}/></Match>
+      <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onBack={onBack}/></Match>
+    </Switch>
+  </>
 }
 export default Setup;

@@ -1,6 +1,6 @@
 import styles from './ModalContentWrapper.module.scss';
 import {JSXElement} from "solid-js";
-import {mobileState} from "../state/state";
+import mobileState from "../state/mobile";
 
 interface ModalContentWrapperProps {
   children?: JSXElement;

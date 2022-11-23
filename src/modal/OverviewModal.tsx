@@ -7,7 +7,7 @@ import QRIcon from "../comp/svg/QRIcon";
 import TeamIcon from "../comp/svg/TeamIcon";
 import HeartIcon from "../comp/svg/HeartIcon";
 import Button from "../comp/Button";
-import {mobileState} from "../state/state";
+import mobileState from "../state/mobile";
 
 interface OverviewModalProps extends GenericModalProps {
 }
@@ -73,7 +73,7 @@ const OverviewModal = (props: OverviewModalProps) => {
     </div>
   </>
 
-  return <Modal onClose={props.onClose} secondaryCloseBtn footer={modalFooter()} content={
+  return <Modal secondaryCloseBtn footer={modalFooter()} content={
     <div classList={{[styles.mobile]: mobile(), [styles.wrapper]: true}}>
       {desktopContent()}
       {mobileContent()}

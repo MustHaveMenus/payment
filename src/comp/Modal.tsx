@@ -8,7 +8,6 @@ import ModalContentWrapper from "./ModalContentWrapper";
 export interface GenericModalProps {
   onBack?: () => void;
   onNext?: () => void;
-  onClose?: () => void;
   secondaryCloseBtn?: boolean;
 }
 
@@ -19,9 +18,9 @@ interface ModalProps extends GenericModalProps {
 }
 
 const Modal = (props: ModalProps) => {
-  return <ModalWrapper onClose={props.onClose}>
+  return <ModalWrapper>
     <ModalContentWrapper>
-      <ModalHeader onBack={props.onBack} onClose={props.onClose} secondaryCloseBtn={props.secondaryCloseBtn}>{props.header}</ModalHeader>
+      <ModalHeader onBack={props.onBack} secondaryCloseBtn={props.secondaryCloseBtn}>{props.header}</ModalHeader>
       <ModalContent withFooter={!!props.footer} withHeader={!!props.header}>{props.content}</ModalContent>
       {props.footer && <ModalFooter>{props.footer}</ModalFooter>}
     </ModalContentWrapper>

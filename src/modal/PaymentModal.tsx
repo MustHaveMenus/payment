@@ -5,17 +5,17 @@ import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
 import {createSignal} from "solid-js";
 import {productType, subscriptionTotal} from "../util/prices";
-import {teamState} from "../state/state";
 import {USERS} from "../util/constants";
+import teamState from "../state/team";
 
 interface PaymentModalProps extends GenericModalProps {
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
-  const [team, setTeam] = teamState;
+  const {team} = teamState;
   const [btnDisabled, setBtnDisabled] = createSignal(true);
 
-  return <Modal onClose={props.onClose} onBack={props.onBack} content={
+  return <Modal onBack={props.onBack} content={
     <div class={styles.wrapper}>
       <div class={styles.left}>
         <span class={styles.topHeader}>Try Pro Plan for free</span>

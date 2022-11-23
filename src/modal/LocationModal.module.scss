@@ -37,6 +37,16 @@
         }
       }
     }
+
+    .addLocation {
+      @include smallTextBold();
+      margin-top: 20px;
+      background-color: $color-purple;
+      color: $color-white;
+      width: 169px;
+      height: 32px;
+      padding: 0;
+    }
   }
 
   &.mobile {

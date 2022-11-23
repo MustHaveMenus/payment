@@ -1,20 +1,10 @@
-import {createRoot, createSignal} from "solid-js";
+import {createRoot} from "solid-js";
 import {createStore} from "solid-js/store";
-import {User} from "../type/types";
 import {EMAIL, LOCATIONS, USERS} from "../util/constants";
+import {User} from "../type/types";
 import {removeIndex, replaceAtIndex} from "../util/util";
 
-export const mobileState = createRoot(() => {
-  const [mobile, setMobile] = createSignal(false);
-  return {mobile, setMobile};
-});
-
-export const locationState = createRoot(() => {
-  const [locations, setLocations] = createSignal([] as string[]);
-  return {locations, setLocations};
-})
-
-export const teamState = createRoot(() => {
+const teamState = createRoot(() => {
   const [team, setTeam] = createStore({
     [USERS]: [] as User[]
   });
@@ -45,3 +35,5 @@ export const teamState = createRoot(() => {
 
   return {team, deleteUser, addUser, addLocation, deleteLocation, updateLocation, updateEmail};
 });
+
+export default teamState;
