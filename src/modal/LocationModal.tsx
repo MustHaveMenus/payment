@@ -4,7 +4,7 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
-import {createEffect, createSignal, For, onMount} from "solid-js";
+import {createEffect, createSignal, For, onCleanup, onMount} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
 import locationsState from "../state/location";
@@ -16,7 +16,7 @@ interface LocationModalProps extends GenericModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
-  const {locations, addLocation, updateName, updateCity, updateZip, updateAddress, updateAddress2} = locationsState;
+  const {locations, addLocation, updateName, updateCity, updateZip, updateAddress, updateAddress2, cleanInvalidLocations} = locationsState;
   const [newLocations, setNewLocations] = createSignal([] as LocationDto[]);
 
   createEffect(() => {
@@ -26,6 +26,7 @@ const LocationModal = (props: LocationModalProps) => {
   });
 
   onMount(addNewLocation);
+  onCleanup(cleanInvalidLocations);
 
   function validateAndProceed() {
     props.onNext?.();
@@ -39,14 +40,8 @@ const LocationModal = (props: LocationModalProps) => {
 
   }
 
-  function newLocation() {
-    return {} as LocationDto;
-  }
-
   function addNewLocation() {
-    addLocation({
-      ...newLocation(),
-    });
+    addLocation({});
   }
 
   return <Modal
@@ -67,13 +62,17 @@ const LocationModal = (props: LocationModalProps) => {
               </div>
 
               <div class={styles.formContent}>
-                <Input type={'text'} value={loc.name} placeholder={'Business Name'} onKeyUp={(e) => updateName(loc, (e.target as HTMLInputElement)?.value ?? '', true)}/>
+                <Input type={'text'} value={loc.name} placeholder={'Business Name'}
+                       onKeyUp={(e) => updateName(loc, (e.target as HTMLInputElement)?.value ?? '', true)}/>
                 <div class={styles.split}>
-                  <Input type={'text'} value={loc.address} placeholder={'Street Address 1'} onKeyUp={(e) => updateAddress(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
-                  <Input type={'text'} value={loc.address2} placeholder={'Street Address 2'} onKeyUp={(e) => updateAddress2(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
+                  <Input type={'text'} value={loc.address} placeholder={'Street Address 1'}
+                         onKeyUp={(e) => updateAddress(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
+                  <Input type={'text'} value={loc.address2} placeholder={'Street Address 2'}
+                         onKeyUp={(e) => updateAddress2(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
                 </div>
                 <div class={styles.split}>
-                  <Input type={'text'} value={loc.city} placeholder={'City'} onKeyUp={(e) => updateCity(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
+                  <Input type={'text'} value={loc.city} placeholder={'City'}
+                         onKeyUp={(e) => updateCity(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
                   <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}} onChange={onStateChange}/>
                 </div>
                 <div class={styles.split}>
