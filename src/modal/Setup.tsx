@@ -16,7 +16,7 @@ export interface SetupProps {
 const Setup = (props: SetupProps) => {
   const [opened, setOpened] = createSignal(props.open ?? true);
   const [currentView, setCurrentView] = createSignal(props.view ?? View.OVERVIEW);
-  const {mobile, setMobile} = mobileState;
+  const {setMobile} = mobileState;
 
   const detectMobile = () => {
     const elem = document.getElementById('mob-detect');
