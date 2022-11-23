@@ -5,6 +5,7 @@ import PaymentModal from "./PaymentModal";
 import ConfirmationModal from "./ConfirmationModal";
 import TeamModal from "./TeamModal";
 import LocationModal from "./LocationModal";
+import {Portal} from "solid-js/web";
 
 export interface SetupProps {
   view?: View;
@@ -47,16 +48,18 @@ const Setup = (props: SetupProps) => {
   }
 
   return <Show when={opened()} keyed>
-    <div id={'mob-detect'}/>
+    <Portal>
+      <div id={'mob-detect'}/>
 
-    <Switch>
-      <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-      <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}
-                                                                       mobile={mobile()}/></Match>
-      <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-      <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-      <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
-    </Switch>
+      <Switch>
+        <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+        <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack} onClose={onModalClose}
+                                                                         mobile={mobile()}/></Match>
+        <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+        <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+        <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onClose={onModalClose} mobile={mobile()}/></Match>
+      </Switch>
+    </Portal>
   </Show>
 }
 export default Setup;
