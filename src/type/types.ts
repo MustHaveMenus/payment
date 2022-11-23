@@ -5,3 +5,9 @@ export enum View {
   TEAM = 'team',
   LOCATION = 'location',
 }
+
+export interface User {
+  email: string;
+  locations: string[]
+}
+

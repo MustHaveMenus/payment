@@ -3,27 +3,22 @@ import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal, For, onMount, Show} from "solid-js";
+import {For, onMount, Show} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
-import {createStore} from "solid-js/store";
 import {removeIndex, replaceAtIndex} from "../util/util";
 import {teamPricePerMonth} from "../util/prices";
+import {EMAIL, LOCATIONS, USERS} from "../util/constants";
+import {User} from "../type/types";
+import {locationState, teamState} from "../state/state";
 
 interface TeamModalProps extends GenericModalProps {
 }
 
-interface User {
-  email: string;
-  locations: string[]
-}
-
-const USERS = 'users';
-const LOCATIONS = 'locations';
-
 const TeamModal = (props: TeamModalProps) => {
-  const [locations, setLocations] = createSignal([] as string[]);
+  const {locations, setLocations} = locationState;
+  const [state, setState] = teamState;
 
   onMount(() => {
     setTimeout(() => {
@@ -32,13 +27,9 @@ const TeamModal = (props: TeamModalProps) => {
     }, 1000);
   })
 
-  const [state, setState] = createStore({
-    [USERS]: [] as User[]
-  });
-
   function newUser() {
     return {
-      email: '',
+      [EMAIL]: '',
       [LOCATIONS]: [newLocation()]
     } as User;
   }
@@ -78,6 +69,11 @@ const TeamModal = (props: TeamModalProps) => {
     setState(USERS, users => removeIndex(users, idx));
   }
 
+  function onEmailChange(e: KeyboardEvent, user: User) {
+    const idx = state[USERS].indexOf(user);
+    setState(USERS, idx, EMAIL, () => (e.target as HTMLInputElement)?.value ?? '');
+  }
+
   function remainingLocations(user: User) {
     if (locations().length === user.locations.length) return [];
     return locations().filter(it => !user?.locations.includes(it));
@@ -105,7 +101,7 @@ const TeamModal = (props: TeamModalProps) => {
                             </div>
 
                             <div class={styles.formContent}>
-                              <Input type={'text'} value={user.email} placeholder={'Email address'}/>
+                              <Input type={'text'} value={user.email} placeholder={'Email address'} onKeyUp={(e) => onEmailChange(e, user)}/>
                             </div>
                           </div>
                           <div>

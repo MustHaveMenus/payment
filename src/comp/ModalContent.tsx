@@ -1,4 +1,4 @@
-import styles from  './ModalContent.module.scss';
+import styles from './ModalContent.module.scss';
 import {JSXElement} from "solid-js";
 
 interface ModalContentProps {
@@ -8,6 +8,10 @@ interface ModalContentProps {
 }
 
 const ModalContent = (props: ModalContentProps) => {
-  return <div class={`${styles.modalContent} ${props.withFooter ? styles.withFooter : ''} ${props.withHeader ? styles.withHeader : ''}`}>{props.children}</div>
+  return <div classList={{
+    [styles.modalContent]: true,
+    [styles.withFooter]: props.withFooter,
+    [styles.withHeader]: props.withHeader
+  }}>{props.children}</div>
 }
 export default ModalContent;

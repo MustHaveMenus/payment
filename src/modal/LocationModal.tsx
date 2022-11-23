@@ -4,11 +4,21 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
+import {locationState, teamState} from "../state/state";
+import {USERS} from "../util/constants";
+import {createEffect} from "solid-js";
 
 interface LocationModalProps extends GenericModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
+  const [state, setState] = teamState;
+  const {locations, setLocations} = locationState;
+
+  createEffect(() => {
+    console.log(state[USERS].at(0));
+  })
+
   function validateAndProceed() {
 
   }
@@ -23,7 +33,7 @@ const LocationModal = (props: LocationModalProps) => {
                 }
                 content={
                   <div class={styles.wrapper}>
-                    content
+                    content {state[USERS].at(0)?.email} {locations().at(0)}
                   </div>
                 }
                 footer={
