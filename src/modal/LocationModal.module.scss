@@ -16,24 +16,30 @@
     flex-direction: column;
     width: 100%;
 
-    .formHeader {
-      @include normalBoldText();
-      display: flex;
-      align-items: center;
-    }
+    .entry {
+      &:not(:first-child) {
+        margin-top: $margin;
+      }
 
-    .formContent {
-      margin-top: 4px;
-      display: flex;
-      flex-direction: column;
-      row-gap: $margin-sm;
-
-      .split {
+      .formHeader {
+        @include normalBoldText();
         display: flex;
-        column-gap: $margin-xs;
+        align-items: center;
+      }
 
-        > div {
-          flex: 1;
+      .formContent {
+        margin-top: 4px;
+        display: flex;
+        flex-direction: column;
+        row-gap: $margin-sm;
+
+        .split {
+          display: flex;
+          column-gap: $margin-xs;
+
+          > div {
+            flex: 1;
+          }
         }
       }
     }
