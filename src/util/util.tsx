@@ -1,3 +1,5 @@
+import {Countries, States} from "./countries";
+
 export function formatCreditCard(value: string) {
   return value
     .replace(/\W/gi, "")
@@ -39,3 +41,17 @@ export function removeIndex<T>(array: readonly T[], index: number): T[] {
 export function replaceAtIndex<T>(array: readonly T[], index: number, value: T): T[] {
   return [...array.slice(0, index), value, ...array.slice(index + 1)];
 }
+
+export const countryValues = Countries.map(it => {
+  return {
+    value: it,
+    label: it
+  }
+});
+
+export const stateValues = Object.keys(States).map(it => {
+  return {
+    value: States[it],
+    label: it
+  }
+});

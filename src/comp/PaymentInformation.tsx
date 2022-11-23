@@ -5,6 +5,8 @@ import CreditCardNumberInput from "./CreditCardInput";
 import CreditCardExpireDateInput from "./CreditCardExpireDateInput";
 import Select from "./Select";
 import Input from "./Input";
+import {countryValues} from "../util/util";
+import {Option} from "../type/types";
 
 interface PaymentInformationProps {
 
@@ -15,8 +17,8 @@ const PaymentInformation = (props: PaymentInformationProps) => {
   const [expireDate, setExpireDate] = createSignal('');
   const [country, setCountry] = createSignal(Countries.at(0));
 
-  function onCountryChange(c: string) {
-    setCountry(c);
+  function onCountryChange(c: Option) {
+    setCountry(c.value);
   }
 
   return <div class={styles.paymentWrapper}>
@@ -26,7 +28,7 @@ const PaymentInformation = (props: PaymentInformationProps) => {
       <Input type={'text'} placeholder={'CVC'} maxLength={4}/>
     </div>
 
-    <Select values={Countries} onChange={onCountryChange} value={country()}/>
+    <Select values={countryValues} onChange={onCountryChange} value={{value: (country() ?? ''), label: (country() ?? '')}}/>
     <Input type={'text'} placeholder={'ZIP'}/>
   </div>
 }

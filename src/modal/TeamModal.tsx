@@ -17,15 +17,19 @@ interface TeamModalProps extends GenericModalProps {
 }
 
 const TeamModal = (props: TeamModalProps) => {
-  const {locations, setLocations} = locationState;
+  const {locations, addLocations} = locationState;
   const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail} = teamState;
 
   onMount(() => {
     setTimeout(() => {
-      setLocations(['caca', 'maca', 'vaca', 'laca']);
+      addLocations([
+        {name: 'caca', value: 'caca', label: 'caca'},
+        {name: 'maca', value: 'maca', label: 'maca'},
+        {name: 'vaca', label: 'vaca', value: 'vaca'},
+        {name: 'laca', value: 'laca', label: 'laca'}]);
       addNewUser();
     }, 1000);
-  })
+  });
 
   function newUser() {
     return {
@@ -39,7 +43,7 @@ const TeamModal = (props: TeamModalProps) => {
   }
 
   function newLocation(user?: User) {
-    if (!user) return locations().at(0)!;
+    if (!user) return locations[LOCATIONS].at(0)!;
     return remainingLocations(user).at(0)!;
   }
 
@@ -48,8 +52,8 @@ const TeamModal = (props: TeamModalProps) => {
   }
 
   function remainingLocations(user: User) {
-    if (locations().length === user.locations.length) return [];
-    return locations().filter(it => !user?.locations.includes(it));
+    if (locations[LOCATIONS].length === user.locations.length) return [];
+    return locations[LOCATIONS].filter(it => !user?.locations.includes(it));
   }
 
   return <Modal
@@ -88,7 +92,7 @@ const TeamModal = (props: TeamModalProps) => {
                 <div class={styles.formContent}>
                   <For each={user.locations}>{(loc, i) =>
                     <div class={styles.locationEntry}>
-                      <Select values={locations()} disabledValues={user.locations} value={loc}
+                      <Select values={locations[LOCATIONS]} disabledValues={user.locations} value={loc}
                               onChange={(newLoc) => updateLocation(user, loc, newLoc)}/>
                       <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={() => deleteLocation(user, loc)}>
                                     <TrashIcon/>

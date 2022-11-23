@@ -1,7 +1,7 @@
 import {createRoot} from "solid-js";
 import {createStore} from "solid-js/store";
 import {EMAIL, LOCATIONS, USERS} from "../util/constants";
-import {User} from "../type/types";
+import {User, Location} from "../type/types";
 import {removeIndex, replaceAtIndex} from "../util/util";
 
 const teamState = createRoot(() => {
@@ -14,16 +14,16 @@ const teamState = createRoot(() => {
     const idx = team[USERS].indexOf(user);
     setTeam(USERS, users => removeIndex(users, idx));
   };
-  const addLocation = (user: User, location: string) => {
+  const addLocation = (user: User, location: Location) => {
     const idx = team[USERS].indexOf(user);
     setTeam(USERS, idx, LOCATIONS, prev => [...prev, location]);
   }
-  const deleteLocation = (user: User, loc: string) => {
+  const deleteLocation = (user: User, loc: Location) => {
     const userIdx = team[USERS].indexOf(user);
     const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(loc) ?? -1;
     setTeam(USERS, userIdx, LOCATIONS, prev => removeIndex(prev, locationIdx));
   }
-  const updateLocation = (user: User, oldLoc: string, loc: string) => {
+  const updateLocation = (user: User, oldLoc: Location, loc: Location) => {
     const userIdx = team[USERS].indexOf(user);
     const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(oldLoc) ?? -1;
     setTeam(USERS, userIdx, LOCATIONS, prev => replaceAtIndex(prev, locationIdx, loc));

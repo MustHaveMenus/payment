@@ -6,8 +6,17 @@ export enum View {
   LOCATION = 'location',
 }
 
-export interface User {
+export interface Option {
+  value: string;
+  label: string;
+}
+
+export interface User extends Option {
   email: string;
-  locations: string[]
+  locations: Location[]
+}
+
+export interface Location extends Option {
+  name: string;
 }
 

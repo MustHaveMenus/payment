@@ -7,14 +7,15 @@ import {locationPricePerMonth} from "../util/prices";
 import {createSignal} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
-import {Countries, States} from "../util/countries";
-import locationState from "../state/location";
+import locationsState from "../state/location";
+import {Location} from "../type/types";
+import {countryValues, stateValues} from "../util/util";
 
 interface LocationModalProps extends GenericModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
-  const {locations, setLocations} = locationState;
+  const {locations, addLocation} = locationsState;
   const [state, setState] = createSignal('');
   const [country, setCountry] = createSignal('');
 
@@ -38,8 +39,12 @@ const LocationModal = (props: LocationModalProps) => {
 
   }
 
-  function addNewLocation() {
+  function newLocation() {
+    return {} as Location;
+  }
 
+  function addNewLocation() {
+    addLocation(newLocation());
   }
 
   return <Modal
@@ -65,10 +70,10 @@ const LocationModal = (props: LocationModalProps) => {
             </div>
             <div class={styles.split}>
               <Input type={'text'} value={''} placeholder={'City'} onKeyUp={onNameChange}/>
-              <Select values={Object.keys(States)} value={state()} onChange={onStateChange}/>
+              <Select values={stateValues} value={{value: (state() ?? ''), label: (state() ?? '')}} onChange={onStateChange}/>
             </div>
             <div class={styles.split}>
-              <Select values={Countries} onChange={onCountryChange} value={country()}/>
+              <Select values={countryValues} onChange={onCountryChange} value={{value: (country() ?? ''), label: (country() ?? '')}}/>
               <Input type={'text'} value={''} placeholder={'Zip'} onKeyUp={onZipChange}/>
             </div>
           </div>
