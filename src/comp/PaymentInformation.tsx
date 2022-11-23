@@ -13,6 +13,11 @@ interface PaymentInformationProps {
 const PaymentInformation = (props: PaymentInformationProps) => {
   const [number, setNumber] = createSignal('');
   const [expireDate, setExpireDate] = createSignal('');
+  const [country, setCountry] = createSignal(Countries.at(0));
+
+  function onCountryChange(c: string) {
+    setCountry(c);
+  }
 
   return <div class={styles.paymentWrapper}>
     <CreditCardNumberInput value={number()} onChange={v => setNumber(v)}/>
@@ -21,7 +26,7 @@ const PaymentInformation = (props: PaymentInformationProps) => {
       <Input type={'text'} placeholder={'CVC'} maxLength={4}/>
     </div>
 
-    <Select values={Countries}/>
+    <Select values={Countries} onChange={onCountryChange} value={country()}/>
     <Input type={'text'} placeholder={'ZIP'}/>
   </div>
 }
