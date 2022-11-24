@@ -12,4 +12,8 @@
   &.withHeader {
     margin-top: 160px;
   }
+
+  &.mobile {
+    max-height: 100%;
+  }
 }
