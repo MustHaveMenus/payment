@@ -1,4 +1,4 @@
-import {View} from "../type/types";
+import {Steps, View, ViewType} from "../type/types";
 import OverviewModal from "./OverviewModal";
 import {createEffect, createResource, createSignal, Match, onCleanup, onMount, Switch} from "solid-js";
 import PaymentModal from "./PaymentModal";
@@ -12,7 +12,7 @@ import memberState from "../state/member";
 import locationsState from "../state/location";
 
 export interface SetupProps {
-  view?: View;
+  type: ViewType;
   memberId: string;
 }
 
@@ -21,12 +21,19 @@ export interface PrivateSetupProps extends SetupProps {
 }
 
 const Setup = (props: PrivateSetupProps) => {
-  const [currentView, setCurrentView] = createSignal(props.view ?? View.OVERVIEW);
+  const [steps, setSteps] = createSignal([] as View[]);
+  const [currentView, setCurrentView] = createSignal(View.OVERVIEW);
   const {setMobile} = mobileState;
   const {opened, openModal} = openState;
   const {memberId, setMemberId} = memberState;
   const {addLocations} = locationsState;
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
+
+  createEffect(() => {
+    if (!props.type) return;
+
+    setSteps(Steps[props.type]);
+  });
 
   createEffect(() => {
     const resp = locationsServer();
@@ -59,19 +66,17 @@ const Setup = (props: PrivateSetupProps) => {
   })
 
   function onNext() {
-    if (currentView() === View.PAYMENT) {
-      setCurrentView(View.CONFIRMATION)
-      return;
+    const currentIdx = steps().findIndex((it => it === currentView()));
+    if (currentIdx < steps().length - 1) {
+      setCurrentView(steps()[currentIdx + 1]);
     }
-    if (currentView() === View.LOCATION) {
-      setCurrentView(View.TEAM)
-      return;
-    }
-    setCurrentView(View.PAYMENT);
   }
 
   function onBack() {
-    setCurrentView(View.OVERVIEW);
+    const currentIdx = steps().findIndex((it => it === currentView()));
+    if (currentIdx > 0) {
+      setCurrentView(steps()[currentIdx - 1]);
+    }
   }
 
   return <>
@@ -79,10 +84,10 @@ const Setup = (props: PrivateSetupProps) => {
 
     <Switch>
       <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext}/></Match>
-      <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onNext={onNext} onBack={onBack}/></Match>
-      <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal onNext={onNext}/></Match>
-      <Match when={View.TEAM === currentView()} keyed><TeamModal onNext={onNext}/></Match>
-      <Match when={View.LOCATION === currentView()} keyed><LocationModal onNext={onNext} onBack={onBack}/></Match>
+      <Match when={View.LOCATION === currentView()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.TEAM === currentView()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal/></Match>
     </Switch>
   </>
 }

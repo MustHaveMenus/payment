@@ -44,7 +44,7 @@ const LocationModal = (props: LocationModalProps) => {
     addLocation({});
   }
 
-  return <Modal
+  return <Modal onBack={props.onBack}
     header={
       <div class={headerStyles.wrapper}>
         <span class={headerStyles.header}>Add Locations</span>

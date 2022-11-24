@@ -13,7 +13,7 @@ interface PaymentModalProps extends GenericModalProps {
 
 const PaymentModal = (props: PaymentModalProps) => {
   const {team} = teamState;
-  const [btnDisabled, setBtnDisabled] = createSignal(true);
+  const [btnDisabled, setBtnDisabled] = createSignal(false);
 
   return <Modal onBack={props.onBack} content={
     <div class={styles.wrapper}>

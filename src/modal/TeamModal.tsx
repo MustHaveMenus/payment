@@ -43,7 +43,7 @@ const TeamModal = (props: TeamModalProps) => {
   }
 
   function validateAndProceed() {
-
+    props.onNext?.();
   }
 
   function remainingLocations(user: User) {
@@ -51,7 +51,7 @@ const TeamModal = (props: TeamModalProps) => {
     return locations[LOCATIONS].filter(it => !user?.locations.includes(it));
   }
 
-  return <Modal
+  return <Modal onBack={props.onBack}
     header={
       <div class={headerStyles.wrapper}>
         <span class={headerStyles.header}>Add Your Team</span>
