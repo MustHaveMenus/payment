@@ -11,6 +11,10 @@
 
   &.withHeader {
     margin-top: 160px;
+
+    &.location {
+      margin-top: 180px;
+    }
   }
 
   &.mobile {
@@ -20,11 +24,19 @@
   @media screen and (max-width: 480px) {
     &.withHeader {
       margin-top: 185px;
+
+      &.location {
+        margin-top: 205px;
+      }
     }
   }
   @media screen and (max-width: 299px) {
     &.withHeader {
       margin-top: 225px;
+
+      &.location {
+        margin-top: 245px;
+      }
     }
   }
 }

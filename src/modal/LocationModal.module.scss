@@ -45,17 +45,29 @@
     }
   }
 
-  .addLocation {
-    @include smallTextBold();
+  .addLocationBtnWrapper {
     margin-top: 20px;
-    background-color: $color-purple;
-    color: $color-white;
-    width: 169px;
-    height: 32px;
-    padding: 0;
+    button {
+      @include smallTextBold();
+      background-color: $color-purple;
+      color: $color-white;
+      width: 169px;
+      height: 32px;
+      padding: 0;
+    }
   }
 
   &.mobile {
+    .split {
+      flex-direction: column;
+      row-gap: $margin-xs;
+    }
 
+    .addLocationBtnWrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 30px;
+    }
   }
 }

@@ -10,6 +10,7 @@ import openState from "../state/open";
 import AccountsApi from "../api/AccountsApi";
 import memberState from "../state/member";
 import locationsState from "../state/location";
+import viewState from "../state/view";
 
 export interface SetupProps {
   type: ViewType;
@@ -22,7 +23,7 @@ export interface PrivateSetupProps extends SetupProps {
 
 const Setup = (props: PrivateSetupProps) => {
   const [steps, setSteps] = createSignal([] as View[]);
-  const [currentView, setCurrentView] = createSignal(View.OVERVIEW);
+  const {view, setView} = viewState;
   const {setMobile} = mobileState;
   const {opened, openModal} = openState;
   const {memberId, setMemberId} = memberState;
@@ -66,16 +67,16 @@ const Setup = (props: PrivateSetupProps) => {
   })
 
   function onNext() {
-    const currentIdx = steps().findIndex((it => it === currentView()));
+    const currentIdx = steps().findIndex((it => it === view()));
     if (currentIdx < steps().length - 1) {
-      setCurrentView(steps()[currentIdx + 1]);
+      setView(steps()[currentIdx + 1]);
     }
   }
 
   function onBack() {
-    const currentIdx = steps().findIndex((it => it === currentView()));
+    const currentIdx = steps().findIndex((it => it === view()));
     if (currentIdx > 0) {
-      setCurrentView(steps()[currentIdx - 1]);
+      setView(steps()[currentIdx - 1]);
     }
   }
 
@@ -83,11 +84,11 @@ const Setup = (props: PrivateSetupProps) => {
     <div id={'mob-detect'}/>
 
     <Switch>
-      <Match when={View.OVERVIEW === currentView()} keyed><OverviewModal onNext={onNext}/></Match>
-      <Match when={View.LOCATION === currentView()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.TEAM === currentView()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.PAYMENT === currentView()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.CONFIRMATION === currentView()} keyed><ConfirmationModal/></Match>
+      <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={onNext}/></Match>
+      <Match when={View.LOCATION === view()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal/></Match>
     </Switch>
   </>
 }
