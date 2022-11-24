@@ -19,6 +19,10 @@
   &.mobile {
     flex-direction: column;
 
+    .topHeader, .topSubheader {
+      text-align: center;
+    }
+
     .agreementWrapper {
       padding: 0;
       background-color: $color-light-grey;
