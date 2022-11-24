@@ -16,4 +16,15 @@
   &.mobile {
     max-height: 100%;
   }
+
+  @media screen and (max-width: 480px) {
+    &.withHeader {
+      margin-top: 185px;
+    }
+  }
+  @media screen and (max-width: 299px) {
+    &.withHeader {
+      margin-top: 225px;
+    }
+  }
 }

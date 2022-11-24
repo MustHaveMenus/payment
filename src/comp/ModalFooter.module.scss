@@ -1,9 +1,11 @@
 @import '../style/vars.scss';
 @import '../style/mixins.scss';
 
+$leftMargin: 31px;
+
 .modalFooter {
   margin-top: auto;
-  padding: 31px 0 $margin-md 0;
+  padding: $leftMargin 0 $margin-md 0;
   width: 100%;
 
   .teamFooter {
@@ -23,6 +25,35 @@
       cursor: pointer;
 
       @include hover();
+    }
+  }
+
+  &.mobile {
+    box-sizing: border-box;
+    padding: 22px;
+    display: flex;
+
+    footer {
+      width: 100%;
+    }
+
+    &:has(.teamFooter) {
+      border-top: 1px solid $color-medium-grey2;
+    }
+
+    .teamFooter {
+      flex-direction: column;
+      width: 100%;
+      row-gap: 17px;
+
+      button {
+        width: 100%;
+      }
+
+      span {
+        position: relative;
+        right: 0;
+      }
     }
   }
 }
