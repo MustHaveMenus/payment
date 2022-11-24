@@ -7,16 +7,18 @@ import {createSignal} from "solid-js";
 import {productType, subscriptionTotal} from "../util/prices";
 import {USERS} from "../util/constants";
 import teamState from "../state/team";
+import mobileState from "../state/mobile";
 
 interface PaymentModalProps extends GenericModalProps {
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
+  const {mobile} = mobileState;
   const {team} = teamState;
   const [btnDisabled, setBtnDisabled] = createSignal(false);
 
   return <Modal onBack={props.onBack} content={
-    <div class={styles.wrapper}>
+    <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
         <span class={styles.topHeader}>Try Pro Plan for free</span>
         <span class={styles.topSubheader}>30-day free trial, cancel at any time</span>

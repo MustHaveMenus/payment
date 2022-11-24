@@ -2,6 +2,7 @@ import styles from './PaymentType.module.scss';
 import {JSXElement} from "solid-js";
 import RadioInput from "./RadioInput";
 import {fullAmount, fullAmountPerMo, monthlyAmount} from "../util/prices";
+import mobileState from "../state/mobile";
 
 interface PaymentTypeProps {
 
@@ -12,9 +13,10 @@ enum PaymentTypeEnum {
 }
 
 const PaymentType = (props: PaymentTypeProps) => {
+  const {mobile} = mobileState;
 
   const getEntry = (value: PaymentTypeEnum, defaultChecked: boolean, label: string, sublabel: JSXElement) =>
-    <div class={styles.radioEntry}>
+    <div classList={{[styles.radioEntry]: true}}>
       <RadioInput name="drone" id={value} value={value} defaultChecked={defaultChecked}/>
       <label for={value}>
         <span><b>{label}</b></span>
@@ -23,7 +25,7 @@ const PaymentType = (props: PaymentTypeProps) => {
     </div>;
 
 
-  return <div class={styles.paymentTypeWrapper}>
+  return <div classList={{[styles.paymentTypeWrapper]: true, [styles.mobile]: mobile()}}>
     {getEntry(PaymentTypeEnum.Annually, true, 'Annually', <span>${fullAmount} <span
       class={styles.pricePerMonth}>(${fullAmountPerMo}/mo)</span></span>)}
     {getEntry(PaymentTypeEnum.Monthly, false, 'Monthly', <span>${monthlyAmount}</span>)}

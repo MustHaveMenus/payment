@@ -15,12 +15,14 @@
   .left {
     .topHeader {
       @include topHeader();
+      text-align: center;
     }
 
     .topSubheader {
       @include normalText();
       display: block;
       line-height: 1.4;
+      text-align: center;
     }
 
     .agreement {
@@ -81,5 +83,9 @@
         }
       }
     }
+  }
+
+  &.mobile {
+    flex-direction: column;
   }
 }

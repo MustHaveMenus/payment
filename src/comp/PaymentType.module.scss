@@ -25,4 +25,11 @@
     color: $color-dark-grey3;
     margin-left: 4px;
   }
+
+  &.mobile {
+    .radioEntry {
+      justify-content: center;
+      align-items: center;
+    }
+  }
 }
