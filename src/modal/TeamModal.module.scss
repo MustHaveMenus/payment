@@ -66,19 +66,39 @@
         }
       }
     }
-    .addUser {
-      @include hover();
-      @include smallTextBold();
+    .addUserWrapper {
       margin-top: 10px;
-      height: 32px;
-      width: 146px;
-      background-color: $color-orange;
-      color: $color-white;
-      padding: 0;
+      button {
+        @include hover();
+        @include smallTextBold();
+        height: 32px;
+        width: 146px;
+        background-color: $color-orange;
+        color: $color-white;
+        padding: 0;
+      }
     }
   }
 
   &.mobile {
+    .form {
+      .entry {
+        flex-direction: column;
+        row-gap: $margin-xs;
+        margin-top: 30px;
 
+        .addLocation {
+          margin-top: 20px !important;
+          justify-content: center !important;
+          margin-right: 0 !important;
+        }
+      }
+
+      .addUserWrapper {
+        display: flex;
+        justify-content: center;
+        margin-top: 30px;
+      }
+    }
   }
 }
