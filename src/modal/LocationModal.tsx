@@ -12,13 +12,15 @@ import {countryValues, stateValues} from "../util/util";
 import {LocationDto} from "../generated/client";
 import {LOCATIONS} from "../util/constants";
 import mobileState from "../state/mobile";
+import TrashIcon from "../comp/svg/TrashIcon";
+import generalStyles from "../style/general.module.scss";
 
 interface LocationModalProps extends GenericModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
   const {mobile} = mobileState;
-  const {locations, addLocation, updateName, updateCity, updateZip, updateAddress, updateAddress2, cleanInvalidLocations} = locationsState;
+  const {locations, addLocation, updateName, updateCity, updateZip, updateAddress, updateAddress2, cleanInvalidLocations, deleteLocation} = locationsState;
   const [newLocations, setNewLocations] = createSignal([] as LocationDto[]);
 
   createEffect(() => {
@@ -61,6 +63,9 @@ const LocationModal = (props: LocationModalProps) => {
                         <div class={styles.entry}>
                           <div class={styles.formHeader}>
                             <span>Location Info</span>
+                            <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={[deleteLocation, loc]}>
+                                <TrashIcon/>
+                              </span>
                           </div>
 
                           <div class={styles.formContent}>

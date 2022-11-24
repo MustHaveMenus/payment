@@ -21,10 +21,13 @@
         margin-top: $margin;
       }
 
+      svg {
+        cursor: pointer;
+        @include hover();
+      }
+
       .formHeader {
-        @include normalBoldText();
-        display: flex;
-        align-items: center;
+        @include formHeader();
       }
 
       .formContent {

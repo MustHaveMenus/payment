@@ -81,3 +81,14 @@
     opacity: $hover-opacity;
   }
 }
+
+
+@mixin formHeader() {
+  @include normalBoldText();
+  display: flex;
+  align-items: center;
+
+  span:has(svg) {
+    margin-left: auto;
+  }
+}

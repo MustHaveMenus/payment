@@ -1,6 +1,7 @@
 import styles from './TeamModal.module.scss';
 import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
+import generalStyles from '../style/general.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {createEffect, For, onMount, Show} from "solid-js";
@@ -67,7 +68,7 @@ const TeamModal = (props: TeamModalProps) => {
               <div>
                 <div class={styles.formHeader}>
                   <span>New User Info</span>
-                  <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={[deleteUser, user]}>
+                  <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={[deleteUser, user]}>
                                 <TrashIcon/>
                               </span>
                 </div>
@@ -80,7 +81,7 @@ const TeamModal = (props: TeamModalProps) => {
               <div>
                 <div class={styles.formHeader}>
                   <span>Location Assignment</span>
-                  <span class={styles.invisible}>
+                  <span class={generalStyles.invisible}>
                                 <TrashIcon/>
                               </span>
                 </div>
@@ -89,7 +90,7 @@ const TeamModal = (props: TeamModalProps) => {
                     <div class={styles.locationEntry}>
                       <Select values={locations[LOCATIONS]} disabledValues={user.locations} value={loc}
                               onChange={(newLoc) => updateLocation(user, loc, newLoc as LocationDto)}/>
-                      <span class={`${i() === 0 ? styles.invisible : ''}`} onClick={() => deleteLocation(user, loc)}>
+                      <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={() => deleteLocation(user, loc)}>
                                     <TrashIcon/>
                                   </span>
                     </div>
