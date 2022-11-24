@@ -15,18 +15,21 @@ $leftMargin: 37.5px;
   .textMd {
     @include mediumTextBold();
     margin-top: 16px;
+    text-align: center;
   }
 
   .textSm {
     @include mmediumText();
     margin-top: 4px;
     line-height: 1.39;
+    text-align: center;
   }
 
   .textLg {
     @include mediumTextBold();
     margin-top: 24px;
     line-height: 1.25;
+    text-align: center;
   }
 
   .btn {
