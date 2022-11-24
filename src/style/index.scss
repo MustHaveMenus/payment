@@ -4,8 +4,22 @@
 #mob-detect {
   display: none;
 }
+
 @media (max-width: 800px) {
   #mob-detect {
     display: block;
+  }
+}
+
+.pro-modal {
+  animation: fadein 75ms;
+
+  @keyframes fadein {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 }

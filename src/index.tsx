@@ -7,6 +7,7 @@ let destroy: ((() => void) | undefined) = undefined;
 
 const init = (props: SetupProps) => {
   container = document.createElement("div");
+  container.classList.add('pro-modal');
   document.body.append(container);
   destroy = render(() => <Setup {...props} onClose={ProModal.hide}/>, container);
 }
