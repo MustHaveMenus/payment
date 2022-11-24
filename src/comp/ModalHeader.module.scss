@@ -51,6 +51,7 @@
 .subheader {
   @include normalText();
   line-height: 1.4;
+  text-align: center;
 }
 
 .wrapper {
