@@ -17,7 +17,7 @@ const ModalHeader = (props: ModalHeaderProps) => {
   const {mobile} = mobileState;
   const {view} = viewState;
 
-  return <div classList={{[styles.headerWrapper]: true, [styles.mobile]: mobile(), [styles.payment]: view() === View.PAYMENT}}>
+  return <div classList={{[styles.headerWrapper]: true, [styles.mobile]: mobile(), [styles.payment]: (view() === View.PAYMENT || view() === View.PAYMENT_REACTIVATE)}}>
     {props.onBack && <div class={styles.back} onClick={props.onBack}><BackIcon/></div>}
     {props.children}
     <div classList={{[styles.close]: true, [styles.closeSecondary]: props.secondaryCloseBtn}} onClick={closeModal}><CloseIcon/></div>

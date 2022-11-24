@@ -1,0 +1,11 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+.agreement {
+  font-size: $text-size-sm;
+
+  &.mobile {
+    padding: $margin;
+    text-align: center;
+  }
+}

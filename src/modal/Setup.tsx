@@ -14,6 +14,7 @@ import viewState from "../state/view";
 import OverviewReactivateModal from "./OverviewReactivateModal";
 import ConfirmCancelModal from "./ConfirmCancelModal";
 import CancelConfirmationModal from "./CancelConfirmationModal";
+import PaymentReactivateModal from "./PaymentReactivateModal";
 
 export interface SetupProps {
   type: ViewType;
@@ -114,6 +115,7 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.LOCATION === view()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={onBack} /></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={'aa'} expireDate={'bb'}/></Match>
