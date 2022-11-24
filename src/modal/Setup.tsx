@@ -1,4 +1,4 @@
-import {Steps, View, ViewType} from "../type/types";
+import {cancelSteps, Decision, reactivateSteps, Steps, View, ViewType} from "../type/types";
 import OverviewModal from "./OverviewModal";
 import {createEffect, createResource, createSignal, Match, onCleanup, onMount, Switch} from "solid-js";
 import PaymentModal from "./PaymentModal";
@@ -12,6 +12,7 @@ import memberState from "../state/member";
 import locationsState from "../state/location";
 import viewState from "../state/view";
 import OverviewReactivateModal from "./OverviewReactivateModal";
+import ConfirmCancelModal from "./ConfirmCancelModal";
 
 export interface SetupProps {
   type: ViewType;
@@ -82,16 +83,38 @@ const Setup = (props: PrivateSetupProps) => {
     }
   }
 
+  function onDecisionMade(dec: Decision) {
+    switch (dec) {
+      case Decision.CANCEL: {
+        setSteps(cancelSteps);
+        setView(cancelSteps[1]);
+        break;
+      }
+      case Decision.REACTIVATE: {
+        setSteps(reactivateSteps);
+        setView(reactivateSteps[1]);
+        break;
+      }
+      case Decision.CONFIRM_CANCEL: {
+
+      }
+      case Decision.BACK_TO_ACCOUNT: {
+
+      }
+    }
+  }
+
   return <>
     <div id={'mob-detect'}/>
 
     <Switch>
       <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={onNext}/></Match>
-      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onNext={onNext}/></Match>
+      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
       <Match when={View.LOCATION === view()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal/></Match>
+      <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={onBack} /></Match>
     </Switch>
   </>
 }

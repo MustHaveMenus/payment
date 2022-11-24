@@ -4,16 +4,18 @@ import Button from "../comp/Button";
 import mobileState from "../state/mobile";
 import {createSignal} from "solid-js";
 import footerStyles from "../comp/ModalFooter.module.scss";
+import {Decision} from "../type/types";
 
 interface OverviewReactivateModalProps extends GenericModalProps {
+  onDecision: (dec: Decision) => void;
 }
 
 const OverviewReactivateModal = (props: OverviewReactivateModalProps) => {
   const [daysLeftUntilReactivate, setDaysLeftUntilReactivate] = createSignal(0);
   const {mobile} = mobileState;
 
-  const cancelBtn = () => <Button label={'Cancel Account'} secondaryOutlined onClick={props.onNext}/>;
-  const reactivateBtn = () => <Button label={'Reactivate Now'} secondary onClick={props.onNext}/>;
+  const cancelBtn = () => <Button label={'Cancel Account'} secondaryOutlined onClick={() => props.onDecision(Decision.CANCEL)}/>;
+  const reactivateBtn = () => <Button label={'Reactivate Now'} secondary onClick={() => props.onDecision(Decision.REACTIVATE)}/>;
 
   const footer = <footer class={mobile() ? footerStyles.reactivateOverview : styles.footer}>
     {mobile() && <>
