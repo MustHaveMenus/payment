@@ -116,7 +116,7 @@ const TeamModal = (props: TeamModalProps) => {
                   </div>
                 }
                 footer={
-                  <div class={footerStyles.teamFooter}>
+                  <div class={footerStyles.borderedFooter}>
                     <Button onClick={validateAndProceed} label={'Next'}></Button>
                     <span onClick={props.onNext}>Skip this step {'>'}</span>
                   </div>

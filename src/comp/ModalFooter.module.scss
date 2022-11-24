@@ -8,7 +8,7 @@ $leftMargin: 31px;
   padding: $leftMargin 0 $margin-md 0;
   width: 100%;
 
-  .teamFooter {
+  .borderedFooter {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -37,11 +37,11 @@ $leftMargin: 31px;
       width: 100%;
     }
 
-    &:has(.teamFooter) {
+    &:has(.borderedFooter) {
       border-top: 1px solid $color-medium-grey2;
     }
 
-    .teamFooter {
+    .borderedFooter {
       flex-direction: column;
       width: 100%;
       row-gap: 17px;
@@ -53,6 +53,10 @@ $leftMargin: 31px;
       span {
         position: relative;
         right: 0;
+      }
+
+      .btnWrapper {
+        width: 100%;
       }
     }
   }

@@ -8,6 +8,7 @@ import {productType, subscriptionTotal} from "../util/prices";
 import {USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
+import footerStyles from "../comp/ModalFooter.module.scss";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -17,7 +18,23 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {team} = teamState;
   const [btnDisabled, setBtnDisabled] = createSignal(false);
 
-  return <Modal onBack={props.onBack} content={
+  const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
+    <Button label={'Subscribe'} disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
+  </div>;
+
+  const agreementMsg = () => <div class={styles.agreement}>
+          <span>By continuing, you agree to our <a href={'https://www.musthavemenus.com'} target={'_blank'}>Terms of Use</a>, confirm you have read our <a
+            href={'https://www.musthavemenus.com'} target={'_blank'}>Privacy Policy</a>, and agree to the recurring charges for your subscription plan until you cancel.</span>
+  </div>;
+
+  const mobileFooter = () => <div class={footerStyles.borderedFooter}>{subscribeBtn()}</div>;
+  const desktopFooter = () => <>{subscribeBtn()}{agreementMsg()}</>;
+
+  const modalFooter = () => mobile() ? mobileFooter() : null;
+  const leftSideFooter = () => !mobile() ? desktopFooter : null;
+  const rightSideFooter = () => mobile() ? agreementMsg() : null;
+
+  return <Modal onBack={props.onBack} footer={modalFooter()} content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
         <span class={styles.topHeader}>Try Pro Plan for free</span>
@@ -25,13 +42,7 @@ const PaymentModal = (props: PaymentModalProps) => {
         <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
         <PaymentType/>
         <PaymentInformation/>
-        <div class={styles.btnWrapper}>
-          <Button label={'Subscribe'} disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
-        </div>
-        <div class={styles.agreement}>
-          <span>By continuing, you agree to our <a href={'https://www.musthavemenus.com'} target={'_blank'}>Terms of Use</a>, confirm you have read our <a
-            href={'https://www.musthavemenus.com'} target={'_blank'}>Privacy Policy</a>, and agree to the recurring charges for your subscription plan until you cancel.</span>
-        </div>
+        {leftSideFooter()}
       </div>
 
       <div class={styles.right}>
@@ -76,6 +87,8 @@ const PaymentModal = (props: PaymentModalProps) => {
           </div>
         </div>
       </div>
+
+      {rightSideFooter()}
     </div>
   }/>
 }

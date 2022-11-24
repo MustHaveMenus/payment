@@ -87,5 +87,10 @@
 
   &.mobile {
     flex-direction: column;
+
+    .agreement {
+      padding: $margin;
+      text-align: center;
+    }
   }
 }

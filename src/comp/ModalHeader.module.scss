@@ -24,7 +24,6 @@
     margin-left: auto;
     display: flex;
     justify-content: center;
-    //align-items: center;
   }
 
   .closeSecondary {
@@ -41,6 +40,12 @@
     }
 
     @include hover();
+  }
+
+  &.mobile {
+    &.payment {
+      background-color: $color-white;
+    }
   }
 }
 

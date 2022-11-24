@@ -4,6 +4,9 @@ import {GenericModalProps} from "./Modal";
 import CloseIcon from "./svg/CloseIcon";
 import BackIcon from "./svg/BackIcon";
 import openState from "../state/open";
+import mobileState from "../state/mobile";
+import viewState from "../state/view";
+import {View} from "../type/types";
 
 interface ModalHeaderProps extends GenericModalProps {
   children?: JSXElement,
@@ -11,7 +14,10 @@ interface ModalHeaderProps extends GenericModalProps {
 
 const ModalHeader = (props: ModalHeaderProps) => {
   const {closeModal} = openState;
-  return <div class={styles.headerWrapper}>
+  const {mobile} = mobileState;
+  const {view} = viewState;
+
+  return <div classList={{[styles.headerWrapper]: true, [styles.mobile]: mobile(), [styles.payment]: view() === View.PAYMENT}}>
     {props.onBack && <div class={styles.back} onClick={props.onBack}><BackIcon/></div>}
     {props.children}
     <div classList={{[styles.close]: true, [styles.closeSecondary]: props.secondaryCloseBtn}} onClick={closeModal}><CloseIcon/></div>
