@@ -5,33 +5,32 @@ $leftMargin: 37.5px;
 
 .wrapper {
   @include confirmationWrapper();
+  box-sizing: border-box;
+  padding: 0 175px;
 
   .textMd {
-    @include mediumTextBold();
-    margin-top: 16px;
-    text-align: center;
-  }
-
-  .textSm {
     @include mmediumText();
-    margin-top: 4px;
-    line-height: 1.39;
+    margin-top: $margin;
     text-align: center;
+
+    &.smallMargin {
+      margin-top: $margin-xxs;
+    }
   }
 
   .textLg {
     @include mediumTextBold();
-    margin-top: 24px;
+    margin-top: $margin;
     line-height: 1.25;
     text-align: center;
   }
 
   button {
     margin-top: 32px;
-    width: 336px;
+    width: 100px;
   }
 
   &.mobile {
-
+    padding: 0 60px;
   }
 }

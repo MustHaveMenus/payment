@@ -21,11 +21,6 @@
         margin-top: $margin;
       }
 
-      svg {
-        cursor: pointer;
-        @include hover();
-      }
-
       .formHeader {
         @include formHeader();
       }
@@ -50,6 +45,7 @@
 
   .addLocationBtnWrapper {
     margin-top: 20px;
+
     button {
       @include smallTextBold();
       background-color: $color-purple;

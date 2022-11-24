@@ -13,6 +13,7 @@ import locationsState from "../state/location";
 import viewState from "../state/view";
 import OverviewReactivateModal from "./OverviewReactivateModal";
 import ConfirmCancelModal from "./ConfirmCancelModal";
+import CancelConfirmationModal from "./CancelConfirmationModal";
 
 export interface SetupProps {
   type: ViewType;
@@ -96,7 +97,7 @@ const Setup = (props: PrivateSetupProps) => {
         break;
       }
       case Decision.CONFIRM_CANCEL: {
-
+        onNext();
       }
       case Decision.BACK_TO_ACCOUNT: {
 
@@ -115,6 +116,7 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={onBack} /></Match>
+      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={'aa'} expireDate={'bb'}/></Match>
     </Switch>
   </>
 }
