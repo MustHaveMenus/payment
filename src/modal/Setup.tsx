@@ -11,6 +11,7 @@ import AccountsApi from "../api/AccountsApi";
 import memberState from "../state/member";
 import locationsState from "../state/location";
 import viewState from "../state/view";
+import OverviewReactivateModal from "./OverviewReactivateModal";
 
 export interface SetupProps {
   type: ViewType;
@@ -34,6 +35,7 @@ const Setup = (props: PrivateSetupProps) => {
     if (!props.type) return;
 
     setSteps(Steps[props.type]);
+    setView(Steps[props.type][0]);
   });
 
   createEffect(() => {
@@ -85,6 +87,7 @@ const Setup = (props: PrivateSetupProps) => {
 
     <Switch>
       <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={onNext}/></Match>
+      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onNext={onNext}/></Match>
       <Match when={View.LOCATION === view()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>

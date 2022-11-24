@@ -2,13 +2,19 @@ import styles from './Button.module.scss';
 
 interface ButtonProps {
   label: string;
-  class?: string;
   disabled?: boolean;
   onClick?: () => void;
+  secondary?: boolean;
+  secondaryOutlined?: boolean;
 }
 
 const Button = (props: ButtonProps) => {
-  return <button class={`${styles.button} ${props.disabled ? styles.disabled : ''} ${props.class ?? ''}`} onClick={props.onClick}>{props.label}</button>
+  return <button classList={{
+    [styles.button]: true,
+    [styles.disabled]: props.disabled,
+    [styles.secondary]: props.secondary,
+    [styles.secondaryOutlined]: props.secondaryOutlined,
+  }} onClick={props.onClick}>{props.label}</button>
 }
 
 export default Button;

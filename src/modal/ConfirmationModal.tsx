@@ -13,7 +13,7 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {closeModal} = openState;
   const {mobile} = mobileState;
 
-  const doneBtn = () => <Button class={styles.btn} label={'Done'} onClick={closeModal}/>;
+  const doneBtn = () => <Button label={'Done'} onClick={closeModal}/>;
 
   const mobileFooter = () => mobile() ? <div class={footerStyles.borderedFooter}>{doneBtn()}</div> : undefined;
   const desktopFooter = () => !mobile() ? doneBtn() : <></>

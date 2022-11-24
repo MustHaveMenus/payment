@@ -14,11 +14,13 @@ $leftMargin: 37.5px;
   }
 
   .left {
-    padding: 30px $leftMargin 0;
+    padding: 30px 30px 0 $leftMargin;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     flex-basis: calc(50% - $leftMargin * 2);
+    line-height: 1.4;
 
     header {
       width: 100%;
@@ -47,38 +49,20 @@ $leftMargin: 37.5px;
       }
     }
 
-    .featureSection {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: flex-start;
-
-      > span {
-        @include normalBoldText();
-        line-height: 1.4;
-      }
-
-      .featureList {
-        margin-top: 20px;
-        display: flex;
-        flex-direction: column;
-        row-gap: calc($margin - 4px);
-
-        div {
-          display: flex;
-          column-gap: 5px;
-        }
-      }
-    }
-
     .footer {
       margin-top: calc($margin - 5px);
       width: 100%;
+      display: flex;
+      column-gap: 8px;
+
+      button {
+        width: 137px;
+      }
     }
   }
 
   .right {
-    background-image: url('../assets/benefits-mobile.webp');
+    background-image: url('../assets/benefits.webp');
     background-size: cover;
     height: 100%;
   }
@@ -87,9 +71,16 @@ $leftMargin: 37.5px;
     flex-direction: column;
 
     .left {
+      flex: 2;
+      justify-content: flex-start;
+      padding-top: 60px;
       header {
         justify-content: flex-start;
       }
+    }
+    .right {
+      background-image: url('../assets/benefits-mobile.webp');
+      flex: 1;
     }
   }
 }

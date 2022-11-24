@@ -28,6 +28,12 @@ $leftMargin: 31px;
     }
   }
 
+  .reactivateOverview {
+    display: flex;
+    flex-direction: column;
+    row-gap: 7px;
+  }
+
   &.mobile {
     box-sizing: border-box;
     padding: 22px;
