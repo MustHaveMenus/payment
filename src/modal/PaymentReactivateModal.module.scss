@@ -7,12 +7,8 @@
   .left {
     @include paymentWrapperHeaderAndSubheader();
 
-    .agreementWrapper {
-      margin-top: $margin * 3;
-    }
-
-    .btnWrapper {
-      margin: 15px 0;
+    .cardOnFileWrapper {
+      margin-top: $margin;
     }
   }
 

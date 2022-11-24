@@ -1,0 +1,18 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+.cardInfo {
+  align-items: center;
+  background-color: $color-medium-grey3;
+  border-radius: 6px;
+  border: 1px solid $color-medium-grey2;
+  display: flex;
+  padding: 10px;
+  column-gap: 10px;
+
+  > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}

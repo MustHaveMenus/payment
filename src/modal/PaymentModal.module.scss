@@ -6,14 +6,6 @@
 
   .left {
     @include paymentWrapperHeaderAndSubheader();
-
-    .agreementWrapper {
-      margin-top: $margin * 3;
-    }
-
-    .btnWrapper {
-      margin: 15px 0;
-    }
   }
 
   .right {
@@ -22,6 +14,10 @@
 
   &.mobile {
     flex-direction: column;
+
+    .topHeader, .topSubheader {
+      text-align: center;
+    }
 
     .agreementWrapper {
       padding: 0;

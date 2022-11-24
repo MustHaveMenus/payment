@@ -116,15 +116,26 @@
 }
 
 @mixin paymentWrapperHeaderAndSubheader() {
+  display: flex;
+  flex-direction: column;
+
   .topHeader {
     @include topHeader();
-    text-align: center;
+    text-align: left;
   }
 
   .topSubheader {
     @include normalText();
     display: block;
     line-height: 1.4;
-    text-align: center;
+    text-align: left;
+  }
+
+  .agreementWrapper {
+    margin-top: auto;
+  }
+
+  .btnWrapper {
+    margin: 15px 0;
   }
 }

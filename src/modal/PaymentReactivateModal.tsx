@@ -1,16 +1,14 @@
-import styles from './PaymentModal.module.scss';
+import styles from './PaymentReactivateModal.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
-import PaymentInformation from "../comp/PaymentInformation";
-import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
 import {createSignal} from "solid-js";
-import {productType, subscriptionTotal} from "../util/prices";
 import {USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
+import CardOnFile from "../comp/CardOnFile";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -39,7 +37,12 @@ const PaymentModal = (props: PaymentModalProps) => {
         <span class={styles.topHeader}>Reactivate Account</span>
         <span class={styles.topSubheader}>Your designs and shared links are waiting for you!</span>
         <span class={styles.topSubheader}>Confirm your payment to resume account access.</span>
-        <PaymentInformation/>
+
+        <div class={styles.cardOnFileWrapper}>
+          <CardOnFile card={{exprMonth: 10, exprYear: 26, ending: '1234'}}/>
+        </div>
+
+        {/*<PaymentInformation/>*/}
         {leftSideFooter()}
       </div>
 
