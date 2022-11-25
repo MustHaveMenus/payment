@@ -42,9 +42,13 @@ const Setup = (props: PrivateSetupProps) => {
   });
 
   createEffect(() => {
-    const resp = locationsServer();
-    if (!resp) return;
-    addLocations(resp);
+    try {
+      const resp = locationsServer();
+      if (!resp) return;
+      addLocations(resp);
+    } catch (e) {
+      console.error(e);
+    }
   })
 
   const detectMobile = () => {
