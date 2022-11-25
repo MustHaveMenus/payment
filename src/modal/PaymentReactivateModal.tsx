@@ -1,7 +1,7 @@
 import styles from './PaymentReactivateModal.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal} from "solid-js";
+import {createSignal, Show} from "solid-js";
 import {USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
@@ -9,6 +9,7 @@ import footerStyles from "../comp/ModalFooter.module.scss";
 import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import CardOnFile from "../comp/CardOnFile";
+import PaymentInformation from "../comp/PaymentInformation";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -17,6 +18,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
   const {team} = teamState;
   const [btnDisabled, setBtnDisabled] = createSignal(false);
+  const [showPaymentForm, setShowPaymentForm] = createSignal(false);
 
   const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
     <Button label={'Reactivate Now'} secondary disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
@@ -31,6 +33,11 @@ const PaymentModal = (props: PaymentModalProps) => {
   const leftSideFooter = () => !mobile() ? desktopFooter : null;
   const rightSideFooter = () => mobile() ? agreementMsg() : null;
 
+  function onUpdatePayment() {
+    setShowPaymentForm(true);
+    setBtnDisabled(true);
+  }
+
   return <Modal onBack={props.onBack} footer={modalFooter()} content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
@@ -38,13 +45,19 @@ const PaymentModal = (props: PaymentModalProps) => {
         <span class={styles.topSubheader}>Your designs and shared links are waiting for you!</span>
         <span class={styles.topSubheader}>Confirm your payment to resume account access.</span>
 
-        <div class={styles.cardOnFileWrapper}>
-          <CardOnFile card={{exprMonth: 10, exprYear: 26, ending: '1234'}}/>
-        </div>
+        <Show when={showPaymentForm()} keyed
+              fallback={
+                <>
+                  <div class={styles.cardOnFileWrapper}>
+                    <CardOnFile card={{exprMonth: 10, exprYear: 26, ending: '1234'}}/>
+                  </div>
+                  <span class={styles.updatePaymentBtn} onClick={onUpdatePayment}>Update payment method</span>
+                </>
+              }>
+          <span class={styles.paymentInformationHeader}>Payment Information</span>
+          <PaymentInformation/>
+        </Show>
 
-        <span class={styles.updatePaymentBtn}>Update payment method</span>
-
-        {/*<PaymentInformation/>*/}
         {leftSideFooter()}
       </div>
 

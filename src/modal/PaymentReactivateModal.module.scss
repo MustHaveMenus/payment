@@ -17,6 +17,12 @@
     .cardOnFileWrapper {
       margin-top: $margin;
     }
+
+    .paymentInformationHeader {
+      @include normalBoldText();
+      margin-top: $margin-lg;
+      margin-bottom: $margin-xxs;
+    }
   }
 
   .right {
