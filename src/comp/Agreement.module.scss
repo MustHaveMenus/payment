@@ -4,6 +4,10 @@
 .agreement {
   font-size: $text-size-sm;
 
+  a {
+    color: $color-blue;
+  }
+
   &.mobile {
     padding: $margin;
     text-align: center;
