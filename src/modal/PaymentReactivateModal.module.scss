@@ -7,6 +7,13 @@
   .left {
     @include paymentWrapperHeaderAndSubheader();
 
+    .updatePaymentBtn {
+      margin-top: $margin-sm;
+      color: $color-blue;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
     .cardOnFileWrapper {
       margin-top: $margin;
     }

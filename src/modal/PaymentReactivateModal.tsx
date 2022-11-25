@@ -42,6 +42,8 @@ const PaymentModal = (props: PaymentModalProps) => {
           <CardOnFile card={{exprMonth: 10, exprYear: 26, ending: '1234'}}/>
         </div>
 
+        <span class={styles.updatePaymentBtn}>Update payment method</span>
+
         {/*<PaymentInformation/>*/}
         {leftSideFooter()}
       </div>
