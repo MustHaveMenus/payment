@@ -3,4 +3,5 @@
 
 .select {
   @include input();
+  cursor: pointer;
 }

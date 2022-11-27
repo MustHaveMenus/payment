@@ -15,6 +15,7 @@ import OverviewReactivateModal from "./OverviewReactivateModal";
 import ConfirmCancelModal from "./ConfirmCancelModal";
 import CancelConfirmationModal from "./CancelConfirmationModal";
 import PaymentReactivateModal from "./PaymentReactivateModal";
+import PauseModal from "./PauseModal";
 
 export interface SetupProps {
   type: ViewType;
@@ -123,6 +124,7 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={onBack} /></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={'aa'} expireDate={'bb'}/></Match>
+      <Match when={View.PAUSE === view()} keyed><PauseModal pauseDate={'Thursday December 15, 2022.'} onDecision={onDecisionMade}/></Match>
     </Switch>
   </>
 }

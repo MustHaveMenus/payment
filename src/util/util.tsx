@@ -1,4 +1,5 @@
 import {Countries, States} from "./countries";
+import {Option} from "../type/types";
 
 export function formatCreditCard(value: string) {
   return value
@@ -55,3 +56,14 @@ export const stateValues = Object.keys(States).map(it => {
     name: it
   }
 });
+
+export const pauseValues = [
+  {
+    id: '1',
+    name: '1 month'
+  },
+  {
+    id: '3',
+    name: '3 months'
+  }
+] as Option[];
