@@ -19,7 +19,7 @@ const PauseConfirmationModal = (props: PauseConfirmationModalProps) => {
 
   createEffect(() => {
     Alert.show({text: 'Subscription successfully paused'});
-  })
+  });
 
   return <Modal content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>

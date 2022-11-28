@@ -34,10 +34,13 @@ const ProModal = {
 
 const Alert = {
   show: (props: AlertModalProps) => {
-    container = document.createElement("div");
+    const container = document.createElement("div");
     container.classList.add('mhm-alert');
     document.body.append(container);
-    destroy = render(() => <AlertModal {...props}/>, container);
+    const destroy = render(() => <AlertModal {...props}/>, container);
+    setTimeout(() => {
+      destroy();
+    }, 10000)
   }
 }
 

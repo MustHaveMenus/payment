@@ -1,4 +1,4 @@
-import styles from './Alert.module.scss';
+import styles from './AlertModal.module.scss';
 import CheckIcon from "./svg/CheckIcon";
 
 export interface AlertModalProps {
