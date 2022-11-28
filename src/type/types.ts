@@ -12,7 +12,8 @@ export enum View {
   PAYMENT_REACTIVATE = 'PAYMENT_REACTIVATE',
   CONFIRM_CANCEL = 'CONFIRM_CANCEL',
   CANCELLED = 'CANCELLED',
-  PAUSE = 'PAUSE',
+  PAUSED = 'PAUSED',
+  CONFIRM_PAUSE = 'CONFIRM_PAUSE',
 }
 
 export interface Option {
@@ -44,7 +45,7 @@ export const Steps = {
   [ViewType.REACTIVATE_FROM_PAUSED]: [View.OVERVIEW_REACTIVATE],
   [ViewType.REACTIVATE_FROM_CANCELLED]: [],
   [ViewType.REACTIVATE_FROM_DECLINED]: [],
-  [ViewType.PAUSE]: [View.PAUSE],
+  [ViewType.PAUSE]: [View.CONFIRM_PAUSE],
 }
 
 export const reactivateSteps = [View.OVERVIEW_REACTIVATE, View.PAYMENT_REACTIVATE, View.CONFIRMATION]

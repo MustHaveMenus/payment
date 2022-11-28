@@ -1,0 +1,50 @@
+@import '../style/vars.scss';
+@import '../style/mixins.scss';
+
+$leftMargin: 37.5px;
+
+.wrapper {
+  @include confirmationWrapper();
+  box-sizing: border-box;
+  padding: 0 175px;
+
+  .consequences {
+    margin-top: $margin;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    row-gap: 25px;
+
+    > div {
+      display: flex;
+      column-gap: 6px;
+    }
+  }
+
+  .textMd {
+    @include mmediumText();
+    margin-top: $margin;
+    text-align: center;
+
+    &.smallMargin {
+      margin-top: $margin-xxs;
+    }
+  }
+
+  .textLg {
+    @include mediumTextBold();
+    margin-top: $margin;
+    line-height: 1.25;
+    text-align: center;
+  }
+
+  button {
+    margin-top: 32px;
+    width: 100px;
+  }
+
+  &.mobile {
+    padding: 0 60px;
+  }
+}
