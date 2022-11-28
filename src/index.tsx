@@ -1,6 +1,7 @@
 import './style/index.scss';
 import {render} from 'solid-js/web';
 import Setup, {SetupProps} from './modal/Setup';
+import AlertModal, {AlertModalProps} from "./comp/AlertModal";
 
 let container: HTMLElement | undefined = undefined;
 let destroy: ((() => void) | undefined) = undefined;
@@ -31,4 +32,13 @@ const ProModal = {
   }
 }
 
-export {ProModal};
+const Alert = {
+  show: (props: AlertModalProps) => {
+    container = document.createElement("div");
+    container.classList.add('mhm-alert');
+    document.body.append(container);
+    destroy = render(() => <AlertModal {...props}/>, container);
+  }
+}
+
+export {ProModal, Alert};

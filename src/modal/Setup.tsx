@@ -17,6 +17,7 @@ import CancelConfirmationModal from "./CancelConfirmationModal";
 import PaymentReactivateModal from "./PaymentReactivateModal";
 import PauseModal from "./PauseModal";
 import PauseConfirmationModal from "./PauseConfirmationModal";
+import AlertModal from "../comp/AlertModal";
 
 export interface SetupProps {
   type: ViewType;

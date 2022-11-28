@@ -1,0 +1,65 @@
+@import '../style/vars.scss';
+
+$yt: -100px;
+
+.alert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 101;
+  left: 0;
+  top: 35px;
+  width: 100%;
+  box-sizing: border-box;
+
+  -webkit-transform: translateY($yt);
+  -moz-transform:    translateY($yt);
+
+  -webkit-animation: slideDown 4s 0.1s 1 ease forwards;
+  -moz-animation:    slideDown 4s 0.1s 1 ease forwards;
+
+  @-webkit-keyframes slideDown {
+    0%, 100% { -webkit-transform: translateY($yt); }
+    10%, 90% { -webkit-transform: translateY(0px); }
+  }
+  @-moz-keyframes slideDown {
+    0%, 100% { -moz-transform: translateY($yt); }
+    10%, 90% { -moz-transform: translateY(0px); }
+  }
+
+  .alertContent {
+    background-color: $color-light-green;
+    border-radius: 2px;
+    border: solid 1px $color-green;
+    width: 269px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    column-gap: 10px;
+    padding: 0 16px;
+
+    .icon {
+      background-color: $color-dark-green;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 5px;
+
+      svg {
+        width: 15px;
+        height: 15px;
+
+        path {
+          fill: $color-white;
+        }
+      }
+    }
+  }
+
+  * {
+    font-family: "proxima-nova", serif;
+  }
+}

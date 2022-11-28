@@ -4,6 +4,8 @@ import Button from "../comp/Button";
 import openState from "../state/open";
 import mobileState from "../state/mobile";
 import CheckIcon from "../comp/svg/CheckIcon";
+import {createEffect} from "solid-js";
+import {Alert} from "../index";
 
 interface PauseConfirmationModalProps extends GenericModalProps {
   pauseDate: string;
@@ -14,6 +16,10 @@ interface PauseConfirmationModalProps extends GenericModalProps {
 const PauseConfirmationModal = (props: PauseConfirmationModalProps) => {
   const {mobile} = mobileState;
   const {closeModal} = openState;
+
+  createEffect(() => {
+    Alert.show({text: 'Subscription successfully paused'});
+  })
 
   return <Modal content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
