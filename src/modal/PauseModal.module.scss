@@ -77,16 +77,17 @@ $leftMargin: 37.5px;
       justify-content: flex-start;
       padding-top: 60px;
       padding-right: 30px;
+      margin-top: 0;
       header {
         justify-content: flex-start;
       }
     }
     .right {
-      background-image: url('../assets/pause.webp');
+      background-image: url('../assets/pause-mobile.webp');
       flex: 2;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-position: center;
+      //background-size: contain;
+      //background-repeat: no-repeat;
+      //background-position: center;
     }
   }
 }

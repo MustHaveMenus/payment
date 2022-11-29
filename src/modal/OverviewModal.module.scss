@@ -78,7 +78,7 @@ $leftMargin: 37.5px;
   }
 
   .right {
-    background-image: url('../assets/benefits-mobile.webp');
+    background-image: url('../assets/benefits.webp');
     background-size: cover;
     height: 100%;
   }
@@ -90,6 +90,10 @@ $leftMargin: 37.5px;
       header {
         justify-content: flex-start;
       }
+    }
+
+    .right {
+      background-image: url('../assets/benefits-mobile.webp');
     }
   }
 }

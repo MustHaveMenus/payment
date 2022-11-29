@@ -39,7 +39,9 @@ const PaymentModal = (props: PaymentModalProps) => {
         <span class={styles.topSubheader}>30-day free trial, cancel at any time</span>
         <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
         <PaymentType/>
-        <PaymentInformation/>
+        <div class={styles.paymentInformationWrapper}>
+          <PaymentInformation/>
+        </div>
         {leftSideFooter()}
       </div>
 
