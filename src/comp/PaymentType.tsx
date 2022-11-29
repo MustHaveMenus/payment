@@ -28,7 +28,7 @@ const PaymentType = (props: PaymentTypeProps) => {
   return <div classList={{[styles.paymentTypeWrapper]: true, [styles.mobile]: mobile()}}>
     {getEntry(PaymentTypeEnum.Annually, true, 'Annually', <span>${fullAmount} <span
       class={styles.pricePerMonth}>(${fullAmountPerMo}/mo)</span></span>)}
-    {getEntry(PaymentTypeEnum.Monthly, false, 'Monthly', <span>${monthlyAmount}</span>)}
+    {getEntry(PaymentTypeEnum.Monthly, false, 'Monthly', <span>${monthlyAmount}/mo</span>)}
   </div>
 }
 
