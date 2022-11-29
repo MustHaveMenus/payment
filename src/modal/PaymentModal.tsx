@@ -48,7 +48,7 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id !== it.name).length}/>
+        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length}/>
       </div>
 
       {rightSideFooter()}
