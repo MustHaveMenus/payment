@@ -16,8 +16,8 @@ $yt: -100px;
   -webkit-transform: translateY($yt);
   -moz-transform:    translateY($yt);
 
-  -webkit-animation: slideDown 4s 0.1s 1 ease forwards;
-  -moz-animation:    slideDown 4s 0.1s 1 ease forwards;
+  -webkit-animation: slideDown 7s 0s 1 ease forwards;
+  -moz-animation:    slideDown 7s 0s 1 ease forwards;
 
   @-webkit-keyframes slideDown {
     0%, 100% { -webkit-transform: translateY($yt); }
@@ -65,6 +65,10 @@ $yt: -100px;
       border: solid 1px $color-primary;
       width: auto;
       color: $color-white;
+
+      .icon {
+        background-color: $color-primary;
+      }
     }
   }
 
