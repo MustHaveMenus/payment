@@ -1,6 +1,12 @@
 import styles from "./SubscriptionDetails.module.scss";
 import {productType, subscriptionTotal} from "../util/prices";
-import {Show} from "solid-js";
+import {createEffect, Show} from "solid-js";
+import paymentTypeState from "../state/paymentType";
+import AccountsApi from "../api/AccountsApi";
+import memberState from "../state/member";
+import {PaymentTypeEnum} from "../type/types";
+import {SubStatusDtoPlanCycleEnum} from "../generated/client";
+import {handleServerError} from "../util/ErrorHandler";
 
 interface SubscriptionDetailsProps {
   users: number;
@@ -8,6 +14,19 @@ interface SubscriptionDetailsProps {
 }
 
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
+  const {paymentType} = paymentTypeState;
+  const {memberId} = memberState;
+
+  createEffect(async () => {
+    try {
+      const cycle = paymentType() === PaymentTypeEnum.Monthly ? SubStatusDtoPlanCycleEnum.Monthly : SubStatusDtoPlanCycleEnum.Yearly;
+      const resp = await AccountsApi.changeSubscriptionPlan(memberId(), cycle, true);
+      console.log(resp);
+    } catch (e: any) {
+      await handleServerError(e);
+    }
+  })
+
   return <>
     <span class={styles.topHeader}>Subscription Details</span>
 

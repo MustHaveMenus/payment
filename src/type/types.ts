@@ -54,3 +54,7 @@ export const cancelSteps = [View.OVERVIEW_REACTIVATE, View.CONFIRM_CANCEL, View.
 export enum Decision {
   REACTIVATE, CANCEL, CONFIRM_CANCEL, BACK_TO_ACCOUNT, CONFIRM_PAUSE
 }
+
+export enum PaymentTypeEnum {
+  Annually = 'a', Monthly = 'm'
+}

@@ -41,6 +41,15 @@ const Alert = {
     setTimeout(() => {
       destroy();
     }, 10000)
+  },
+  showError: (props: AlertModalProps) => {
+    const container = document.createElement("div");
+    container.classList.add('mhm-alert');
+    document.body.append(container);
+    const destroy = render(() => <AlertModal {...props} error/>, container);
+    setTimeout(() => {
+      destroy();
+    }, 10000)
   }
 }
 

@@ -59,6 +59,15 @@ $yt: -100px;
     }
   }
 
+  &.error {
+    .alertContent {
+      background-color: $color-primary;
+      border: solid 1px $color-primary;
+      width: auto;
+      color: $color-white;
+    }
+  }
+
   * {
     font-family: "proxima-nova", serif;
   }

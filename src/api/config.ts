@@ -8,6 +8,7 @@ export const ops = (loginToken: string = "") => {
   return {
     headers: {
       Authorization: "Bearer " + (loginToken || Storage.getToken()),
+      'Content-Type': 'application/json'
     },
   };
 };
