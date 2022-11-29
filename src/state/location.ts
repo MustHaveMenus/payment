@@ -1,8 +1,7 @@
 import {batch, createRoot} from "solid-js";
-import {LOCATIONS, USERS} from "../util/constants";
+import {LOCATIONS} from "../util/constants";
 import {createStore} from "solid-js/store";
 import {LocationDto} from "../generated/client";
-import {User} from "../type/types";
 import {removeIndex} from "../util/util";
 
 const locationsState = createRoot(() => {

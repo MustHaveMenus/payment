@@ -4,12 +4,13 @@ import PaymentInformation from "../comp/PaymentInformation";
 import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
 import {createSignal} from "solid-js";
-import {USERS} from "../util/constants";
+import {LOCATIONS, USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
+import locationsState from "../state/location";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -17,6 +18,7 @@ interface PaymentModalProps extends GenericModalProps {
 const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
   const {team} = teamState;
+  const {locations} = locationsState;
   const [btnDisabled, setBtnDisabled] = createSignal(false);
 
   const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
@@ -46,7 +48,7 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        <SubscriptionDetails users={team[USERS].length} locations={1}/>
+        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id !== it.name).length}/>
       </div>
 
       {rightSideFooter()}
