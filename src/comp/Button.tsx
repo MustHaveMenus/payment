@@ -9,12 +9,17 @@ interface ButtonProps {
 }
 
 const Button = (props: ButtonProps) => {
+  function onClick() {
+    if (!props.disabled) {
+      props.onClick?.();
+    }
+  }
   return <button classList={{
     [styles.button]: true,
     [styles.disabled]: props.disabled,
     [styles.secondary]: props.secondary,
     [styles.secondaryOutlined]: props.secondaryOutlined,
-  }} onClick={props.onClick}>{props.label}</button>
+  }} onClick={onClick}>{props.label}</button>
 }
 
 export default Button;

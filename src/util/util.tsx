@@ -1,5 +1,7 @@
 import {Countries, States} from "./countries";
-import {Option} from "../type/types";
+import {Option, PaymentInfo, PaymentTypeEnum} from "../type/types";
+import paymentType from "../comp/PaymentType";
+import {SubStatusDtoPlanCycleEnum} from "../generated/client";
 
 export function formatCreditCard(value: string) {
   return value
@@ -67,3 +69,23 @@ export const pauseValues = [
     name: '3 months'
   }
 ] as Option[];
+
+export const isNotEmpty = (v: string | undefined | null) => {
+  return !!(v && v.length);
+}
+export const isNotEmptyNumber = (v: number | undefined | null) => {
+  return !!v;
+}
+
+export const isValidPaymentInfo = (info: PaymentInfo) => {
+  return isNotEmpty(info.country) &&
+    isNotEmpty(info.number) &&
+    isNotEmpty(info.cvc) &&
+    isNotEmpty(info.zip) &&
+    isNotEmptyNumber(info.year) &&
+    isNotEmptyNumber(info.month);
+}
+
+export const getCycle = (type: PaymentTypeEnum) => {
+  return type === PaymentTypeEnum.Monthly ? SubStatusDtoPlanCycleEnum.Monthly : SubStatusDtoPlanCycleEnum.Yearly;
+}

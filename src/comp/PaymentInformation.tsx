@@ -1,21 +1,38 @@
 import styles from './PaymentInformation.module.scss';
-import {createSignal} from "solid-js";
+import {createEffect, createSignal} from "solid-js";
 import {Countries} from "../util/countries";
 import CreditCardNumberInput from "./CreditCardInput";
 import CreditCardExpireDateInput from "./CreditCardExpireDateInput";
 import Select from "./Select";
 import Input from "./Input";
 import {countryValues} from "../util/util";
-import {Option} from "../type/types";
+import {Option, PaymentInfo} from "../type/types";
 
 interface PaymentInformationProps {
-
+  onChange: (info: PaymentInfo) => void;
 }
 
 const PaymentInformation = (props: PaymentInformationProps) => {
   const [number, setNumber] = createSignal('');
+  const [cvc, setCVC] = createSignal('');
+  const [zip, setZIP] = createSignal('');
   const [expireDate, setExpireDate] = createSignal('');
   const [country, setCountry] = createSignal(Countries.at(0));
+
+  createEffect(() => {
+    const splitted = expireDate().split('/');
+    const month = parseInt(splitted[0]) || 0;
+    const year = parseInt(splitted[1]) || 0;
+
+    props.onChange({
+      number: number(),
+      cvc: cvc(),
+      zip: zip(),
+      country: (country() || Countries.at(0)!),
+      month,
+      year
+    });
+  });
 
   function onCountryChange(c: Option) {
     setCountry(c.id);
@@ -25,11 +42,11 @@ const PaymentInformation = (props: PaymentInformationProps) => {
     <CreditCardNumberInput value={number()} onChange={v => setNumber(v)}/>
     <div class={styles.split}>
       <CreditCardExpireDateInput value={expireDate()} onChange={v => setExpireDate(v)}/>
-      <Input type={'text'} placeholder={'CVC'} maxLength={4}/>
+      <Input type={'text'} placeholder={'CVC'} value={cvc()} maxLength={4} onChange={v => setCVC(v)}/>
     </div>
 
     <Select values={countryValues} onChange={onCountryChange} value={{id: (country() ?? ''), name: (country() ?? '')}}/>
-    <Input type={'text'} placeholder={'ZIP'}/>
+    <Input type={'text'} placeholder={'ZIP'} value={zip()} onChange={v => setZIP(v)}/>
   </div>
 }
 

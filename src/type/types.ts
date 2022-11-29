@@ -58,3 +58,12 @@ export enum Decision {
 export enum PaymentTypeEnum {
   Annually = 'a', Monthly = 'm'
 }
+
+export interface PaymentInfo {
+  number: string;
+  cvc: string;
+  zip: string;
+  country: string;
+  month: number;
+  year: number;
+}

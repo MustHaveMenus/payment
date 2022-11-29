@@ -3,7 +3,7 @@ import Modal, {GenericModalProps} from "../comp/Modal";
 import PaymentInformation from "../comp/PaymentInformation";
 import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
-import {createSignal} from "solid-js";
+import {createEffect, createSignal} from "solid-js";
 import {LOCATIONS, USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
@@ -11,6 +11,11 @@ import footerStyles from "../comp/ModalFooter.module.scss";
 import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import locationsState from "../state/location";
+import {PaymentInfo} from "../type/types";
+import {getCycle, isValidPaymentInfo} from "../util/util";
+import AccountsApi from "../api/AccountsApi";
+import memberState from "../state/member";
+import paymentTypeState from "../state/paymentType";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -19,10 +24,27 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
   const {team} = teamState;
   const {locations} = locationsState;
-  const [btnDisabled, setBtnDisabled] = createSignal(false);
+  const {memberId} = memberState;
+  const {paymentType} = paymentTypeState;
+  const [btnDisabled, setBtnDisabled] = createSignal(true);
+  const [paymentInfo, setPaymentInfo] = createSignal({} as PaymentInfo);
+
+  function onPaymentInfoChange(info: PaymentInfo) {
+    setPaymentInfo(info);
+  }
+
+  createEffect(() => {
+    setBtnDisabled(!isValidPaymentInfo(paymentInfo()));
+  });
+
+  function onSubscribe() {
+    //props.onNext
+    console.log('subscribe');
+    //AccountsApi.changeSubscriptionPlan(memberId(), getCycle(paymentType()), false);
+  }
 
   const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
-    <Button label={'Subscribe'} disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
+    <Button label={'Subscribe'} disabled={btnDisabled()} onClick={onSubscribe}/>
   </div>;
 
   const agreementMsg = () => <div class={styles.agreementWrapper}><Agreement/></div>;
@@ -42,7 +64,7 @@ const PaymentModal = (props: PaymentModalProps) => {
         <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
         <PaymentType/>
         <div class={styles.paymentInformationWrapper}>
-          <PaymentInformation/>
+          <PaymentInformation onChange={onPaymentInfoChange}/>
         </div>
         {leftSideFooter()}
       </div>

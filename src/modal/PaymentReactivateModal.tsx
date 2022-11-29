@@ -10,6 +10,7 @@ import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import CardOnFile from "../comp/CardOnFile";
 import PaymentInformation from "../comp/PaymentInformation";
+import {PaymentInfo} from "../type/types";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -38,6 +39,10 @@ const PaymentModal = (props: PaymentModalProps) => {
     setBtnDisabled(true);
   }
 
+  function onPaymentInfoChange(info: PaymentInfo) {
+    console.log(info);
+  }
+
   return <Modal onBack={props.onBack} footer={modalFooter()} content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
@@ -55,7 +60,7 @@ const PaymentModal = (props: PaymentModalProps) => {
                 </>
               }>
           <span class={styles.paymentInformationHeader}>Payment Information</span>
-          <PaymentInformation/>
+          <PaymentInformation onChange={onPaymentInfoChange}/>
         </Show>
 
         {leftSideFooter()}

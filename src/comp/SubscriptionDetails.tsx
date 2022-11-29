@@ -10,6 +10,7 @@ import {handleServerError} from "../util/ErrorHandler";
 import {Spinner} from "./Spinner";
 import Price from "./Price";
 import FormattedDate from "./FormattedDate";
+import {getCycle} from "../util/util";
 
 interface SubscriptionDetailsProps {
   users: number;
@@ -25,8 +26,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   createEffect(async () => {
     try {
       setLoading(true);
-      const cycle = paymentType() === PaymentTypeEnum.Monthly ? SubStatusDtoPlanCycleEnum.Monthly : SubStatusDtoPlanCycleEnum.Yearly;
-      setStatus(await AccountsApi.changeSubscriptionPlan(memberId(), cycle, true));
+      setStatus(await AccountsApi.changeSubscriptionPlan(memberId(), getCycle(paymentType()), true));
       setLoading(false);
     } catch (e: any) {
       setLoading(false);
