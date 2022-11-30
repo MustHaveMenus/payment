@@ -27,4 +27,5 @@ export * from './SubStatusDto';
 export * from './TransferFilesDto';
 export * from './UpdateCardDto';
 export * from './UpdateMemberDto';
+export * from './UpgradeSubscriptionDto';
 export * from './UserDetailsDto';

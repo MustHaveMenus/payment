@@ -26,6 +26,7 @@ import type {
   PurchaseDto,
   SubStatusDto,
   UpdateCardDto,
+  UpgradeSubscriptionDto,
   UserDetailsDto,
 } from '../models';
 import {
@@ -51,6 +52,8 @@ import {
     SubStatusDtoToJSON,
     UpdateCardDtoFromJSON,
     UpdateCardDtoToJSON,
+    UpgradeSubscriptionDtoFromJSON,
+    UpgradeSubscriptionDtoToJSON,
     UserDetailsDtoFromJSON,
     UserDetailsDtoToJSON,
 } from '../models';
@@ -168,6 +171,11 @@ export interface SetPrimaryUserLocationRequest {
 export interface UpdateAccountPaymentDetailsCardRequest {
     memberId: string;
     updateCardDto: UpdateCardDto;
+}
+
+export interface UpgradeSubscriptionPlanRequest {
+    memberId: string;
+    upgradeSubscriptionDto: UpgradeSubscriptionDto;
 }
 
 export interface ValidateBillingRequest {
@@ -974,6 +982,41 @@ export class AccountsResourceApi extends runtime.BaseAPI {
      */
     async updateAccountPaymentDetailsCard(requestParameters: UpdateAccountPaymentDetailsCardRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<LightCardDto> {
         const response = await this.updateAccountPaymentDetailsCardRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async upgradeSubscriptionPlanRaw(requestParameters: UpgradeSubscriptionPlanRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SubStatusDto>> {
+        if (requestParameters.memberId === null || requestParameters.memberId === undefined) {
+            throw new runtime.RequiredError('memberId','Required parameter requestParameters.memberId was null or undefined when calling upgradeSubscriptionPlan.');
+        }
+
+        if (requestParameters.upgradeSubscriptionDto === null || requestParameters.upgradeSubscriptionDto === undefined) {
+            throw new runtime.RequiredError('upgradeSubscriptionDto','Required parameter requestParameters.upgradeSubscriptionDto was null or undefined when calling upgradeSubscriptionPlan.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/accounts/{memberId}/subscription/upgrade`.replace(`{${"memberId"}}`, encodeURIComponent(String(requestParameters.memberId))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpgradeSubscriptionDtoToJSON(requestParameters.upgradeSubscriptionDto),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SubStatusDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async upgradeSubscriptionPlan(requestParameters: UpgradeSubscriptionPlanRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SubStatusDto> {
+        const response = await this.upgradeSubscriptionPlanRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

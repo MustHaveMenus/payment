@@ -34,6 +34,7 @@ models/SubStatusDto.ts
 models/TransferFilesDto.ts
 models/UpdateCardDto.ts
 models/UpdateMemberDto.ts
+models/UpgradeSubscriptionDto.ts
 models/UserDetailsDto.ts
 models/index.ts
 runtime.ts

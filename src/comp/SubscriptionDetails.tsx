@@ -32,7 +32,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       setLoading(false);
       await handleServerError(e);
     }
-  })
+  });
 
   return <>
     <Show when={!loading()} keyed fallback={<Spinner/>}>

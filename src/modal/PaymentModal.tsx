@@ -16,6 +16,9 @@ import {getCycle, isValidPaymentInfo} from "../util/util";
 import AccountsApi from "../api/AccountsApi";
 import memberState from "../state/member";
 import paymentTypeState from "../state/paymentType";
+import {handleServerError} from "../util/ErrorHandler";
+import {UpgradeSubscriptionDto} from "../generated/client";
+import loadingState from "../state/loading";
 
 interface PaymentModalProps extends GenericModalProps {
 }
@@ -26,6 +29,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {locations} = locationsState;
   const {memberId} = memberState;
   const {paymentType} = paymentTypeState;
+  const {setLoading} = loadingState;
   const [btnDisabled, setBtnDisabled] = createSignal(true);
   const [paymentInfo, setPaymentInfo] = createSignal({} as PaymentInfo);
 
@@ -37,10 +41,26 @@ const PaymentModal = (props: PaymentModalProps) => {
     setBtnDisabled(!isValidPaymentInfo(paymentInfo()));
   });
 
-  function onSubscribe() {
-    //props.onNext
-    console.log('subscribe');
-    //AccountsApi.changeSubscriptionPlan(memberId(), getCycle(paymentType()), false);
+  async function onSubscribe() {
+    try {
+      setLoading(true);
+      const dto = {
+        zip: paymentInfo().zip,
+        cycle: getCycle(paymentType()),
+        card: {
+          number: paymentInfo().number,
+          month: `${paymentInfo().month}`,
+          year: `${paymentInfo().year}`,
+          cvv: paymentInfo().cvc
+        }
+      } as UpgradeSubscriptionDto;
+      const resp = await AccountsApi.upgradeSubscriptionPlan(memberId(), dto);
+      console.log(resp);
+      props.onNext?.();
+    } catch (e: any) {
+      setLoading(false);
+      await handleServerError(e);
+    }
   }
 
   const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
