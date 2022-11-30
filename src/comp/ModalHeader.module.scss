@@ -5,7 +5,7 @@
   position: absolute;
   top: 0;
   display: flex;
-  width: calc(100% - $margin-md * 2);
+  width: 100%;
   padding: $margin-md $margin-md 0;
 
   .back, .close {
