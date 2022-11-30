@@ -2,6 +2,7 @@ import './style/index.scss';
 import {render} from 'solid-js/web';
 import Setup, {SetupProps} from './modal/Setup';
 import AlertModal, {AlertModalProps} from "./comp/AlertModal";
+import {ViewType} from "./type/types";
 
 let container: HTMLElement | undefined = undefined;
 let destroy: ((() => void) | undefined) = undefined;
@@ -22,6 +23,9 @@ const ProModal = {
     if (!container) init(props);
     if (!container) return;
     container.style.display = 'block';
+  },
+  upgrade: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.FREE_TO_PRO});
   },
   destroy: () => {
     destroy?.();
