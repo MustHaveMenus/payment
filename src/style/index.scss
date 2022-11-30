@@ -13,7 +13,6 @@
 
 .pro-modal {
   line-height: 1.25;
-  animation: fadein 75ms;
   font-size: 16px;
 
   * {
@@ -26,14 +25,5 @@
 
   b {
     font-weight: bold;
-  }
-
-  @keyframes fadein {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
   }
 }
