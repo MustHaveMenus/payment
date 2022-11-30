@@ -55,6 +55,7 @@ const PaymentModal = (props: PaymentModalProps) => {
         }
       } as UpgradeSubscriptionDto;
       const resp = await AccountsApi.upgradeSubscriptionPlan(memberId(), dto);
+      setLoading(false);
       console.log(resp);
       props.onNext?.();
     } catch (e: any) {
