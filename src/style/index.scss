@@ -20,6 +20,14 @@
     box-sizing: border-box;
   }
 
+  label {
+    font-weight: normal;
+  }
+
+  b {
+    font-weight: bold;
+  }
+
   @keyframes fadein {
     from {
       opacity: 0;
