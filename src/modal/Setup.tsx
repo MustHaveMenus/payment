@@ -21,6 +21,7 @@ import PauseConfirmationModal from "./PauseConfirmationModal";
 export interface SetupProps {
   type: ViewType;
   memberId: string;
+  onSuccess?: () => void;
 }
 
 export interface PrivateSetupProps extends SetupProps {
@@ -128,7 +129,7 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={onBack} /></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={'Thursday December 15, 2022.'} onDecision={onDecisionMade}/></Match>
 
-      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal/></Match>
+      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess}/></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={'aa'} expireDate={'bb'}/></Match>
       <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={'aa'} pauseDate={'Thursday December 15, 2022'} resumeDate={'Sunday January 15, 2023'}/></Match>
     </Switch>

@@ -7,13 +7,19 @@ import footerStyles from "../comp/ModalFooter.module.scss";
 import mobileState from "../state/mobile";
 
 interface ConfirmationModalProps extends GenericModalProps {
+  onSuccess?: () => void;
 }
 
 const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {closeModal} = openState;
   const {mobile} = mobileState;
 
-  const doneBtn = () => <Button label={'Done'} onClick={closeModal}/>;
+  function onDone() {
+    props.onSuccess?.();
+    closeModal();
+  }
+
+  const doneBtn = () => <Button label={'Done'} onClick={onDone}/>;
 
   const mobileFooter = () => mobile() ? <div class={footerStyles.borderedFooter}>{doneBtn()}</div> : undefined;
   const desktopFooter = () => !mobile() ? doneBtn() : <></>
