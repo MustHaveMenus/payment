@@ -93,6 +93,7 @@ const Setup = (props: PrivateSetupProps) => {
         setLoading(false);
         props.onSuccess?.();
         closeModal();
+        props.onClose();
       } catch (e: any) {
         setLoading(false);
         await handleServerError(e);
@@ -109,6 +110,7 @@ const Setup = (props: PrivateSetupProps) => {
         setLoading(false);
         props.onSuccess?.();
         closeModal();
+        props.onClose();
       } catch (e: any) {
         setLoading(false);
         await handleServerError(e);
