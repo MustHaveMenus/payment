@@ -32,7 +32,7 @@ $yt: -100px;
     background-color: $color-light-green;
     border-radius: 2px;
     border: solid 1px $color-green;
-    width: 269px;
+    width: auto;
     height: 40px;
     display: flex;
     justify-content: center;
@@ -63,7 +63,6 @@ $yt: -100px;
     .alertContent {
       background-color: $color-primary;
       border: solid 1px $color-primary;
-      width: auto;
       color: $color-white;
 
       .icon {

@@ -35,6 +35,8 @@ export enum ViewType {
   REACTIVATE_FROM_CANCELLED = 'REACTIVATE_FROM_CANCELLED',
   REACTIVATE_FROM_DECLINED = 'REACTIVATE_FROM_DECLINED',
   PAUSE = 'PAUSE',
+  CANCEL = 'CANCEL',
+  REACTIVATE = 'REACTIVATE',
 }
 
 export const Steps = {
@@ -46,6 +48,8 @@ export const Steps = {
   [ViewType.REACTIVATE_FROM_CANCELLED]: [],
   [ViewType.REACTIVATE_FROM_DECLINED]: [],
   [ViewType.PAUSE]: [View.CONFIRM_PAUSE],
+  [ViewType.CANCEL]: [View.CONFIRM_CANCEL, View.CANCELLED],
+  [ViewType.REACTIVATE]: [],
 }
 
 export const reactivateSteps = [View.OVERVIEW_REACTIVATE, View.PAYMENT_REACTIVATE, View.CONFIRMATION]

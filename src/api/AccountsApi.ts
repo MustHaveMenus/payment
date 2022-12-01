@@ -15,6 +15,14 @@ const AccountsApi = {
   upgradeSubscriptionPlan(memberId: string, upgradeSubscriptionDto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
     if (!memberId || !upgradeSubscriptionDto) return Promise.reject();
     return api.upgradeSubscriptionPlan({memberId, upgradeSubscriptionDto}, ops());
+  },
+  cancelSubscription(memberId: string): Promise<SubStatusDto> {
+    if (!memberId) return Promise.reject();
+    return api.cancelSubscription({memberId}, ops());
+  },
+  reactivateSubscription(memberId: string): Promise<SubStatusDto> {
+    if (!memberId) return Promise.reject();
+    return api.reactivateSubscription({memberId}, ops());
   }
 };
 

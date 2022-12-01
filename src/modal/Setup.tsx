@@ -17,6 +17,9 @@ import CancelConfirmationModal from "./CancelConfirmationModal";
 import PaymentReactivateModal from "./PaymentReactivateModal";
 import PauseModal from "./PauseModal";
 import PauseConfirmationModal from "./PauseConfirmationModal";
+import loadingState from "../state/loading";
+import {handleServerError} from "../util/ErrorHandler";
+import {Alert} from "../index";
 
 export interface SetupProps {
   type: ViewType;
@@ -30,11 +33,14 @@ export interface PrivateSetupProps extends SetupProps {
 
 const Setup = (props: PrivateSetupProps) => {
   const [steps, setSteps] = createSignal([] as View[]);
+  const [email, setEmail] = createSignal('');
+  const [expireDate, setExpireDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
   const {opened, openModal} = openState;
   const {memberId, setMemberId} = memberState;
   const {addLocations} = locationsState;
+  const {setLoading} = loadingState;
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
 
   createEffect(() => {
@@ -76,7 +82,34 @@ const Setup = (props: PrivateSetupProps) => {
       props.onClose();
       openModal();
     }
+  });
+
+  createEffect(async () => {
+    if (props.type === ViewType.REACTIVATE) {
+      try {
+        setLoading(true);
+        await AccountsApi.reactivateSubscription(memberId());
+        Alert.show({text: 'Subscription successfully reactivated'});
+        setLoading(false);
+      } catch (e: any) {
+        setLoading(false);
+        await handleServerError(e);
+      }
+    }
   })
+
+  async function onCancel() {
+    try {
+      setLoading(true);
+      const resp = await AccountsApi.cancelSubscription(memberId());
+      setEmail(resp.email || '');
+      setExpireDate(resp.planEndDate || new Date());
+      setLoading(false);
+    } catch (e: any) {
+      setLoading(false);
+      await handleServerError(e);
+    }
+  }
 
   function onNext() {
     const currentIdx = steps().findIndex((it => it === view()));
@@ -92,7 +125,7 @@ const Setup = (props: PrivateSetupProps) => {
     }
   }
 
-  function onDecisionMade(dec: Decision) {
+  async function onDecisionMade(dec: Decision) {
     switch (dec) {
       case Decision.CANCEL: {
         setSteps(cancelSteps);
@@ -105,9 +138,13 @@ const Setup = (props: PrivateSetupProps) => {
         break;
       }
       case Decision.CONFIRM_CANCEL: {
+        await onCancel();
         onNext();
+        break;
       }
       case Decision.BACK_TO_ACCOUNT: {
+        props.onClose();
+        break;
 
       }
       case Decision.CONFIRM_PAUSE: {
@@ -126,12 +163,12 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={onBack} /></Match>
+      <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={props.type === ViewType.CANCEL ? undefined : onBack} /></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={'Thursday December 15, 2022.'} onDecision={onDecisionMade}/></Match>
 
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess}/></Match>
-      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={'aa'} expireDate={'bb'}/></Match>
-      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={'aa'} pauseDate={'Thursday December 15, 2022'} resumeDate={'Sunday January 15, 2023'}/></Match>
+      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()}/></Match>
+      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={'Thursday December 15, 2022'} resumeDate={'Sunday January 15, 2023'}/></Match>
     </Switch>
   </>
 }

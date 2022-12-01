@@ -27,6 +27,15 @@ const ProModal = {
   upgrade: (props: SetupProps) => {
     ProModal.show({...props, type: ViewType.FREE_TO_PRO});
   },
+  pause: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.PAUSE});
+  },
+  cancel: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.CANCEL});
+  },
+  reactivate: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.REACTIVATE});
+  },
   destroy: () => {
     destroy?.();
     destroy = undefined;
