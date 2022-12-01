@@ -48,7 +48,7 @@ export const Steps = {
   [ViewType.REACTIVATE_FROM_PAUSED]: [View.OVERVIEW_REACTIVATE],
   [ViewType.REACTIVATE_FROM_CANCELLED]: [],
   [ViewType.REACTIVATE_FROM_DECLINED]: [],
-  [ViewType.PAUSE]: [View.CONFIRM_PAUSE],
+  [ViewType.PAUSE]: [View.CONFIRM_PAUSE, View.PAUSED],
   [ViewType.CANCEL]: [View.CONFIRM_CANCEL, View.CANCELLED],
   [ViewType.REACTIVATE]: [],
   [ViewType.RESUME]: [],
@@ -56,6 +56,11 @@ export const Steps = {
 
 export const reactivateSteps = [View.OVERVIEW_REACTIVATE, View.PAYMENT_REACTIVATE, View.CONFIRMATION]
 export const cancelSteps = [View.OVERVIEW_REACTIVATE, View.CONFIRM_CANCEL, View.CANCELLED];
+export const cancelFromPauseSteps = [View.CONFIRM_PAUSE, View.CONFIRM_CANCEL, View.CANCELLED];
+
+export interface DecisionParams {
+  period?: number;
+}
 
 export enum Decision {
   REACTIVATE, CANCEL, CONFIRM_CANCEL, BACK_TO_ACCOUNT, CONFIRM_PAUSE

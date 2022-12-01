@@ -4,6 +4,10 @@ import {apiConfig, ops} from "./config";
 const api = new AccountsResourceApi(apiConfig);
 
 const AccountsApi = {
+  getSubscription(memberId: string): Promise<SubStatusDto> {
+    if (!memberId) return Promise.reject();
+    return api.getSubscription({memberId}, ops());
+  },
   getLocations(memberId: string): Promise<LocationDto[]> {
     if (!memberId) return Promise.reject();
     return api.getUserLocations({memberId}, ops());
@@ -23,6 +27,10 @@ const AccountsApi = {
   reactivateSubscription(memberId: string): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
     return api.reactivateSubscription({memberId}, ops());
+  },
+  pauseSubscription(memberId: string, period: number): Promise<SubStatusDto> {
+    if (!memberId) return Promise.reject();
+    return api.pauseSubscription({memberId, body: period}, ops());
   },
   resumeSubscription(memberId: string): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();

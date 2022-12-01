@@ -6,10 +6,11 @@ import mobileState from "../state/mobile";
 import CheckIcon from "../comp/svg/CheckIcon";
 import {createEffect} from "solid-js";
 import {Alert} from "../index";
+import FormattedDate from "../comp/FormattedDate";
 
 interface PauseConfirmationModalProps extends GenericModalProps {
-  pauseDate: string;
-  resumeDate: string;
+  pauseDate: Date;
+  resumeDate: Date;
   email: string;
   onSuccess?: () => void;
 }
@@ -34,11 +35,11 @@ const PauseConfirmationModal = (props: PauseConfirmationModalProps) => {
       <div class={styles.consequences}>
         <div>
           <div><CheckIcon/></div>
-          <div>Your account will be paused on <b>{props.pauseDate}</b></div>
+          <div>Your account will be paused on <b><FormattedDate date={props.pauseDate}/></b></div>
         </div>
         <div>
           <div><CheckIcon/></div>
-          <div>You will not be charged again until <b>{props.resumeDate}</b></div>
+          <div>You will not be charged again until <b><FormattedDate date={props.resumeDate}/></b></div>
         </div>
         <div>
           <div><CheckIcon/></div>

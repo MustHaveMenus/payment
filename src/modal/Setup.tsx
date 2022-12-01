@@ -1,4 +1,4 @@
-import {cancelSteps, Decision, reactivateSteps, Steps, View, ViewType} from "../type/types";
+import {cancelFromPauseSteps, cancelSteps, Decision, DecisionParams, reactivateSteps, Steps, View, ViewType} from "../type/types";
 import OverviewModal from "./OverviewModal";
 import {createEffect, createResource, createSignal, Match, onCleanup, onMount, Switch} from "solid-js";
 import PaymentModal from "./PaymentModal";
@@ -35,6 +35,7 @@ const Setup = (props: PrivateSetupProps) => {
   const [steps, setSteps] = createSignal([] as View[]);
   const [email, setEmail] = createSignal('');
   const [expireDate, setExpireDate] = createSignal(new Date());
+  const [nextPlanBillDate, setNextPlanBillDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
   const {opened, openModal, closeModal} = openState;
@@ -42,6 +43,7 @@ const Setup = (props: PrivateSetupProps) => {
   const {addLocations} = locationsState;
   const {setLoading} = loadingState;
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
+  const [subscription] = createResource(memberId, AccountsApi.getSubscription);
 
   createEffect(() => {
     if (!props.type) return;
@@ -58,7 +60,19 @@ const Setup = (props: PrivateSetupProps) => {
     } catch (e) {
       console.error(e);
     }
-  })
+  });
+
+  createEffect(() => {
+    try {
+      setLoading(true);
+      const resp = subscription();
+      if (!resp) return;
+      setNextPlanBillDate(resp.planEndDate || new Date());
+      setLoading(false);
+    } catch (e) {
+      console.error(e);
+    }
+  });
 
   const detectMobile = () => {
     const elem = document.getElementById('mob-detect');
@@ -118,6 +132,19 @@ const Setup = (props: PrivateSetupProps) => {
     }
   });
 
+  async function onPause(period: number) {
+    try {
+      setLoading(true);
+      const resp = await AccountsApi.pauseSubscription(memberId(), period);
+      setEmail(resp.email || '');
+      setExpireDate(resp.planEndDate || new Date());
+      setLoading(false);
+    } catch (e: any) {
+      setLoading(false);
+      await handleServerError(e);
+    }
+  }
+
   async function onCancel() {
     try {
       setLoading(true);
@@ -145,11 +172,22 @@ const Setup = (props: PrivateSetupProps) => {
     }
   }
 
-  async function onDecisionMade(dec: Decision) {
+  createEffect(() => {
+    if (view() === View.CONFIRM_PAUSE) {
+      setSteps(Steps[props.type]);
+    }
+  })
+
+  async function onDecisionMade(dec: Decision, params?: DecisionParams) {
     switch (dec) {
       case Decision.CANCEL: {
-        setSteps(cancelSteps);
-        setView(cancelSteps[1]);
+        let st = cancelSteps;
+        if (props.type === ViewType.PAUSE) {
+          st = cancelFromPauseSteps;
+        }
+
+        setSteps(st);
+        setView(st[1]);
         break;
       }
       case Decision.REACTIVATE: {
@@ -168,7 +206,9 @@ const Setup = (props: PrivateSetupProps) => {
 
       }
       case Decision.CONFIRM_PAUSE: {
-        setView(View.PAUSED);
+        await onPause(params?.period || 0);
+        onNext();
+        break;
       }
     }
   }
@@ -184,11 +224,11 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={props.type === ViewType.CANCEL ? undefined : onBack} /></Match>
-      <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={'Thursday December 15, 2022.'} onDecision={onDecisionMade}/></Match>
+      <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>
 
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess}/></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()} onSuccess={props.onSuccess}/></Match>
-      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={'Thursday December 15, 2022'} resumeDate={'Sunday January 15, 2023'} onSuccess={props.onSuccess}/></Match>
+      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()} resumeDate={nextPlanBillDate()} onSuccess={props.onSuccess}/></Match>
     </Switch>
   </>
 }

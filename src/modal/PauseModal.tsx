@@ -3,14 +3,15 @@ import Modal, {GenericModalProps} from "../comp/Modal";
 import mobileState from "../state/mobile";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import Button from "../comp/Button";
-import {Decision} from "../type/types";
+import {Decision, DecisionParams} from "../type/types";
 import Select from "../comp/Select";
 import {pauseValues} from "../util/util";
 import {createSignal} from "solid-js";
+import FormattedDate from "../comp/FormattedDate";
 
 interface PauseModalProps extends GenericModalProps {
-  pauseDate: string
-  onDecision: (dec: Decision) => void;
+  pauseDate: Date
+  onDecision: (dec: Decision, params?: DecisionParams) => void;
 }
 
 const PauseModal = (props: PauseModalProps) => {
@@ -18,7 +19,7 @@ const PauseModal = (props: PauseModalProps) => {
   const [pausePeriod, setPausePeriod] = createSignal(pauseValues[0]);
 
 
-  const cancelBtn = () => <Button label={'Pause Subscription'} secondary onClick={() => props.onDecision(Decision.CONFIRM_PAUSE)}/>;
+  const cancelBtn = () => <Button label={'Pause Subscription'} secondary onClick={() => props.onDecision(Decision.CONFIRM_PAUSE, {period: parseInt(pausePeriod().id || '0')})}/>;
   const backToAccountBtn = () => <Button label={'Cancel Subscription'} secondaryOutlined onClick={() => props.onDecision(Decision.CANCEL)}/>;
 
   const footer = <footer class={mobile() ? footerStyles.reactivateOverview : styles.footer}>
@@ -33,7 +34,7 @@ const PauseModal = (props: PauseModalProps) => {
     <section class={styles.topSection}>
       <span class={styles.topHeader}>Pause Subscription</span>
       <span class={styles.topSubheader} style={{"margin-top": '12px'}}>Need to take a break? No problem!</span>
-      <span class={styles.topSubheader}>Pause will take effect on {props.pauseDate}</span>
+      <span class={styles.topSubheader}>Pause will take effect on <FormattedDate date={props.pauseDate}/></span>
 
       <div class={styles.pausePeriod} style={{"margin-top": '32px'}}>
         <span>Pause for</span>
