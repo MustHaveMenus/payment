@@ -11,6 +11,7 @@ import FormattedDate from "../comp/FormattedDate";
 interface CancelConfirmationModalProps extends GenericModalProps {
   expireDate: Date;
   email: string;
+  onSuccess?: () => void;
 }
 
 const CancelConfirmationModal = (props: CancelConfirmationModalProps) => {
@@ -21,6 +22,11 @@ const CancelConfirmationModal = (props: CancelConfirmationModalProps) => {
     Alert.show({text: 'Subscription successfully cancelled'});
   });
 
+  function onDone() {
+    props.onSuccess?.();
+    closeModal();
+  }
+
   return <Modal content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <img src={sadFace} alt={''}/>
@@ -28,7 +34,7 @@ const CancelConfirmationModal = (props: CancelConfirmationModalProps) => {
       <span class={`${styles.textMd} ${styles.smallMargin}`}>Your subscription has been cancelled, but you can still access your account until it expires on <b><FormattedDate date={props.expireDate}/></b></span>
       <span class={styles.textMd}>We sent a confirmation email to <b>{props.email}</b></span>
 
-      <Button label={'Ok'} secondary onClick={closeModal}/>
+      <Button label={'Ok'} secondary onClick={onDone}/>
     </div>
   }/>
 }

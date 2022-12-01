@@ -11,6 +11,7 @@ interface PauseConfirmationModalProps extends GenericModalProps {
   pauseDate: string;
   resumeDate: string;
   email: string;
+  onSuccess?: () => void;
 }
 
 const PauseConfirmationModal = (props: PauseConfirmationModalProps) => {
@@ -20,6 +21,11 @@ const PauseConfirmationModal = (props: PauseConfirmationModalProps) => {
   createEffect(() => {
     Alert.show({text: 'Subscription successfully paused'});
   });
+
+  function onDone() {
+    props.onSuccess?.();
+    closeModal();
+  }
 
   return <Modal content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
@@ -44,7 +50,7 @@ const PauseConfirmationModal = (props: PauseConfirmationModalProps) => {
         </div>
       </div>
 
-      <Button label={'Ok'} secondary onClick={closeModal}/>
+      <Button label={'Ok'} secondary onClick={onDone}/>
     </div>
   }/>
 }

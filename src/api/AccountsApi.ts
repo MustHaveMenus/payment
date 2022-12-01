@@ -23,7 +23,11 @@ const AccountsApi = {
   reactivateSubscription(memberId: string): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
     return api.reactivateSubscription({memberId}, ops());
-  }
+  },
+  resumeSubscription(memberId: string): Promise<SubStatusDto> {
+    if (!memberId) return Promise.reject();
+    return api.resumeSubscription({memberId}, ops());
+  },
 };
 
 export default AccountsApi;

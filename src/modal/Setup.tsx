@@ -37,7 +37,7 @@ const Setup = (props: PrivateSetupProps) => {
   const [expireDate, setExpireDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
-  const {opened, openModal} = openState;
+  const {opened, openModal, closeModal} = openState;
   const {memberId, setMemberId} = memberState;
   const {addLocations} = locationsState;
   const {setLoading} = loadingState;
@@ -91,12 +91,30 @@ const Setup = (props: PrivateSetupProps) => {
         await AccountsApi.reactivateSubscription(memberId());
         Alert.show({text: 'Subscription successfully reactivated'});
         setLoading(false);
+        props.onSuccess?.();
+        closeModal();
       } catch (e: any) {
         setLoading(false);
         await handleServerError(e);
       }
     }
-  })
+  });
+
+  createEffect(async () => {
+    if (props.type === ViewType.RESUME) {
+      try {
+        setLoading(true);
+        await AccountsApi.resumeSubscription(memberId());
+        Alert.show({text: 'Subscription successfully resumed'});
+        setLoading(false);
+        props.onSuccess?.();
+        closeModal();
+      } catch (e: any) {
+        setLoading(false);
+        await handleServerError(e);
+      }
+    }
+  });
 
   async function onCancel() {
     try {
@@ -167,8 +185,8 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={'Thursday December 15, 2022.'} onDecision={onDecisionMade}/></Match>
 
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess}/></Match>
-      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()}/></Match>
-      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={'Thursday December 15, 2022'} resumeDate={'Sunday January 15, 2023'}/></Match>
+      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()} onSuccess={props.onSuccess}/></Match>
+      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={'Thursday December 15, 2022'} resumeDate={'Sunday January 15, 2023'} onSuccess={props.onSuccess}/></Match>
     </Switch>
   </>
 }

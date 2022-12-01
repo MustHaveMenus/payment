@@ -36,6 +36,9 @@ const ProModal = {
   reactivate: (props: SetupProps) => {
     ProModal.show({...props, type: ViewType.REACTIVATE});
   },
+  resume: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.RESUME});
+  },
   destroy: () => {
     destroy?.();
     destroy = undefined;
