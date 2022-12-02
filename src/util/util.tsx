@@ -1,7 +1,7 @@
 import {Countries, States} from "./countries";
 import {Option, PaymentInfo, PaymentTypeEnum} from "../type/types";
 import paymentType from "../comp/PaymentType";
-import {SubStatusDtoPlanCycleEnum} from "../generated/client";
+import {LocationDto, SubStatusDtoPlanCycleEnum} from "../generated/client";
 
 export function formatCreditCard(value: string) {
   return value
@@ -84,6 +84,16 @@ export const isValidPaymentInfo = (info: PaymentInfo) => {
     isNotEmpty(info.zip) &&
     isNotEmptyNumber(info.year) &&
     isNotEmptyNumber(info.month);
+}
+
+export const isValidLocation = (loc: LocationDto) => {
+  return isNotEmpty(loc.name) &&
+    isNotEmpty(loc.address) &&
+    isNotEmpty(loc.city) &&
+    isNotEmpty(loc.state) &&
+    isNotEmpty(loc.country) &&
+    isNotEmpty(loc.zip)
+
 }
 
 export const getCycle = (type: PaymentTypeEnum) => {
