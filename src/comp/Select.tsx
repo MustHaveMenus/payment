@@ -11,11 +11,14 @@ interface SelectProps<T extends Option> {
 }
 
 const Select = (props: SelectProps<Option>) => {
-  return <select class={styles.select} onChange={(e) => props.onChange(props.values.find(it => it.name === (e.target as HTMLSelectElement).value)!)}>
-    <For each={props.values} fallback={<div>Loading...</div>}>
-      {(item) => <option selected={item?.id === props.value?.id} disabled={props.disabledValues?.map(it => it?.id).includes(item?.id)}>{item?.name}</option>}
-    </For>
-  </select>
+  return <div>
+    <select class={styles.select} onChange={(e) => props.onChange(props.values.find(it => it.name === (e.target as HTMLSelectElement).value)!)}>
+      <For each={props.values} fallback={<div>Loading...</div>}>
+        {(item) => <option selected={item?.id === props.value?.id}
+                           disabled={props.disabledValues?.map(it => it?.id).includes(item?.id)}>{item?.name}</option>}
+      </For>
+    </select>
+  </div>
 }
 
 export default Select;

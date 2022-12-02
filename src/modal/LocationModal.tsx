@@ -4,17 +4,18 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
-import {createEffect, createSignal, For, onCleanup, onMount, Show} from "solid-js";
+import {createEffect, createSignal, For, onCleanup, onMount, Setter, Show} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
 import locationsState from "../state/location";
-import {countryValues, stateValues} from "../util/util";
+import {countryValues, isNotEmpty, isValidLocation, stateValues} from "../util/util";
 import {LocationDto} from "../generated/client";
-import {LOCATIONS} from "../util/constants";
+import {DEFAULT_LOCATION, LOCATIONS} from "../util/constants";
 import mobileState from "../state/mobile";
 import TrashIcon from "../comp/svg/TrashIcon";
 import generalStyles from "../style/general.module.scss";
 import LocationCircleIcon from "../comp/svg/LocationCircleIcon";
+import {Option} from "../type/types";
 
 interface LocationModalProps extends GenericModalProps {
   secondary?: boolean;
@@ -37,7 +38,15 @@ const LocationModal = (props: LocationModalProps) => {
     updateCountry
   } = locationsState;
   const [newLocations, setNewLocations] = createSignal([] as LocationDto[]);
-  const [btnDisabled, setBtnDisabled] = createSignal(true);
+  const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
+  const [addLocBtnDisabled, setAddLocBtnDisabled] = createSignal(true);
+  const [nameErr, setNameErr] = createSignal([] as string[]);
+  const [addressErr, setAddressErr] = createSignal([] as string[]);
+  const [address2Err, setAddress2Err] = createSignal([] as string[]);
+  const [cityErr, setCityErr] = createSignal([] as string[]);
+  const [zipErr, setZipErr] = createSignal([] as string[]);
+  const [stateErr, setStateErr] = createSignal([] as string[]);
+  const [countryErr, setCountryErr] = createSignal([] as string[]);
 
   createEffect(() => {
     const locs = locations[LOCATIONS];
@@ -48,17 +57,55 @@ const LocationModal = (props: LocationModalProps) => {
   onMount(addNewLocation);
   onCleanup(cleanInvalidLocations);
 
-  function validateAndProceed() {
-    props.onNext?.();
-  }
+  createEffect(() => {
+    console.log(locations)
+  }, [locations]);
 
   function addNewLocation() {
-    addLocation({});
+    addLocation(JSON.parse(JSON.stringify(DEFAULT_LOCATION)));
   }
 
-  createEffect(() => {
-    console.log(locations);
-  });
+  function update(loc: LocationDto, e: KeyboardEvent | null, setter: Setter<string[]>, updateState: (value: string) => void) {
+    const key = e?.key.toLowerCase();
+    if (key === 'tab' || key === 'shift') return;
+    const idx = locations[LOCATIONS].indexOf(loc);
+    const value = (e?.target as HTMLInputElement)?.value ?? '';
+    updateState(value);
+
+    if (isNotEmpty(value)) {
+      setErrorMessage(setter, idx, '');
+    } else {
+      setErrorMessage(setter, idx, 'Please complete this field.');
+    }
+    validate();
+  }
+
+  const validate = () => {
+    let valid = true;
+    locations[LOCATIONS].filter(it => it.id === it.name).forEach(loc => {
+      if (!isValidLocation(loc)) {
+        valid = false;
+      }
+    });
+    setNextBtnDisabled(!valid);
+    setAddLocBtnDisabled(!valid);
+  }
+
+  const onUpdateName = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setNameErr, (value: string) => updateName(loc, value, true));
+  const onUpdateAddress = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setAddressErr, (value: string) => updateAddress(loc, value));
+  const onUpdateAddress2 = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setAddress2Err, (value: string) => updateAddress2(loc, value));
+  const onUpdateCity = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setCityErr, (value: string) => updateCity(loc, value));
+  const onUpdateZip = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setZipErr, (value: string) => updateZip(loc, value));
+  const onUpdateState = (loc: LocationDto, v: Option) => update(loc, null, setStateErr, () => updateState(loc, v.name!));
+  const onUpdateCountry = (loc: LocationDto, v: Option) => update(loc, null, setCountryErr, () => updateCountry(loc, v.name!));
+
+  function setErrorMessage(setter: Setter<string[]>, idx: number, value: string) {
+    setter(old => {
+      const temp = [...old];
+      temp[idx] = value;
+      return temp;
+    });
+  }
 
   return <Modal onBack={props.onBack}
                 header={
@@ -87,36 +134,38 @@ const LocationModal = (props: LocationModalProps) => {
                           </div>
 
                           <div class={styles.formContent}>
-                            <Input type={'text'} value={loc.name} placeholder={'Business Name'}
-                                   onKeyUp={(e) => updateName(loc, (e.target as HTMLInputElement)?.value ?? '', true)}/>
+                            <Input type={'text'} value={loc.name} placeholder={'Business Name'} errorMsg={nameErr()[i()]}
+                                   onKeyUp={(e) => onUpdateName(loc, e)}/>
                             <div class={styles.split}>
-                              <Input type={'text'} value={loc.address} placeholder={'Street Address 1'}
-                                     onKeyUp={(e) => updateAddress(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
-                              <Input type={'text'} value={loc.address2} placeholder={'Street Address 2'}
-                                     onKeyUp={(e) => updateAddress2(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
+                              <Input type={'text'} value={loc.address} placeholder={'Street Address 1'} errorMsg={addressErr()[i()]}
+                                     onKeyUp={(e) => onUpdateAddress(loc, e)}/>
+                              <Input type={'text'} value={loc.address2} placeholder={'Street Address 2'} errorMsg={address2Err()[i()]}
+                                     onKeyUp={(e) => onUpdateAddress2(loc, e)}/>
                             </div>
                             <div class={styles.split}>
-                              <Input type={'text'} value={loc.city} placeholder={'City'}
-                                     onKeyUp={(e) => updateCity(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
-                              <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}} onChange={v => updateState(loc, v.name!)}/>
+                              <Input type={'text'} value={loc.city} placeholder={'City'} errorMsg={cityErr()[i()]}
+                                     onKeyUp={(e) => onUpdateCity(loc, e)}/>
+                              <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}}
+                                      onChange={v => onUpdateState(loc, v)}/>
                             </div>
                             <div class={styles.split}>
-                              <Select values={countryValues} onChange={v => updateCountry(loc, v.name!)} value={{id: (loc.country ?? ''), name: (loc.country ?? '')}}/>
-                              <Input type={'text'} value={''} placeholder={'Zip'}
-                                     onKeyUp={(e) => updateZip(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
+                              <Select values={countryValues} onChange={v => onUpdateCountry(loc, v)}
+                                      value={{id: (loc.country ?? ''), name: (loc.country ?? '')}}/>
+                              <Input type={'text'} value={loc.zip} placeholder={'Zip'} errorMsg={zipErr()[i()]}
+                                     onKeyUp={(e) => onUpdateZip(loc, e)}/>
                             </div>
                           </div>
                         </div>
                       }</For>
                       <div class={styles.addLocationBtnWrapper}>
-                        <Button label={'+ Add Another Location'} onClick={addNewLocation}/>
+                        <Button label={'+ Add Another Location'} disabled={addLocBtnDisabled()} onClick={addNewLocation}/>
                       </div>
                     </div>
                   </div>
                 }
                 footer={
-                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary }}>
-                    <Button onClick={validateAndProceed} disabled={btnDisabled()} label={'Next'}></Button>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary}}>
+                    <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
                     <Show when={!props.disallowSkip} keyed>
                       <span onClick={props.onNext}>Skip this step {'>'}</span>
                     </Show>

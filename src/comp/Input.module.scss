@@ -1,6 +1,14 @@
 @import '../style/vars.scss';
 @import '../style/mixins.scss';
 
+.inputWrapper {
+  display: flex;
+  flex-direction: column;
+}
+
 .input {
   @include input();
+}
+.errorMsg {
+  @include errorMsg();
 }
