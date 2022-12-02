@@ -220,7 +220,8 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={onNext}/></Match>
       <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
       <Match when={View.LOCATION === view()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.ADD_LOCATION === view()} keyed><LocationModal onNext={onNext} secondary/></Match>
+      <Match when={View.ADD_LOCATION === view()} keyed><LocationModal onNext={onNext} secondary disallowSkip/></Match>
+      <Match when={View.ADD_TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext} secondary/></Match>
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={onBack} onNext={onNext}/></Match>
