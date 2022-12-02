@@ -54,6 +54,12 @@
       height: 32px;
       padding: 0;
     }
+
+    &.secondary {
+      button {
+        background-color: $color-purple;
+      }
+    }
   }
 
   &.mobile {

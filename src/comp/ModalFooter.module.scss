@@ -26,6 +26,12 @@ $leftMargin: 31px;
 
       @include hover();
     }
+
+    &.secondary {
+      button {
+        background-color: $color-purple;
+      }
+    }
   }
 
   .reactivateOverview {

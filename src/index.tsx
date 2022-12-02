@@ -39,6 +39,9 @@ const ProModal = {
   resume: (props: SetupProps) => {
     ProModal.show({...props, type: ViewType.RESUME});
   },
+  addLocation: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.ADD_LOCATION_ADDON});
+  },
   destroy: () => {
     destroy?.();
     destroy = undefined;

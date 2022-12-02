@@ -4,7 +4,7 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
-import {createEffect, createSignal, For, onCleanup, onMount} from "solid-js";
+import {createEffect, createSignal, For, onCleanup, onMount, Show} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
 import locationsState from "../state/location";
@@ -14,14 +14,29 @@ import {LOCATIONS} from "../util/constants";
 import mobileState from "../state/mobile";
 import TrashIcon from "../comp/svg/TrashIcon";
 import generalStyles from "../style/general.module.scss";
+import LocationCircleIcon from "../comp/svg/LocationCircleIcon";
 
 interface LocationModalProps extends GenericModalProps {
+  secondary?: boolean;
 }
 
 const LocationModal = (props: LocationModalProps) => {
   const {mobile} = mobileState;
-  const {locations, addLocation, updateName, updateCity, updateZip, updateAddress, updateAddress2, cleanInvalidLocations, deleteLocation} = locationsState;
+  const {
+    locations,
+    addLocation,
+    updateName,
+    updateCity,
+    updateZip,
+    updateAddress,
+    updateAddress2,
+    cleanInvalidLocations,
+    deleteLocation,
+    updateState,
+    updateCountry
+  } = locationsState;
   const [newLocations, setNewLocations] = createSignal([] as LocationDto[]);
+  const [btnDisabled, setBtnDisabled] = createSignal(true);
 
   createEffect(() => {
     const locs = locations[LOCATIONS];
@@ -36,24 +51,26 @@ const LocationModal = (props: LocationModalProps) => {
     props.onNext?.();
   }
 
-  function onStateChange() {
-
-  }
-
-  function onCountryChange() {
-
-  }
-
   function addNewLocation() {
     addLocation({});
   }
 
+  createEffect(() => {
+    console.log(locations);
+  });
+
   return <Modal onBack={props.onBack}
                 header={
                   <div class={headerStyles.wrapper}>
-                    <span class={headerStyles.header}>Add Locations</span>
-                    <span class={headerStyles.subheader}>Manage all your storefronts and brands from a single account.</span>
-                    <span class={headerStyles.subheader}>Try it free for 30 days. Only ${locationPricePerMonth}/month per location after that.</span>
+                    <span class={headerStyles.header}><Show when={props.secondary} keyed><LocationCircleIcon/></Show>Add Locations</span>
+                    <Show when={props.secondary} keyed fallback={<>¸Ø
+                      <span class={headerStyles.subheader}>Manage all your storefronts and brands from a single account.</span>
+                      <span
+                        class={headerStyles.subheader}>Try it free for 30 days. Only ${locationPricePerMonth}/month per location after that.</span>
+                    </>}>
+                      <span
+                        class={headerStyles.subheader}>Manage all your storefronts and brands from a single account. Add locations for only ${locationPricePerMonth}/month.</span>
+                    </Show>
                   </div>
                 }
                 content={
@@ -80,10 +97,10 @@ const LocationModal = (props: LocationModalProps) => {
                             <div class={styles.split}>
                               <Input type={'text'} value={loc.city} placeholder={'City'}
                                      onKeyUp={(e) => updateCity(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
-                              <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}} onChange={onStateChange}/>
+                              <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}} onChange={v => updateState(loc, v.name!)}/>
                             </div>
                             <div class={styles.split}>
-                              <Select values={countryValues} onChange={onCountryChange} value={{id: (loc.country ?? ''), name: (loc.country ?? '')}}/>
+                              <Select values={countryValues} onChange={v => updateCountry(loc, v.name!)} value={{id: (loc.country ?? ''), name: (loc.country ?? '')}}/>
                               <Input type={'text'} value={''} placeholder={'Zip'}
                                      onKeyUp={(e) => updateZip(loc, (e.target as HTMLInputElement)?.value ?? '')}/>
                             </div>
@@ -97,9 +114,11 @@ const LocationModal = (props: LocationModalProps) => {
                   </div>
                 }
                 footer={
-                  <div class={footerStyles.borderedFooter}>
-                    <Button onClick={validateAndProceed} label={'Next'}></Button>
-                    <span onClick={props.onNext}>Skip this step {'>'}</span>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary }}>
+                    <Button onClick={validateAndProceed} disabled={btnDisabled()} label={'Next'}></Button>
+                    <Show when={!props.secondary} keyed>
+                      <span onClick={props.onNext}>Skip this step {'>'}</span>
+                    </Show>
                   </div>
                 }/>
 }

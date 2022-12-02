@@ -33,9 +33,11 @@ const locationsState = createRoot(() => {
   const updateZip = (loc: LocationDto, value: string) => updateProp(loc, value, 'zip');
   const updateAddress = (loc: LocationDto, value: string) => updateProp(loc, value, 'address');
   const updateAddress2 = (loc: LocationDto, value: string) => updateProp(loc, value, 'address2');
+  const updateState = (loc: LocationDto, value: string) => updateProp(loc, value, 'state');
+  const updateCountry = (loc: LocationDto, value: string) => updateProp(loc, value, 'country');
   const cleanInvalidLocations = () => setLocations(LOCATIONS, old => old.filter(it => it.id));
 
-  return {locations, addLocation, addLocations, updateName, updateCity, updateZip, updateAddress, updateAddress2, cleanInvalidLocations, deleteLocation};
+  return {locations, addLocation, addLocations, updateName, updateCity, updateZip, updateAddress, updateState, updateCountry, updateAddress2, cleanInvalidLocations, deleteLocation};
 });
 
 export default locationsState;
