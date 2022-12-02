@@ -18,6 +18,7 @@ import LocationCircleIcon from "../comp/svg/LocationCircleIcon";
 
 interface LocationModalProps extends GenericModalProps {
   secondary?: boolean;
+  disallowSkip?: boolean;
 }
 
 const LocationModal = (props: LocationModalProps) => {
@@ -63,7 +64,7 @@ const LocationModal = (props: LocationModalProps) => {
                 header={
                   <div class={headerStyles.wrapper}>
                     <span class={headerStyles.header}><Show when={props.secondary} keyed><LocationCircleIcon/></Show>Add Locations</span>
-                    <Show when={props.secondary} keyed fallback={<>¸Ø
+                    <Show when={props.secondary} keyed fallback={<>
                       <span class={headerStyles.subheader}>Manage all your storefronts and brands from a single account.</span>
                       <span
                         class={headerStyles.subheader}>Try it free for 30 days. Only ${locationPricePerMonth}/month per location after that.</span>
@@ -116,7 +117,7 @@ const LocationModal = (props: LocationModalProps) => {
                 footer={
                   <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary }}>
                     <Button onClick={validateAndProceed} disabled={btnDisabled()} label={'Next'}></Button>
-                    <Show when={!props.secondary} keyed>
+                    <Show when={!props.disallowSkip} keyed>
                       <span onClick={props.onNext}>Skip this step {'>'}</span>
                     </Show>
                   </div>
