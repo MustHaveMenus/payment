@@ -15,8 +15,10 @@ import teamState from "../state/team";
 import locationState from "../state/location";
 import {LocationDto} from "../generated/client";
 import mobileState from "../state/mobile";
+import TeamCircleIcon from "../comp/svg/TeamCircleIcon";
 
 interface TeamModalProps extends GenericModalProps {
+  secondary?: boolean;
 }
 
 const TeamModal = (props: TeamModalProps) => {
@@ -57,9 +59,14 @@ const TeamModal = (props: TeamModalProps) => {
   return <Modal onBack={props.onBack}
                 header={
                   <div class={headerStyles.wrapper}>
-                    <span class={headerStyles.header}>Add Your Team</span>
-                    <span class={headerStyles.subheader}>Try Teams for free for 30 days. Only ${teamPricePerMonth}/month per user after that.</span>
-                    <span class={headerStyles.subheader}>New users will get an email invite.</span>
+                    <span class={headerStyles.header}><Show when={props.secondary} keyed><TeamCircleIcon/></Show>Add Your Team</span>
+                    <Show when={props.secondary} keyed fallback={<>
+                      <span class={headerStyles.subheader}>Try Teams for free for 30 days. Only ${teamPricePerMonth}/month per user after that.</span>
+                      <span class={headerStyles.subheader}>New users will get an email invite.</span>
+                    </>}>
+                      <span
+                        class={headerStyles.subheader}>Work better, together. Add your team for ${teamPricePerMonth}/month per user. New users will get an email invite.</span>
+                    </Show>
                   </div>
                 }
                 content={
@@ -116,7 +123,7 @@ const TeamModal = (props: TeamModalProps) => {
                   </div>
                 }
                 footer={
-                  <div class={footerStyles.borderedFooter}>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary}}>
                     <Button onClick={validateAndProceed} label={'Next'}></Button>
                     <span onClick={props.onNext}>Skip this step {'>'}</span>
                   </div>
