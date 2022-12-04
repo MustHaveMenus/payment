@@ -1,25 +1,31 @@
-import {cancelFromPauseSteps, cancelSteps, Decision, DecisionParams, reactivateSteps, Steps, View, ViewType} from "../type/types";
-import OverviewModal from "./OverviewModal";
+import {cancelFromPauseSteps, cancelSteps, Decision, DecisionParams, reactivateSteps, Steps, View, ViewType} from "./type/types";
+import OverviewModal from "./modal/OverviewModal";
 import {createEffect, createResource, createSignal, Match, onCleanup, onMount, Switch} from "solid-js";
-import PaymentModal from "./PaymentModal";
-import ConfirmationModal from "./ConfirmationModal";
-import TeamModal from "./TeamModal";
-import LocationModal from "./LocationModal";
-import mobileState from "../state/mobile";
-import openState from "../state/open";
-import AccountsApi from "../api/AccountsApi";
-import memberState from "../state/member";
-import locationsState from "../state/location";
-import viewState from "../state/view";
-import OverviewReactivateModal from "./OverviewReactivateModal";
-import ConfirmCancelModal from "./ConfirmCancelModal";
-import CancelConfirmationModal from "./CancelConfirmationModal";
-import PaymentReactivateModal from "./PaymentReactivateModal";
-import PauseModal from "./PauseModal";
-import PauseConfirmationModal from "./PauseConfirmationModal";
-import loadingState from "../state/loading";
-import {handleServerError} from "../util/ErrorHandler";
-import {Alert} from "../index";
+import PaymentModal from "./modal/PaymentModal";
+import ConfirmationModal from "./modal/ConfirmationModal";
+import TeamModal from "./modal/TeamModal";
+import LocationModal from "./modal/LocationModal";
+import mobileState from "./state/mobile";
+import openState from "./state/open";
+import AccountsApi from "./api/AccountsApi";
+import memberState from "./state/member";
+import locationsState from "./state/location";
+import viewState from "./state/view";
+import OverviewReactivateModal from "./modal/OverviewReactivateModal";
+import ConfirmCancelModal from "./modal/ConfirmCancelModal";
+import CancelConfirmationModal from "./modal/CancelConfirmationModal";
+import PaymentReactivateModal from "./modal/PaymentReactivateModal";
+import PauseModal from "./modal/PauseModal";
+import PauseConfirmationModal from "./modal/PauseConfirmationModal";
+import loadingState from "./state/loading";
+import {handleServerError} from "./util/ErrorHandler";
+import {Alert} from "./index";
+import {getCycle} from "./util/util";
+import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto} from "./generated/client";
+import paymentInfoState from "./state/paymentInfo";
+import paymentTypeState from "./state/paymentType";
+import {LOCATIONS, USERS} from "./util/constants";
+import teamState from "./state/team";
 
 export interface SetupProps {
   type: ViewType;
@@ -31,7 +37,7 @@ export interface PrivateSetupProps extends SetupProps {
   onClose: () => void;
 }
 
-const Setup = (props: PrivateSetupProps) => {
+const App = (props: PrivateSetupProps) => {
   const [steps, setSteps] = createSignal([] as View[]);
   const [email, setEmail] = createSignal('');
   const [expireDate, setExpireDate] = createSignal(new Date());
@@ -42,6 +48,12 @@ const Setup = (props: PrivateSetupProps) => {
   const {memberId, setMemberId} = memberState;
   const {addLocations} = locationsState;
   const {setLoading} = loadingState;
+  const [previewLoading, setPreviewLoading] = createSignal(false);
+  const {paymentInfo} = paymentInfoState;
+  const {paymentType} = paymentTypeState;
+  const {team} = teamState;
+  const {locations} = locationsState;
+  const [status, setStatus] = createSignal({} as SubStatusDto);
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
   const [subscription] = createResource(memberId, AccountsApi.getSubscription);
 
@@ -131,6 +143,54 @@ const Setup = (props: PrivateSetupProps) => {
       }
     }
   });
+
+  const getUpgradeSubDto = (preview: boolean) => {
+    return {
+      preview,
+      cycle: getCycle(paymentType()),
+      card: {
+        number: paymentInfo().number,
+        month: `${paymentInfo().month}`,
+        year: `${paymentInfo().year}`,
+        cvv: paymentInfo().cvc
+      },
+      zip: paymentInfo().zip,
+      locations: locations[LOCATIONS].filter(it => it.id === it.name),
+      users: team[USERS].map(it => {
+        return {
+          email: it.email,
+          locations: it.locations.filter(it => it).map(it => it.name),
+          ownerId: memberId()
+        }
+      }) as InviteUserDto[]
+    } as UpgradeSubscriptionDto;
+  }
+
+  async function previewInvoice() {
+    if (view() !== View.PAYMENT) return;
+    try {
+      setPreviewLoading(true);
+      setStatus(await AccountsApi.upgradeSubscriptionPlan(memberId(), getUpgradeSubDto(true)));
+      setPreviewLoading(false);
+    } catch (e: any) {
+      setPreviewLoading(false);
+      await handleServerError(e);
+    }
+  }
+
+  createEffect(previewInvoice);
+
+  async function onSubscribe() {
+    try {
+      setLoading(true);
+      const resp = await AccountsApi.upgradeSubscriptionPlan(memberId(), getUpgradeSubDto(false));
+      setLoading(false);
+      onNext();
+    } catch (e: any) {
+      setLoading(false);
+      await handleServerError(e);
+    }
+  }
 
   async function onPause(period: number) {
     try {
@@ -230,22 +290,29 @@ const Setup = (props: PrivateSetupProps) => {
 
     <Switch>
       <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={getOnNext()}/></Match>
-      <Match when={View.LOCATION === view()} keyed><LocationModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}/></Match>
-      <Match when={View.TEAM === view()} keyed><TeamModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}/></Match>
-      <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}/></Match>
+      <Match when={View.LOCATION === view()} keyed><LocationModal onBack={getOnBack()} onNext={getOnNext()} type={props.type}
+                                                                  idx={getCurrentViewIdx()}/></Match>
+      <Match when={View.TEAM === view()} keyed><TeamModal onBack={getOnBack()} onNext={getOnNext()} type={props.type}
+                                                          idx={getCurrentViewIdx()}/></Match>
+      <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}
+                                                                status={status()} previewLoading={previewLoading()}
+                                                                onPay={onSubscribe}/></Match>
 
 
       <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={getOnBack()} onNext={getOnNext()}/></Match>
-      <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={props.type === ViewType.CANCEL ? undefined : onBack} /></Match>
+      <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade}
+                                                                             onBack={props.type === ViewType.CANCEL ? undefined : onBack}/></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>
 
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess}/></Match>
-      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()} onSuccess={props.onSuccess}/></Match>
-      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()} resumeDate={nextPlanBillDate()} onSuccess={props.onSuccess}/></Match>
+      <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()}
+                                                                             onSuccess={props.onSuccess}/></Match>
+      <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()}
+                                                                         resumeDate={nextPlanBillDate()} onSuccess={props.onSuccess}/></Match>
 
 
       <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
     </Switch>
   </>
 }
-export default Setup;
+export default App;

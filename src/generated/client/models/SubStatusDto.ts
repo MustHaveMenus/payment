@@ -88,6 +88,18 @@ export interface SubStatusDto {
     planTotal?: number;
     /**
      * 
+     * @type {Date}
+     * @memberof SubStatusDto
+     */
+    pauseStartDate?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof SubStatusDto
+     */
+    pauseEndDate?: Date;
+    /**
+     * 
      * @type {boolean}
      * @memberof SubStatusDto
      */
@@ -206,6 +218,8 @@ export function SubStatusDtoFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'planEndDate': !exists(json, 'planEndDate') ? undefined : (new Date(json['planEndDate'])),
         'nextPlanBillingDate': !exists(json, 'nextPlanBillingDate') ? undefined : (new Date(json['nextPlanBillingDate'])),
         'planTotal': !exists(json, 'planTotal') ? undefined : json['planTotal'],
+        'pauseStartDate': !exists(json, 'pauseStartDate') ? undefined : (new Date(json['pauseStartDate'])),
+        'pauseEndDate': !exists(json, 'pauseEndDate') ? undefined : (new Date(json['pauseEndDate'])),
         'addonsUpgradeInProgress': !exists(json, 'addonsUpgradeInProgress') ? undefined : json['addonsUpgradeInProgress'],
         'addonsCycle': !exists(json, 'addonsCycle') ? undefined : json['addonsCycle'],
         'addonsEndDate': !exists(json, 'addonsEndDate') ? undefined : (new Date(json['addonsEndDate'])),
@@ -235,6 +249,8 @@ export function SubStatusDtoToJSON(value?: SubStatusDto | null): any {
         'planEndDate': value.planEndDate === undefined ? undefined : (value.planEndDate.toISOString()),
         'nextPlanBillingDate': value.nextPlanBillingDate === undefined ? undefined : (value.nextPlanBillingDate.toISOString()),
         'planTotal': value.planTotal,
+        'pauseStartDate': value.pauseStartDate === undefined ? undefined : (value.pauseStartDate.toISOString()),
+        'pauseEndDate': value.pauseEndDate === undefined ? undefined : (value.pauseEndDate.toISOString()),
         'addonsUpgradeInProgress': value.addonsUpgradeInProgress,
         'addonsCycle': value.addonsCycle,
         'addonsEndDate': value.addonsEndDate === undefined ? undefined : (value.addonsEndDate.toISOString()),

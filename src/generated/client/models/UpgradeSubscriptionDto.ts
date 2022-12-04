@@ -19,6 +19,18 @@ import {
     CardDtoFromJSONTyped,
     CardDtoToJSON,
 } from './CardDto';
+import type { InviteUserDto } from './InviteUserDto';
+import {
+    InviteUserDtoFromJSON,
+    InviteUserDtoFromJSONTyped,
+    InviteUserDtoToJSON,
+} from './InviteUserDto';
+import type { LocationDto } from './LocationDto';
+import {
+    LocationDtoFromJSON,
+    LocationDtoFromJSONTyped,
+    LocationDtoToJSON,
+} from './LocationDto';
 
 /**
  * 
@@ -44,6 +56,24 @@ export interface UpgradeSubscriptionDto {
      * @memberof UpgradeSubscriptionDto
      */
     zip?: string;
+    /**
+     * 
+     * @type {boolean}
+     * @memberof UpgradeSubscriptionDto
+     */
+    preview?: boolean;
+    /**
+     * 
+     * @type {Array<LocationDto>}
+     * @memberof UpgradeSubscriptionDto
+     */
+    locations?: Array<LocationDto>;
+    /**
+     * 
+     * @type {Array<InviteUserDto>}
+     * @memberof UpgradeSubscriptionDto
+     */
+    users?: Array<InviteUserDto>;
 }
 
 
@@ -81,6 +111,9 @@ export function UpgradeSubscriptionDtoFromJSONTyped(json: any, ignoreDiscriminat
         'cycle': !exists(json, 'cycle') ? undefined : json['cycle'],
         'card': !exists(json, 'card') ? undefined : CardDtoFromJSON(json['card']),
         'zip': !exists(json, 'zip') ? undefined : json['zip'],
+        'preview': !exists(json, 'preview') ? undefined : json['preview'],
+        'locations': !exists(json, 'locations') ? undefined : ((json['locations'] as Array<any>).map(LocationDtoFromJSON)),
+        'users': !exists(json, 'users') ? undefined : ((json['users'] as Array<any>).map(InviteUserDtoFromJSON)),
     };
 }
 
@@ -96,6 +129,9 @@ export function UpgradeSubscriptionDtoToJSON(value?: UpgradeSubscriptionDto | nu
         'cycle': value.cycle,
         'card': CardDtoToJSON(value.card),
         'zip': value.zip,
+        'preview': value.preview,
+        'locations': value.locations === undefined ? undefined : ((value.locations as Array<any>).map(LocationDtoToJSON)),
+        'users': value.users === undefined ? undefined : ((value.users as Array<any>).map(InviteUserDtoToJSON)),
     };
 }
 

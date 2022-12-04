@@ -1,40 +1,35 @@
 import styles from "./SubscriptionDetails.module.scss";
-import {createEffect, createSignal, Show} from "solid-js";
+import {Show} from "solid-js";
 import paymentTypeState from "../state/paymentType";
-import AccountsApi from "../api/AccountsApi";
-import memberState from "../state/member";
 import {PaymentTypeEnum} from "../type/types";
-import {SubStatusDto} from "../generated/client";
-import {handleServerError} from "../util/ErrorHandler";
+import {SubStatusDto, SubStatusDtoAddonsCycleEnum} from "../generated/client";
 import {Spinner} from "./Spinner";
 import Price from "./Price";
 import FormattedDate from "./FormattedDate";
-import {getCycle} from "../util/util";
 
 interface SubscriptionDetailsProps {
   users: number;
   locations: number;
+  status: SubStatusDto;
+  loading: boolean;
 }
 
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
-  const [loading, setLoading] = createSignal(false);
   const {paymentType} = paymentTypeState;
-  const {memberId} = memberState;
-  const [status, setStatus] = createSignal({} as SubStatusDto);
 
-  createEffect(async () => {
-    try {
-      setLoading(true);
-      setStatus(await AccountsApi.changeSubscriptionPlan(memberId(), getCycle(paymentType()), true));
-      setLoading(false);
-    } catch (e: any) {
-      setLoading(false);
-      await handleServerError(e);
+  function getPaymentType(status: SubStatusDtoAddonsCycleEnum) {
+    switch (status) {
+      case "Yearly":
+        return PaymentTypeEnum.Annually;
+      case "Monthly":
+        return PaymentTypeEnum.Monthly;
+      default:
+        return PaymentTypeEnum.None;
     }
-  });
+  }
 
   return <>
-    <Show when={!loading()} keyed fallback={<Spinner/>}>
+    <Show when={!props.loading} keyed fallback={<Spinner/>}>
       <span class={styles.topHeader}>Subscription Details</span>
 
       <Show when={paymentType() !== PaymentTypeEnum.None} keyed>
@@ -44,7 +39,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
           </div>
           <div class={styles.paymentDetailsEntry}>
             <div>{paymentType() === PaymentTypeEnum.Monthly ? 'Pro Monthly' : 'Pro Annual'}</div>
-            <div><Price price={status().planTotal || 0} type={paymentType()}/></div>
+            <div><Price price={props.status.planTotal || 0} type={paymentType()}/></div>
           </div>
         </div>
       </Show>
@@ -60,14 +55,16 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
             <div class={styles.paymentDetailsEntry}>
               <div>Users</div>
               <div>{props.users}</div>
-              <div>$240.00 / year</div>
+              <div><Price price={(props.status.addons?.find(it => it.type === 'USER')?.total || 0) * props.users}
+                          type={getPaymentType(props.status.addonsCycle!)}/></div>
             </div>
           </Show>
           <Show when={props.locations} keyed>
             <div class={styles.paymentDetailsEntry}>
               <div>Locations</div>
               <div>{props.locations}</div>
-              <div>$120.00 / year</div>
+              <div><Price price={(props.status.addons?.find(it => it.type === 'LOCATION')?.total || 0) * props.locations}
+                          type={getPaymentType(props.status.addonsCycle!)}/></div>
             </div>
           </Show>
         </div>
@@ -75,7 +72,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       <div class={`${styles.paymentDetails} ${styles.topBorder}`}>
         <div class={styles.paymentDetailsEntry}>
           <div>Subtotal:</div>
-          <div><Price price={status().grandTotal || 0}/></div>
+          <div><Price price={props.status.grandTotal || 0}/></div>
         </div>
         <div class={styles.paymentDetailsEntry}>
           <div>Tax:</div>
@@ -83,8 +80,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
         </div>
 
         <div class={`${styles.paymentDetailsEntry} ${styles.topMargin}`}>
-          <div>Due <FormattedDate date={new Date(status().nextPlanBillingDate!)}/></div>
-          <div><Price price={status().grandTotal || 0}/></div>
+          <div>Due <FormattedDate date={new Date(props.status.nextPlanBillingDate!)}/></div>
+          <div><Price price={props.status.grandTotal || 0}/></div>
         </div>
         <div class={styles.paymentDetailsEntry}>
           <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>

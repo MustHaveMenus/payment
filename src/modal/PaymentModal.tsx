@@ -12,26 +12,22 @@ import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import locationsState from "../state/location";
 import {PaymentInfo, ViewType} from "../type/types";
-import {getCycle, isAddonFlow, isValidPaymentInfo} from "../util/util";
-import AccountsApi from "../api/AccountsApi";
-import memberState from "../state/member";
-import paymentTypeState from "../state/paymentType";
-import {handleServerError} from "../util/ErrorHandler";
-import {UpgradeSubscriptionDto} from "../generated/client";
-import loadingState from "../state/loading";
+import {isAddonFlow, isValidPaymentInfo} from "../util/util";
+import paymentInfoState from "../state/paymentInfo";
+import {SubStatusDto} from "../generated/client";
 
 interface PaymentModalProps extends StepModalProps {
+  onPay: () => void;
+  status: SubStatusDto;
+  previewLoading: boolean;
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
   const {team} = teamState;
   const {locations} = locationsState;
-  const {memberId} = memberState;
-  const {paymentType} = paymentTypeState;
-  const {setLoading} = loadingState;
   const [btnDisabled, setBtnDisabled] = createSignal(true);
-  const [paymentInfo, setPaymentInfo] = createSignal({} as PaymentInfo);
+  const {paymentInfo, setPaymentInfo} = paymentInfoState;
 
   const [addonFlow, setAddonFlow] = createSignal(true);
 
@@ -47,35 +43,13 @@ const PaymentModal = (props: PaymentModalProps) => {
     setBtnDisabled(!isValidPaymentInfo(paymentInfo()));
   });
 
-  async function onSubscribe() {
-    try {
-      setLoading(true);
-      const dto = {
-        zip: paymentInfo().zip,
-        cycle: getCycle(paymentType()),
-        card: {
-          number: paymentInfo().number,
-          month: `${paymentInfo().month}`,
-          year: `${paymentInfo().year}`,
-          cvv: paymentInfo().cvc
-        }
-      } as UpgradeSubscriptionDto;
-      const resp = await AccountsApi.upgradeSubscriptionPlan(memberId(), dto);
-      setLoading(false);
-      props.onNext?.();
-    } catch (e: any) {
-      setLoading(false);
-      await handleServerError(e);
-    }
-  }
-
   const subscribeBtn = () => <div classList={{
     [styles.btnWrapper]: !mobile(),
     [styles.secondary]: !mobile() && props.type === ViewType.ADD_LOCATION_ADDON,
     [footerStyles.btnWrapper]: mobile(),
     [footerStyles.secondary]: mobile() && props.type === ViewType.ADD_LOCATION_ADDON
   }}>
-    <Button label={'Subscribe'} disabled={btnDisabled()} onClick={onSubscribe}/>
+    <Button label={'Subscribe'} disabled={btnDisabled()} onClick={props.onPay}/>
   </div>;
 
   const agreementMsg = () => <div class={styles.agreementWrapper}><Agreement/></div>;
@@ -105,7 +79,7 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length}/>
+        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length} status={props.status} loading={props.previewLoading}/>
       </div>
 
       {rightSideFooter()}

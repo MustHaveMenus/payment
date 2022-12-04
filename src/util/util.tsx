@@ -1,6 +1,5 @@
 import {Countries, States} from "./countries";
 import {Option, PaymentInfo, PaymentTypeEnum, User, ViewType} from "../type/types";
-import paymentType from "../comp/PaymentType";
 import {LocationDto, SubStatusDtoPlanCycleEnum} from "../generated/client";
 
 export function formatCreditCard(value: string) {
@@ -101,7 +100,14 @@ export const isValidUser = (u: User) => {
 }
 
 export const getCycle = (type: PaymentTypeEnum) => {
-  return type === PaymentTypeEnum.Monthly ? SubStatusDtoPlanCycleEnum.Monthly : SubStatusDtoPlanCycleEnum.Yearly;
+  switch (type) {
+    case PaymentTypeEnum.Annually:
+      return SubStatusDtoPlanCycleEnum.Yearly;
+    case PaymentTypeEnum.Monthly:
+      return SubStatusDtoPlanCycleEnum.Monthly;
+    case PaymentTypeEnum.None:
+      return SubStatusDtoPlanCycleEnum.No;
+  }
 }
 
 export const isEmail = (email: string) => {

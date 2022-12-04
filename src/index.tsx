@@ -1,6 +1,6 @@
 import './style/index.scss';
 import {render} from 'solid-js/web';
-import Setup, {SetupProps} from './modal/Setup';
+import App, {SetupProps} from './App';
 import AlertModal, {AlertModalProps} from "./comp/AlertModal";
 import {ViewType} from "./type/types";
 
@@ -11,7 +11,7 @@ const init = (props: SetupProps) => {
   container = document.createElement("div");
   container.classList.add('pro-modal');
   document.body.append(container);
-  destroy = render(() => <Setup {...props} onClose={ProModal.hide}/>, container);
+  destroy = render(() => <App {...props} onClose={ProModal.hide}/>, container);
 }
 
 const ProModal = {
