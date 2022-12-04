@@ -48,6 +48,10 @@
             &:not(:first-child) {
               margin-top: $margin-xs;
             }
+
+            > div {
+              width: 100%;
+            }
           }
 
           .addLocation {
