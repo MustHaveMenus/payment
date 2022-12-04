@@ -54,15 +54,22 @@ const LocationModal = (props: LocationModalProps) => {
     setNewLocations(locs.filter(it => it.id === it.name));
   });
 
-  onMount(addNewLocation);
+  onMount(() => {
+    if (!newLocations().length) {
+      addNewLocation();
+    }
+    validate();
+  });
   onCleanup(cleanInvalidLocations);
-
-  createEffect(() => {
-    console.log(locations)
-  }, [locations]);
 
   function addNewLocation() {
     addLocation(JSON.parse(JSON.stringify(DEFAULT_LOCATION)));
+    validate();
+  }
+
+  function onDeleteLocation(loc: LocationDto) {
+    deleteLocation(loc);
+    validate();
   }
 
   function update(loc: LocationDto, e: KeyboardEvent | null, setter: Setter<string[]>, updateState: (value: string) => void) {
@@ -128,7 +135,7 @@ const LocationModal = (props: LocationModalProps) => {
                         <div class={styles.entry}>
                           <div class={styles.formHeader}>
                             <span>Location Info</span>
-                            <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={[deleteLocation, loc]}>
+                            <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={() => onDeleteLocation(loc)}>
                                 <TrashIcon/>
                               </span>
                           </div>
@@ -145,11 +152,11 @@ const LocationModal = (props: LocationModalProps) => {
                             <div class={styles.split}>
                               <Input type={'text'} value={loc.city} placeholder={'City'} errorMsg={cityErr()[i()]}
                                      onKeyUp={(e) => onUpdateCity(loc, e)}/>
-                              <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}}
+                              <Select values={stateValues} value={{id: (loc.state ?? ''), name: (loc.state ?? '')}} errorMsg={stateErr()[i()]}
                                       onChange={v => onUpdateState(loc, v)}/>
                             </div>
                             <div class={styles.split}>
-                              <Select values={countryValues} onChange={v => onUpdateCountry(loc, v)}
+                              <Select values={countryValues} onChange={v => onUpdateCountry(loc, v)} errorMsg={countryErr()[i()]}
                                       value={{id: (loc.country ?? ''), name: (loc.country ?? '')}}/>
                               <Input type={'text'} value={loc.zip} placeholder={'Zip'} errorMsg={zipErr()[i()]}
                                      onKeyUp={(e) => onUpdateZip(loc, e)}/>
