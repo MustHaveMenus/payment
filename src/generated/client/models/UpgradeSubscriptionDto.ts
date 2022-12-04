@@ -58,6 +58,12 @@ export interface UpgradeSubscriptionDto {
     zip?: string;
     /**
      * 
+     * @type {string}
+     * @memberof UpgradeSubscriptionDto
+     */
+    country?: string;
+    /**
+     * 
      * @type {boolean}
      * @memberof UpgradeSubscriptionDto
      */
@@ -111,6 +117,7 @@ export function UpgradeSubscriptionDtoFromJSONTyped(json: any, ignoreDiscriminat
         'cycle': !exists(json, 'cycle') ? undefined : json['cycle'],
         'card': !exists(json, 'card') ? undefined : CardDtoFromJSON(json['card']),
         'zip': !exists(json, 'zip') ? undefined : json['zip'],
+        'country': !exists(json, 'country') ? undefined : json['country'],
         'preview': !exists(json, 'preview') ? undefined : json['preview'],
         'locations': !exists(json, 'locations') ? undefined : ((json['locations'] as Array<any>).map(LocationDtoFromJSON)),
         'users': !exists(json, 'users') ? undefined : ((json['users'] as Array<any>).map(InviteUserDtoFromJSON)),
@@ -129,6 +136,7 @@ export function UpgradeSubscriptionDtoToJSON(value?: UpgradeSubscriptionDto | nu
         'cycle': value.cycle,
         'card': CardDtoToJSON(value.card),
         'zip': value.zip,
+        'country': value.country,
         'preview': value.preview,
         'locations': value.locations === undefined ? undefined : ((value.locations as Array<any>).map(LocationDtoToJSON)),
         'users': value.users === undefined ? undefined : ((value.users as Array<any>).map(InviteUserDtoToJSON)),
