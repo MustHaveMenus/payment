@@ -30,7 +30,7 @@ const LocationModal = (props: LocationModalProps) => {
     updateZip,
     updateAddress,
     updateAddress2,
-    cleanInvalidLocations,
+    cleanLocations,
     deleteLocation,
     updateState,
     updateCountry
@@ -68,8 +68,6 @@ const LocationModal = (props: LocationModalProps) => {
     }
     validate();
   });
-
-  onCleanup(cleanInvalidLocations);
 
   function addNewLocation() {
     addLocation(JSON.parse(JSON.stringify(DEFAULT_LOCATION)));
@@ -121,6 +119,12 @@ const LocationModal = (props: LocationModalProps) => {
       temp[idx] = value;
       return temp;
     });
+  }
+
+
+  function onSkip() {
+    cleanLocations();
+    props.onNext?.();
   }
 
   return <Modal onBack={props.onBack}
@@ -183,7 +187,7 @@ const LocationModal = (props: LocationModalProps) => {
                   <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>
                     <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
                     <Show when={allowSkip()} keyed>
-                      <span onClick={props.onNext}>Skip this step {'>'}</span>
+                      <span onClick={onSkip}>Skip this step {'>'}</span>
                     </Show>
                   </div>
                 }/>

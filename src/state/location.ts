@@ -1,5 +1,5 @@
 import {batch, createRoot} from "solid-js";
-import {LOCATIONS} from "../util/constants";
+import {LOCATIONS, USERS} from "../util/constants";
 import {createStore} from "solid-js/store";
 import {LocationDto} from "../generated/client";
 import {removeIndex} from "../util/util";
@@ -35,9 +35,12 @@ const locationsState = createRoot(() => {
   const updateAddress2 = (loc: LocationDto, value: string) => updateProp(loc, value, 'address2');
   const updateState = (loc: LocationDto, value: string) => updateProp(loc, value, 'state');
   const updateCountry = (loc: LocationDto, value: string) => updateProp(loc, value, 'country');
-  const cleanInvalidLocations = () => setLocations(LOCATIONS, old => old.filter(it => it.id));
 
-  return {locations, addLocation, addLocations, updateName, updateCity, updateZip, updateAddress, updateState, updateCountry, updateAddress2, cleanInvalidLocations, deleteLocation};
+  const cleanLocations = () => {
+    setLocations(LOCATIONS, old => old.filter(it => it.id !== it.name));
+  }
+
+  return {locations, addLocation, addLocations, updateName, updateCity, updateZip, updateAddress, updateState, updateCountry, updateAddress2, deleteLocation, cleanLocations};
 });
 
 export default locationsState;
