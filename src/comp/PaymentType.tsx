@@ -1,5 +1,5 @@
 import styles from './PaymentType.module.scss';
-import {JSXElement} from "solid-js";
+import {JSXElement, onMount} from "solid-js";
 import RadioInput from "./RadioInput";
 import {fullAmount, fullAmountPerMo, monthlyAmount} from "../util/prices";
 import mobileState from "../state/mobile";
@@ -13,6 +13,12 @@ interface PaymentTypeProps {
 const PaymentType = (props: PaymentTypeProps) => {
   const {mobile} = mobileState;
   const {paymentType, setPaymentType} = paymentTypeState;
+
+  onMount(() => {
+    if (paymentType() === PaymentTypeEnum.None) {
+      setPaymentType(PaymentTypeEnum.Annually);
+    }
+  });
 
   function onPaymentTypeChange(val: string) {
     setPaymentType(val as PaymentTypeEnum);

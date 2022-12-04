@@ -3,7 +3,7 @@ import Modal, {GenericModalProps} from "../comp/Modal";
 import PaymentInformation from "../comp/PaymentInformation";
 import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
-import {createEffect, createSignal} from "solid-js";
+import {createEffect, createSignal, Show} from "solid-js";
 import {LOCATIONS, USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
@@ -21,6 +21,7 @@ import {UpgradeSubscriptionDto} from "../generated/client";
 import loadingState from "../state/loading";
 
 interface PaymentModalProps extends GenericModalProps {
+  fromFree?: boolean;
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
@@ -79,10 +80,14 @@ const PaymentModal = (props: PaymentModalProps) => {
   return <Modal onBack={props.onBack} footer={modalFooter()} content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
-        <span class={styles.topHeader}>Try Pro Plan for free</span>
-        <span class={styles.topSubheader}>30-day free trial, cancel at any time</span>
-        <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
-        <PaymentType/>
+        <Show when={props.fromFree} keyed fallback={
+          <span class={styles.topHeader}>Payment Info</span>
+        }>
+          <span class={styles.topHeader}>Try Pro Plan for free</span>
+          <span class={styles.topSubheader}>30-day free trial, cancel at any time</span>
+          <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
+          <PaymentType/>
+        </Show>
         <div class={styles.paymentInformationWrapper}>
           <PaymentInformation onChange={onPaymentInfoChange}/>
         </div>

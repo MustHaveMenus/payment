@@ -224,6 +224,7 @@ const Setup = (props: PrivateSetupProps) => {
       <Match when={View.ADD_TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext} secondary/></Match>
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.PAYMENT_FROM_FREE === view()} keyed><PaymentModal onBack={onBack} onNext={onNext} fromFree/></Match>
       <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={onBack} onNext={onNext}/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={props.type === ViewType.CANCEL ? undefined : onBack} /></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>

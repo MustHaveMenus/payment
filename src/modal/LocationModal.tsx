@@ -60,6 +60,7 @@ const LocationModal = (props: LocationModalProps) => {
     }
     validate();
   });
+
   onCleanup(cleanInvalidLocations);
 
   function addNewLocation() {

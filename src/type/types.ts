@@ -3,6 +3,7 @@ import {LocationDto} from "../generated/client";
 export enum View {
   OVERVIEW = 'overview',
   OVERVIEW_REACTIVATE = 'overview-reactivate',
+  PAYMENT_FROM_FREE = 'payment_from_free',
   PAYMENT = 'payment',
   CONFIRMATION = 'confirmation',
   TEAM = 'team',
@@ -43,8 +44,8 @@ export enum ViewType {
 }
 
 export const Steps = {
-  [ViewType.FREE_TO_PRO]: [View.OVERVIEW, View.PAYMENT, View.CONFIRMATION],
-  [ViewType.FREE_TO_PRO_WITH_ADDONS]: [View.OVERVIEW, View.LOCATION, View.TEAM, View.PAYMENT, View.CONFIRMATION],
+  [ViewType.FREE_TO_PRO]: [View.OVERVIEW, View.PAYMENT_FROM_FREE, View.CONFIRMATION],
+  [ViewType.FREE_TO_PRO_WITH_ADDONS]: [View.OVERVIEW, View.LOCATION, View.TEAM, View.PAYMENT_FROM_FREE, View.CONFIRMATION],
   [ViewType.ADD_LOCATION_ADDON]: [View.ADD_LOCATION, View.ADD_TEAM, View.PAYMENT, View.CONFIRMATION],
   [ViewType.ADD_USER_ADDON]: [View.TEAM, View.LOCATION, View.PAYMENT, View.CONFIRMATION],
   [ViewType.REACTIVATE_FROM_PAUSED]: [View.OVERVIEW_REACTIVATE],
@@ -69,7 +70,7 @@ export enum Decision {
 }
 
 export enum PaymentTypeEnum {
-  Annually = 'a', Monthly = 'm'
+  None = 'n', Annually = 'a', Monthly = 'm'
 }
 
 export interface PaymentInfo {

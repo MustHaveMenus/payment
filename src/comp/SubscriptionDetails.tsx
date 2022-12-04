@@ -1,11 +1,10 @@
 import styles from "./SubscriptionDetails.module.scss";
-import {subscriptionTotal} from "../util/prices";
 import {createEffect, createSignal, Show} from "solid-js";
 import paymentTypeState from "../state/paymentType";
 import AccountsApi from "../api/AccountsApi";
 import memberState from "../state/member";
 import {PaymentTypeEnum} from "../type/types";
-import {SubStatusDto, SubStatusDtoPlanCycleEnum} from "../generated/client";
+import {SubStatusDto} from "../generated/client";
 import {handleServerError} from "../util/ErrorHandler";
 import {Spinner} from "./Spinner";
 import Price from "./Price";
@@ -38,18 +37,20 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     <Show when={!loading()} keyed fallback={<Spinner/>}>
       <span class={styles.topHeader}>Subscription Details</span>
 
-      <div class={styles.paymentDetails}>
-        <div class={styles.paymentDetailsHeader}>
-          <span>Subscription</span>
+      <Show when={paymentType() !== PaymentTypeEnum.None} keyed>
+        <div class={styles.paymentDetails}>
+          <div class={styles.paymentDetailsHeader}>
+            <span>Subscription</span>
+          </div>
+          <div class={styles.paymentDetailsEntry}>
+            <div>{paymentType() === PaymentTypeEnum.Monthly ? 'Pro Monthly' : 'Pro Annual'}</div>
+            <div><Price price={status().planTotal || 0} type={paymentType()}/></div>
+          </div>
         </div>
-        <div class={styles.paymentDetailsEntry}>
-          <div>{paymentType() === PaymentTypeEnum.Monthly ? 'Pro Monthly' : 'Pro Annual'}</div>
-          <div><Price price={status().planTotal || 0} type={paymentType()}/></div>
-        </div>
-      </div>
+      </Show>
 
       <Show when={(props.users || props.locations)} keyed>
-        <div class={`${styles.paymentDetails} ${styles.topBorder}`}>
+        <div classList={{[styles.paymentDetails]: true, [styles.topBorder]: paymentType() !== PaymentTypeEnum.None}}>
           <div class={styles.paymentDetailsHeader}>
             <span>Add-on</span>
             <span>Qty</span>
