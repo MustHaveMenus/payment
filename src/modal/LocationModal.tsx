@@ -15,7 +15,7 @@ import mobileState from "../state/mobile";
 import TrashIcon from "../comp/svg/TrashIcon";
 import generalStyles from "../style/general.module.scss";
 import LocationCircleIcon from "../comp/svg/LocationCircleIcon";
-import {Option} from "../type/types";
+import {Option, ViewType} from "../type/types";
 
 interface LocationModalProps extends StepModalProps {
 }
@@ -180,7 +180,7 @@ const LocationModal = (props: LocationModalProps) => {
                   </div>
                 }
                 footer={
-                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: addonFlow()}}>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>
                     <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
                     <Show when={allowSkip()} keyed>
                       <span onClick={props.onNext}>Skip this step {'>'}</span>

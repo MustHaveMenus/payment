@@ -70,6 +70,12 @@ $leftMargin: 31px;
 
       .btnWrapper {
         width: 100%;
+
+        &.secondary {
+          button {
+            background-color: $color-purple;
+          }
+        }
       }
     }
   }

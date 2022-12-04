@@ -156,6 +156,12 @@
 
   .btnWrapper {
     margin: $margin-md 0;
+
+    &.secondary {
+      button {
+        background-color: $color-purple;
+      }
+    }
   }
 }
 

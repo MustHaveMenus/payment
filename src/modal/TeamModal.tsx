@@ -10,7 +10,7 @@ import Input from "../comp/Input";
 import Select from "../comp/Select";
 import {teamPricePerMonth} from "../util/prices";
 import {EMAIL, LOCATIONS, USERS} from "../util/constants";
-import {User} from "../type/types";
+import {User, ViewType} from "../type/types";
 import teamState from "../state/team";
 import locationState from "../state/location";
 import {LocationDto} from "../generated/client";
@@ -189,7 +189,7 @@ const TeamModal = (props: TeamModalProps) => {
                   </div>
                 }
                 footer={
-                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: addonFlow()}}>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>
                     <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
                     <Show when={allowSkip()} keyed>
                       <span onClick={onSkip}>Skip this step {'>'}</span>

@@ -69,7 +69,12 @@ const PaymentModal = (props: PaymentModalProps) => {
     }
   }
 
-  const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
+  const subscribeBtn = () => <div classList={{
+    [styles.btnWrapper]: !mobile(),
+    [styles.secondary]: !mobile() && props.type === ViewType.ADD_LOCATION_ADDON,
+    [footerStyles.btnWrapper]: mobile(),
+    [footerStyles.secondary]: mobile() && props.type === ViewType.ADD_LOCATION_ADDON
+  }}>
     <Button label={'Subscribe'} disabled={btnDisabled()} onClick={onSubscribe}/>
   </div>;
 
