@@ -1,5 +1,5 @@
 import styles from "./SubscriptionDetails.module.scss";
-import {Show} from "solid-js";
+import {createEffect, createSignal, Show} from "solid-js";
 import paymentTypeState from "../state/paymentType";
 import {PaymentTypeEnum} from "../type/types";
 import {SubStatusDto, SubStatusDtoAddonsCycleEnum} from "../generated/client";
@@ -16,6 +16,12 @@ interface SubscriptionDetailsProps {
 
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const {paymentType} = paymentTypeState;
+  const [addonUpgrade, setAddonUpgrade] = createSignal(false);
+
+  createEffect(() => {
+    setAddonUpgrade(paymentType() == PaymentTypeEnum.None);
+  });
+
 
   function getPaymentType(status: SubStatusDtoAddonsCycleEnum) {
     switch (status) {
@@ -32,7 +38,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     <Show when={!props.loading} keyed fallback={<Spinner/>}>
       <span class={styles.topHeader}>Subscription Details</span>
 
-      <Show when={paymentType() !== PaymentTypeEnum.None} keyed>
+      <Show when={!addonUpgrade()} keyed>
         <div class={styles.paymentDetails}>
           <div class={styles.paymentDetailsHeader}>
             <span>Subscription</span>
