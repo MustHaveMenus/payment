@@ -26,6 +26,7 @@ import paymentInfoState from "./state/paymentInfo";
 import paymentTypeState from "./state/paymentType";
 import {LOCATIONS, USERS} from "./util/constants";
 import teamState from "./state/team";
+import {Countries} from "./util/countries";
 
 export interface AppProps {
   type: ViewType;
@@ -57,6 +58,7 @@ const App = (props: PrivateSetupProps) => {
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
   const [subscription] = createResource(memberId, AccountsApi.getSubscription);
   const [zip, setZip] = createSignal('');
+  const [country, setCountry] = createSignal(Countries[0]);
   const [cardNumber, setCardNumber] = createSignal('');
   const [cardMonth, setCardMonth] = createSignal('');
   const [cardYear, setCardYear] = createSignal('');
@@ -67,6 +69,7 @@ const App = (props: PrivateSetupProps) => {
     if (!info || Object.keys(info).length === 0) return;
 
     setZip(info.zip);
+    setCountry(info.country);
     setCardNumber(info.number);
     setCardMonth(`${info.month || ''}`);
     setCardYear(`${info.year || ''}`);
@@ -165,6 +168,7 @@ const App = (props: PrivateSetupProps) => {
       preview: true,
       cycle: getCycle(paymentType()),
       zip: zip(),
+      country: country(),
       locations: locations[LOCATIONS].filter(it => it.id === it.name),
       users: team[USERS].map(it => {
         return {

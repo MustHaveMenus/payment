@@ -17,11 +17,39 @@ interface SubscriptionDetailsProps {
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const {paymentType} = paymentTypeState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
+  const [subtotal, setSubtotal] = createSignal(0.0);
+  const [grandTotal, setGrandTotal] = createSignal(0.0);
+  const [userSubtotal, setUserSubtotal] = createSignal(0.0);
+  const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
 
   createEffect(() => {
     setAddonUpgrade(paymentType() == PaymentTypeEnum.None);
   });
 
+  createEffect(() => {
+    if (!props.status || !props.status.grandTotal) return;
+
+    if (addonUpgrade()) {
+      setSubtotal(userSubtotal() + locationSubtotal());
+    } else {
+      setSubtotal(props.status.grandTotal || 0);
+    }
+  });
+
+  createEffect(() => {
+    if (!props.status.addons || !props.users) return;
+    setUserSubtotal((props.status.addons.find(it => it.type === 'USER')?.total || 0) * props.users);
+  });
+
+  createEffect(() => {
+    if (!props.status.addons || !props.locations) return;
+    setLocationSubtotal((props.status.addons.find(it => it.type === 'LOCATION')?.total || 0) * props.locations);
+  });
+
+  createEffect(() => {
+    if (!props.status) return;
+    setGrandTotal(subtotal() + (props.status.totalTax || 0));
+  });
 
   function getPaymentType(status: SubStatusDtoAddonsCycleEnum) {
     switch (status) {
@@ -61,16 +89,14 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
             <div class={styles.paymentDetailsEntry}>
               <div>Users</div>
               <div>{props.users}</div>
-              <div><Price price={(props.status.addons?.find(it => it.type === 'USER')?.total || 0) * props.users}
-                          type={getPaymentType(props.status.addonsCycle!)}/></div>
+              <div><Price price={userSubtotal()} type={getPaymentType(props.status.addonsCycle!)}/></div>
             </div>
           </Show>
           <Show when={props.locations} keyed>
             <div class={styles.paymentDetailsEntry}>
               <div>Locations</div>
               <div>{props.locations}</div>
-              <div><Price price={(props.status.addons?.find(it => it.type === 'LOCATION')?.total || 0) * props.locations}
-                          type={getPaymentType(props.status.addonsCycle!)}/></div>
+              <div><Price price={locationSubtotal()} type={getPaymentType(props.status.addonsCycle!)}/></div>
             </div>
           </Show>
         </div>
@@ -78,16 +104,16 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       <div class={`${styles.paymentDetails} ${styles.topBorder}`}>
         <div class={styles.paymentDetailsEntry}>
           <div>Subtotal:</div>
-          <div><Price price={props.status.grandTotal || 0}/></div>
+          <div><Price price={subtotal()}/></div>
         </div>
         <div class={styles.paymentDetailsEntry}>
           <div>Tax:</div>
-          <div><Price price={0}/></div>
+          <div><Price price={props.status.totalTax || 0}/></div>
         </div>
 
         <div class={`${styles.paymentDetailsEntry} ${styles.topMargin}`}>
           <div>Due <FormattedDate date={new Date(props.status.nextPlanBillingDate!)}/></div>
-          <div><Price price={props.status.grandTotal || 0}/></div>
+          <div><Price price={grandTotal()}/></div>
         </div>
         <div class={styles.paymentDetailsEntry}>
           <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>

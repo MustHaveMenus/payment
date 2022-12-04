@@ -55,7 +55,19 @@ export interface SubStatusDto {
      * @type {number}
      * @memberof SubStatusDto
      */
+    grandTotalWithTax?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SubStatusDto
+     */
     dueToday?: number;
+    /**
+     * 
+     * @type {number}
+     * @memberof SubStatusDto
+     */
+    totalTax?: number;
     /**
      * 
      * @type {boolean}
@@ -212,7 +224,9 @@ export function SubStatusDtoFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'status': !exists(json, 'status') ? undefined : json['status'],
         'email': !exists(json, 'email') ? undefined : json['email'],
         'grandTotal': !exists(json, 'grandTotal') ? undefined : json['grandTotal'],
+        'grandTotalWithTax': !exists(json, 'grandTotalWithTax') ? undefined : json['grandTotalWithTax'],
         'dueToday': !exists(json, 'dueToday') ? undefined : json['dueToday'],
+        'totalTax': !exists(json, 'totalTax') ? undefined : json['totalTax'],
         'planUpgradeInProgress': !exists(json, 'planUpgradeInProgress') ? undefined : json['planUpgradeInProgress'],
         'planCycle': !exists(json, 'planCycle') ? undefined : json['planCycle'],
         'planEndDate': !exists(json, 'planEndDate') ? undefined : (new Date(json['planEndDate'])),
@@ -243,7 +257,9 @@ export function SubStatusDtoToJSON(value?: SubStatusDto | null): any {
         'status': value.status,
         'email': value.email,
         'grandTotal': value.grandTotal,
+        'grandTotalWithTax': value.grandTotalWithTax,
         'dueToday': value.dueToday,
+        'totalTax': value.totalTax,
         'planUpgradeInProgress': value.planUpgradeInProgress,
         'planCycle': value.planCycle,
         'planEndDate': value.planEndDate === undefined ? undefined : (value.planEndDate.toISOString()),
