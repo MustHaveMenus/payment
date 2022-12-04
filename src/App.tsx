@@ -27,13 +27,13 @@ import paymentTypeState from "./state/paymentType";
 import {LOCATIONS, USERS} from "./util/constants";
 import teamState from "./state/team";
 
-export interface SetupProps {
+export interface AppProps {
   type: ViewType;
   memberId: string;
   onSuccess?: () => void;
 }
 
-export interface PrivateSetupProps extends SetupProps {
+export interface PrivateSetupProps extends AppProps {
   onClose: () => void;
 }
 
