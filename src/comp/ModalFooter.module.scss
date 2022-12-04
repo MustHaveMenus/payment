@@ -30,6 +30,7 @@ $leftMargin: 31px;
     &.secondary {
       button {
         background-color: $color-purple;
+        @include hover();
       }
     }
   }

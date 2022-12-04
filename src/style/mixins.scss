@@ -60,7 +60,7 @@
 @mixin input() {
   box-sizing: border-box;
   width: 100%;
-  height: 40px;
+  height: $input-height;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -85,6 +85,12 @@
   &:hover {
     opacity: $hover-opacity;
   }
+
+  &:disabled {
+    &:hover {
+      opacity: $hover-opacity-disabled !important;
+    }
+  }
 }
 
 @mixin errorMsg() {
@@ -98,6 +104,11 @@
 
   span:has(svg) {
     margin-left: auto;
+  }
+
+  svg {
+    cursor: pointer;
+    @include hover();
   }
 }
 

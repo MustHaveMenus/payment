@@ -1,5 +1,5 @@
 import {Countries, States} from "./countries";
-import {Option, PaymentInfo, PaymentTypeEnum} from "../type/types";
+import {Option, PaymentInfo, PaymentTypeEnum, User} from "../type/types";
 import paymentType from "../comp/PaymentType";
 import {LocationDto, SubStatusDtoPlanCycleEnum} from "../generated/client";
 
@@ -96,6 +96,18 @@ export const isValidLocation = (loc: LocationDto) => {
 
 }
 
+export const isValidUser = (u: User) => {
+  return isNotEmpty(u.email) && isEmail(u.email);
+}
+
 export const getCycle = (type: PaymentTypeEnum) => {
   return type === PaymentTypeEnum.Monthly ? SubStatusDtoPlanCycleEnum.Monthly : SubStatusDtoPlanCycleEnum.Yearly;
 }
+
+export const isEmail = (email: string) => {
+  return String(email)
+    .toLowerCase()
+    .match(
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    );
+};

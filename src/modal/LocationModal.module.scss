@@ -48,6 +48,7 @@
 
     button {
       @include smallTextBold();
+      @include hover();
       background-color: $color-purple;
       color: $color-white;
       width: 169px;

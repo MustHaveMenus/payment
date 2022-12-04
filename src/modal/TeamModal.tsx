@@ -4,7 +4,7 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import generalStyles from '../style/general.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createEffect, For, Show} from "solid-js";
+import {createSignal, For, onMount, Setter, Show} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
@@ -16,6 +16,7 @@ import locationState from "../state/location";
 import {LocationDto} from "../generated/client";
 import mobileState from "../state/mobile";
 import TeamCircleIcon from "../comp/svg/TeamCircleIcon";
+import {isEmail, isNotEmpty, isValidUser} from "../util/util";
 
 interface TeamModalProps extends GenericModalProps {
   secondary?: boolean;
@@ -23,13 +24,19 @@ interface TeamModalProps extends GenericModalProps {
 
 const TeamModal = (props: TeamModalProps) => {
   const {mobile} = mobileState;
-  const {locations, addLocations} = locationState;
-  const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail} = teamState;
+  const {locations} = locationState;
+  const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers} = teamState;
+  const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
+  const [addUserBtnDisabled, setAddUserBtnDisabled] = createSignal(true);
+  const [emailErr, setEmailErr] = createSignal([] as string[]);
 
-  createEffect(() => {
+  onMount(() => {
     if (!locations[LOCATIONS].length) return;
-    addNewUser();
-  })
+    if (!team[USERS].length) {
+      addNewUser();
+    }
+    validate();
+  });
 
   function newUser() {
     return {
@@ -47,6 +54,17 @@ const TeamModal = (props: TeamModalProps) => {
     return remainingLocations(user).at(0)!;
   }
 
+  const validate = () => {
+    let valid = true;
+    team[USERS].forEach(u => {
+      if (!isValidUser(u)) {
+        valid = false;
+      }
+    });
+    setNextBtnDisabled(!valid);
+    setAddUserBtnDisabled(!valid);
+  }
+
   function validateAndProceed() {
     props.onNext?.();
   }
@@ -54,6 +72,46 @@ const TeamModal = (props: TeamModalProps) => {
   function remainingLocations(user: User) {
     if (locations[LOCATIONS].length === user.locations.length) return [];
     return locations[LOCATIONS].filter(it => !user?.locations.includes(it));
+  }
+
+  function onSkip() {
+    cleanUsers();
+    props.onNext?.();
+  }
+
+  function onUpdateEmail(user: User, e: KeyboardEvent) {
+    const value = (e.target as HTMLInputElement)?.value ?? '';
+    updateEmail(user, value);
+    const idx = team[USERS].indexOf(user);
+
+    if (isNotEmpty(value)) {
+      if (!isEmail(value)) {
+        setErrorMessage(setEmailErr, idx, 'Please input a valid email address.');
+      } else {
+        setErrorMessage(setEmailErr, idx, '');
+      }
+    } else {
+      setErrorMessage(setEmailErr, idx, 'Please complete this field.');
+    }
+    validate();
+  }
+
+  function setErrorMessage(setter: Setter<string[]>, idx: number, value: string) {
+    setter(old => {
+      const temp = [...old];
+      temp[idx] = value;
+      return temp;
+    });
+  }
+
+  function onDeleteUser(user: User) {
+    deleteUser(user);
+    validate();
+  }
+
+  function onAddNewUser() {
+    addNewUser();
+    validate();
   }
 
   return <Modal onBack={props.onBack}
@@ -77,14 +135,14 @@ const TeamModal = (props: TeamModalProps) => {
                           <div>
                             <div class={styles.formHeader}>
                               <span>New User Info</span>
-                              <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={[deleteUser, user]}>
+                              <span class={`${i() === 0 ? generalStyles.invisible : ''}`} onClick={() => onDeleteUser(user)}>
                                 <TrashIcon/>
                               </span>
                             </div>
 
                             <div class={styles.formContent}>
-                              <Input type={'text'} value={user.email} placeholder={'Email address'}
-                                     onKeyUp={(e) => updateEmail(user, (e.target as HTMLInputElement)?.value ?? '')}/>
+                              <Input type={'text'} value={user.email} placeholder={'Email address'} errorMsg={emailErr()[i()]}
+                                     onKeyUp={(e) => onUpdateEmail(user, e)}/>
                             </div>
                           </div>
                           <div>
@@ -117,15 +175,15 @@ const TeamModal = (props: TeamModalProps) => {
                       }</For>
 
                       <div class={styles.addUserWrapper}>
-                        <Button label={'+ Add Another User'} onClick={addNewUser}/>
+                        <Button label={'+ Add Another User'} onClick={() => onAddNewUser()} disabled={addUserBtnDisabled()}/>
                       </div>
                     </div>
                   </div>
                 }
                 footer={
                   <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary}}>
-                    <Button onClick={validateAndProceed} label={'Next'}></Button>
-                    <span onClick={props.onNext}>Skip this step {'>'}</span>
+                    <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
+                    <span onClick={onSkip}>Skip this step {'>'}</span>
                   </div>
                 }/>
 }

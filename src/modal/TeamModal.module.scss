@@ -80,6 +80,12 @@
         background-color: $color-orange;
         color: $color-white;
         padding: 0;
+
+        &:disabled {
+          &:hover {
+            opacity: .3;
+          }
+        }
       }
     }
   }

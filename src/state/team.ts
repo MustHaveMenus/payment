@@ -33,8 +33,11 @@ const teamState = createRoot(() => {
     const idx = team[USERS].indexOf(user);
     setTeam(USERS, idx, EMAIL, () => value);
   }
+  const cleanUsers = () => {
+    setTeam(USERS, _ => []);
+  }
 
-  return {team, deleteUser, addUser, addLocation, deleteLocation, updateLocation, updateEmail};
+  return {team, deleteUser, addUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers};
 });
 
 export default teamState;

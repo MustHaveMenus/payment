@@ -4,6 +4,7 @@
 .inputWrapper {
   display: flex;
   flex-direction: column;
+  height: $input-height;
 }
 
 .input {
