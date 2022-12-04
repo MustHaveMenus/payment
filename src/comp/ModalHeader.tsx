@@ -1,4 +1,5 @@
 import styles from './ModalHeader.module.scss';
+import generalStyles from '../style/general.module.scss';
 import {JSXElement} from "solid-js";
 import {GenericModalProps} from "./Modal";
 import CloseIcon from "./svg/CloseIcon";
@@ -18,7 +19,7 @@ const ModalHeader = (props: ModalHeaderProps) => {
   const {view} = viewState;
 
   return <div classList={{[styles.headerWrapper]: true, [styles.mobile]: mobile(), [styles.payment]: (view() === View.PAYMENT || view() === View.PAYMENT_REACTIVATE)}}>
-    {props.onBack && <div class={styles.back} onClick={props.onBack}><BackIcon/></div>}
+    <div classList={{[styles.back]: true, [generalStyles.invisible]: !props.onBack}} onClick={props.onBack}><BackIcon/></div>
     {props.children}
     <div classList={{[styles.close]: true, [styles.closeSecondary]: props.secondaryCloseBtn}} onClick={closeModal}><CloseIcon/></div>
   </div>
