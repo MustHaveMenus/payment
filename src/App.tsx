@@ -21,7 +21,7 @@ import loadingState from "./state/loading";
 import {handleServerError} from "./util/ErrorHandler";
 import {Alert} from "./index";
 import {getCycle} from "./util/util";
-import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto} from "./generated/client";
+import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum} from "./generated/client";
 import paymentInfoState from "./state/paymentInfo";
 import paymentTypeState from "./state/paymentType";
 import {LOCATIONS, USERS} from "./util/constants";
@@ -56,6 +56,22 @@ const App = (props: PrivateSetupProps) => {
   const [status, setStatus] = createSignal({} as SubStatusDto);
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
   const [subscription] = createResource(memberId, AccountsApi.getSubscription);
+  const [zip, setZip] = createSignal('');
+  const [cardNumber, setCardNumber] = createSignal('');
+  const [cardMonth, setCardMonth] = createSignal('');
+  const [cardYear, setCardYear] = createSignal('');
+  const [cvc, setCVC] = createSignal('');
+
+  createEffect(() => {
+    const info = paymentInfo();
+    if (!info || Object.keys(info).length === 0) return;
+
+    setZip(info.zip);
+    setCardNumber(info.number);
+    setCardMonth(`${info.month || ''}`);
+    setCardYear(`${info.year || ''}`);
+    setCVC(info.cvc);
+  });
 
   createEffect(() => {
     if (!props.type) return;
@@ -144,17 +160,11 @@ const App = (props: PrivateSetupProps) => {
     }
   });
 
-  const getUpgradeSubDto = (preview: boolean) => {
+  const getPreviewUpgradeSubDto = () => {
     return {
-      preview,
+      preview: true,
       cycle: getCycle(paymentType()),
-      card: {
-        number: paymentInfo().number,
-        month: `${paymentInfo().month}`,
-        year: `${paymentInfo().year}`,
-        cvv: paymentInfo().cvc
-      },
-      zip: paymentInfo().zip,
+      zip: zip(),
       locations: locations[LOCATIONS].filter(it => it.id === it.name),
       users: team[USERS].map(it => {
         return {
@@ -166,11 +176,28 @@ const App = (props: PrivateSetupProps) => {
     } as UpgradeSubscriptionDto;
   }
 
+  const getUpgradeSubDto = () => {
+    return {
+      ...getPreviewUpgradeSubDto(),
+      preview: false,
+      card: {
+        number: cardNumber(),
+        month: cardMonth(),
+        year: cardYear(),
+        cvv: cvc()
+      }
+    }
+  }
+
   async function previewInvoice() {
     if (view() !== View.PAYMENT) return;
+    const dto = getPreviewUpgradeSubDto();
+    if (dto.cycle === UpgradeSubscriptionDtoCycleEnum.No && !dto.users?.length && !dto.locations?.length) return;
+    if ((dto.zip?.length || 0) > 0 && (dto.zip?.length || 1) < 5) return;
+
     try {
       setPreviewLoading(true);
-      setStatus(await AccountsApi.upgradeSubscriptionPlan(memberId(), getUpgradeSubDto(true)));
+      setStatus(await AccountsApi.upgradeSubscriptionPlan(memberId(), dto));
       setPreviewLoading(false);
     } catch (e: any) {
       setPreviewLoading(false);
@@ -183,7 +210,7 @@ const App = (props: PrivateSetupProps) => {
   async function onSubscribe() {
     try {
       setLoading(true);
-      const resp = await AccountsApi.upgradeSubscriptionPlan(memberId(), getUpgradeSubDto(false));
+      await AccountsApi.upgradeSubscriptionPlan(memberId(), getUpgradeSubDto());
       setLoading(false);
       onNext();
     } catch (e: any) {
