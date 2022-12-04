@@ -1,5 +1,5 @@
 import {Countries, States} from "./countries";
-import {Option, PaymentInfo, PaymentTypeEnum, User} from "../type/types";
+import {Option, PaymentInfo, PaymentTypeEnum, User, ViewType} from "../type/types";
 import paymentType from "../comp/PaymentType";
 import {LocationDto, SubStatusDtoPlanCycleEnum} from "../generated/client";
 
@@ -111,3 +111,7 @@ export const isEmail = (email: string) => {
       /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     );
 };
+
+export const isAddonFlow = (type: ViewType) => {
+  return type === ViewType.ADD_USER_ADDON || type === ViewType.ADD_LOCATION_ADDON;
+}

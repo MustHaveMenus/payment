@@ -2,9 +2,9 @@ import styles from './TeamModal.module.scss';
 import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
 import generalStyles from '../style/general.module.scss';
-import Modal, {GenericModalProps} from "../comp/Modal";
+import Modal, {StepModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal, For, onMount, Setter, Show} from "solid-js";
+import {createEffect, createSignal, For, onMount, Setter, Show} from "solid-js";
 import TrashIcon from "../comp/svg/TrashIcon";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
@@ -16,10 +16,9 @@ import locationState from "../state/location";
 import {LocationDto} from "../generated/client";
 import mobileState from "../state/mobile";
 import TeamCircleIcon from "../comp/svg/TeamCircleIcon";
-import {isEmail, isNotEmpty, isValidUser} from "../util/util";
+import {isAddonFlow, isEmail, isNotEmpty, isValidUser} from "../util/util";
 
-interface TeamModalProps extends GenericModalProps {
-  secondary?: boolean;
+interface TeamModalProps extends StepModalProps {
 }
 
 const TeamModal = (props: TeamModalProps) => {
@@ -29,13 +28,22 @@ const TeamModal = (props: TeamModalProps) => {
   const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
   const [addUserBtnDisabled, setAddUserBtnDisabled] = createSignal(true);
   const [emailErr, setEmailErr] = createSignal([] as string[]);
+  const [allowSkip, setAllowSkip] = createSignal(true);
+  const [addonFlow, setAddonFlow] = createSignal(true);
 
   onMount(() => {
-    if (!locations[LOCATIONS].length) return;
     if (!team[USERS].length) {
       addNewUser();
     }
     validate();
+  });
+
+  createEffect(() => {
+    setAllowSkip(props.idx > 0);
+  });
+
+  createEffect(() => {
+    setAddonFlow(isAddonFlow(props.type));
   });
 
   function newUser() {
@@ -117,8 +125,8 @@ const TeamModal = (props: TeamModalProps) => {
   return <Modal onBack={props.onBack}
                 header={
                   <div class={headerStyles.wrapper}>
-                    <span class={headerStyles.header}><Show when={props.secondary} keyed><TeamCircleIcon/></Show>Add Your Team</span>
-                    <Show when={props.secondary} keyed fallback={<>
+                    <span class={headerStyles.header}><Show when={addonFlow()} keyed><TeamCircleIcon/></Show>Add Your Team</span>
+                    <Show when={addonFlow()} keyed fallback={<>
                       <span class={headerStyles.subheader}>Try Teams for free for 30 days. Only ${teamPricePerMonth}/month per user after that.</span>
                       <span class={headerStyles.subheader}>New users will get an email invite.</span>
                     </>}>
@@ -181,9 +189,11 @@ const TeamModal = (props: TeamModalProps) => {
                   </div>
                 }
                 footer={
-                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary}}>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: addonFlow()}}>
                     <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
-                    <span onClick={onSkip}>Skip this step {'>'}</span>
+                    <Show when={allowSkip()} keyed>
+                      <span onClick={onSkip}>Skip this step {'>'}</span>
+                    </Show>
                   </div>
                 }/>
 }

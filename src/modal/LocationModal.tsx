@@ -1,14 +1,14 @@
 import styles from './LocationModal.module.scss';
 import footerStyles from '../comp/ModalFooter.module.scss';
 import headerStyles from '../comp/ModalHeader.module.scss';
-import Modal, {GenericModalProps} from "../comp/Modal";
+import Modal, {StepModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
 import {createEffect, createSignal, For, onCleanup, onMount, Setter, Show} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
 import locationsState from "../state/location";
-import {countryValues, isNotEmpty, isValidLocation, stateValues} from "../util/util";
+import {countryValues, isAddonFlow, isNotEmpty, isValidLocation, stateValues} from "../util/util";
 import {LocationDto} from "../generated/client";
 import {DEFAULT_LOCATION, LOCATIONS} from "../util/constants";
 import mobileState from "../state/mobile";
@@ -17,9 +17,7 @@ import generalStyles from "../style/general.module.scss";
 import LocationCircleIcon from "../comp/svg/LocationCircleIcon";
 import {Option} from "../type/types";
 
-interface LocationModalProps extends GenericModalProps {
-  secondary?: boolean;
-  disallowSkip?: boolean;
+interface LocationModalProps extends StepModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
@@ -40,6 +38,8 @@ const LocationModal = (props: LocationModalProps) => {
   const [newLocations, setNewLocations] = createSignal([] as LocationDto[]);
   const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
   const [addLocBtnDisabled, setAddLocBtnDisabled] = createSignal(true);
+  const [allowSkip, setAllowSkip] = createSignal(true);
+  const [addonFlow, setAddonFlow] = createSignal(true);
   const [nameErr, setNameErr] = createSignal([] as string[]);
   const [addressErr, setAddressErr] = createSignal([] as string[]);
   const [address2Err, setAddress2Err] = createSignal([] as string[]);
@@ -52,6 +52,14 @@ const LocationModal = (props: LocationModalProps) => {
     const locs = locations[LOCATIONS];
     if (!locs) return;
     setNewLocations(locs.filter(it => it.id === it.name));
+  });
+
+  createEffect(() => {
+    setAllowSkip(props.idx > 0);
+  });
+
+  createEffect(() => {
+    setAddonFlow(isAddonFlow(props.type));
   });
 
   onMount(() => {
@@ -118,8 +126,8 @@ const LocationModal = (props: LocationModalProps) => {
   return <Modal onBack={props.onBack}
                 header={
                   <div class={headerStyles.wrapper}>
-                    <span class={headerStyles.header}><Show when={props.secondary} keyed><LocationCircleIcon/></Show>Add Locations</span>
-                    <Show when={props.secondary} keyed fallback={<>
+                    <span class={headerStyles.header}><Show when={addonFlow()} keyed><LocationCircleIcon/></Show>Add Locations</span>
+                    <Show when={addonFlow()} keyed fallback={<>
                       <span class={headerStyles.subheader}>Manage all your storefronts and brands from a single account.</span>
                       <span
                         class={headerStyles.subheader}>Try it free for 30 days. Only ${locationPricePerMonth}/month per location after that.</span>
@@ -172,9 +180,9 @@ const LocationModal = (props: LocationModalProps) => {
                   </div>
                 }
                 footer={
-                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.secondary}}>
+                  <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: addonFlow()}}>
                     <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
-                    <Show when={!props.disallowSkip} keyed>
+                    <Show when={allowSkip()} keyed>
                       <span onClick={props.onNext}>Skip this step {'>'}</span>
                     </Show>
                   </div>

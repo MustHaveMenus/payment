@@ -158,15 +158,19 @@ const Setup = (props: PrivateSetupProps) => {
     }
   }
 
+  function getCurrentViewIdx() {
+    return steps().findIndex((it => it === view()));
+  }
+
   function onNext() {
-    const currentIdx = steps().findIndex((it => it === view()));
+    const currentIdx = getCurrentViewIdx();
     if (currentIdx < steps().length - 1) {
       setView(steps()[currentIdx + 1]);
     }
   }
 
   function onBack() {
-    const currentIdx = steps().findIndex((it => it === view()));
+    const currentIdx = getCurrentViewIdx();
     if (currentIdx > 0) {
       setView(steps()[currentIdx - 1]);
     }
@@ -213,25 +217,34 @@ const Setup = (props: PrivateSetupProps) => {
     }
   }
 
+  function getOnBack() {
+    return getCurrentViewIdx() > 0 ? onBack : undefined;
+  }
+
+  function getOnNext() {
+    return onNext;
+  }
+
   return <>
     <div id={'mob-detect'}/>
 
     <Switch>
-      <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={onNext}/></Match>
-      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
-      <Match when={View.LOCATION === view()} keyed><LocationModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.ADD_LOCATION === view()} keyed><LocationModal onNext={onNext} secondary disallowSkip/></Match>
-      <Match when={View.ADD_TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext} secondary/></Match>
-      <Match when={View.TEAM === view()} keyed><TeamModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={onBack} onNext={onNext}/></Match>
-      <Match when={View.PAYMENT_FROM_FREE === view()} keyed><PaymentModal onBack={onBack} onNext={onNext} fromFree/></Match>
-      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={onBack} onNext={onNext}/></Match>
+      <Match when={View.OVERVIEW === view()} keyed><OverviewModal onNext={getOnNext()}/></Match>
+      <Match when={View.LOCATION === view()} keyed><LocationModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}/></Match>
+      <Match when={View.TEAM === view()} keyed><TeamModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}/></Match>
+      <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}/></Match>
+
+
+      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={getOnBack()} onNext={getOnNext()}/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade} onBack={props.type === ViewType.CANCEL ? undefined : onBack} /></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>
 
       <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess}/></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()} onSuccess={props.onSuccess}/></Match>
       <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()} resumeDate={nextPlanBillDate()} onSuccess={props.onSuccess}/></Match>
+
+
+      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
     </Switch>
   </>
 }

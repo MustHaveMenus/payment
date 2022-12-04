@@ -42,6 +42,9 @@ const ProModal = {
   addLocation: (props: SetupProps) => {
     ProModal.show({...props, type: ViewType.ADD_LOCATION_ADDON});
   },
+  addUser: (props: SetupProps) => {
+    ProModal.show({...props, type: ViewType.ADD_USER_ADDON});
+  },
   destroy: () => {
     destroy?.();
     destroy = undefined;

@@ -1,5 +1,5 @@
 import styles from './PaymentModal.module.scss';
-import Modal, {GenericModalProps} from "../comp/Modal";
+import Modal, {StepModalProps} from "../comp/Modal";
 import PaymentInformation from "../comp/PaymentInformation";
 import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
@@ -11,8 +11,8 @@ import footerStyles from "../comp/ModalFooter.module.scss";
 import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import locationsState from "../state/location";
-import {PaymentInfo} from "../type/types";
-import {getCycle, isValidPaymentInfo} from "../util/util";
+import {PaymentInfo, ViewType} from "../type/types";
+import {getCycle, isAddonFlow, isValidPaymentInfo} from "../util/util";
 import AccountsApi from "../api/AccountsApi";
 import memberState from "../state/member";
 import paymentTypeState from "../state/paymentType";
@@ -20,8 +20,7 @@ import {handleServerError} from "../util/ErrorHandler";
 import {UpgradeSubscriptionDto} from "../generated/client";
 import loadingState from "../state/loading";
 
-interface PaymentModalProps extends GenericModalProps {
-  fromFree?: boolean;
+interface PaymentModalProps extends StepModalProps {
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
@@ -33,6 +32,12 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {setLoading} = loadingState;
   const [btnDisabled, setBtnDisabled] = createSignal(true);
   const [paymentInfo, setPaymentInfo] = createSignal({} as PaymentInfo);
+
+  const [addonFlow, setAddonFlow] = createSignal(true);
+
+  createEffect(() => {
+    setAddonFlow(isAddonFlow(props.type));
+  });
 
   function onPaymentInfoChange(info: PaymentInfo) {
     setPaymentInfo(info);
@@ -80,7 +85,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   return <Modal onBack={props.onBack} footer={modalFooter()} content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
-        <Show when={props.fromFree} keyed fallback={
+        <Show when={!addonFlow()} keyed fallback={
           <span class={styles.topHeader}>Payment Info</span>
         }>
           <span class={styles.topHeader}>Try Pro Plan for free</span>

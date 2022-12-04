@@ -7,6 +7,7 @@ import ModalContent from "./ModalContent";
 import ModalContentWrapper from "./ModalContentWrapper";
 import loadingState from "../state/loading";
 import {Spinner} from "./Spinner";
+import {ViewType} from "../type/types";
 
 export interface GenericModalProps {
   onBack?: () => void;
@@ -18,6 +19,11 @@ interface ModalProps extends GenericModalProps {
   header?: JSXElement,
   content?: JSXElement,
   footer?: JSXElement,
+}
+
+export interface StepModalProps extends GenericModalProps {
+  type: ViewType;
+  idx: number;
 }
 
 const Modal = (props: ModalProps) => {
