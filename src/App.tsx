@@ -20,7 +20,7 @@ import PauseConfirmationModal from "./modal/PauseConfirmationModal";
 import loadingState from "./state/loading";
 import {handleServerError} from "./util/ErrorHandler";
 import {Alert} from "./index";
-import {getCycle} from "./util/util";
+import {getCycle, isNumeric} from "./util/util";
 import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum} from "./generated/client";
 import paymentInfoState from "./state/paymentInfo";
 import paymentTypeState from "./state/paymentType";
@@ -111,9 +111,13 @@ const App = (props: PrivateSetupProps) => {
     setMobile(window.getComputedStyle(elem).display === 'block');
   };
 
-  onMount(() => {
+  onMount(async () => {
     detectMobile();
-    setMemberId(props.memberId);
+    if (isNumeric(props.memberId)) {
+      setMemberId(await AccountsApi.getAccountId(parseInt(props.memberId)));
+    } else {
+      setMemberId(props.memberId);
+    }
   });
 
   createEffect(() => {

@@ -121,3 +121,11 @@ export const isEmail = (email: string) => {
 export const isAddonFlow = (type: ViewType) => {
   return type === ViewType.ADD_USER_ADDON || type === ViewType.ADD_LOCATION_ADDON;
 }
+
+export const isNumeric = (str: string) => {
+  try {
+    return !isNaN(Number(str)) && !isNaN(parseFloat(str));
+  } catch (e) {
+    return false;
+  }
+}

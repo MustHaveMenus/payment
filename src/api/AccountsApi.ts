@@ -4,6 +4,10 @@ import {apiConfig, ops} from "./config";
 const api = new AccountsResourceApi(apiConfig);
 
 const AccountsApi = {
+  getAccountId(memberId: number): Promise<string> {
+    if (!memberId) return Promise.reject();
+    return api.getMemberAccountId({memberId}, ops());
+  },
   getSubscription(memberId: string): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
     return api.getSubscription({memberId}, ops());

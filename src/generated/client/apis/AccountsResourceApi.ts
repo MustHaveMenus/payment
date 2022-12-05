@@ -108,6 +108,10 @@ export interface GetAvailableSubscriptionsRequest {
     memberId: string;
 }
 
+export interface GetMemberAccountIdRequest {
+    memberId: number;
+}
+
 export interface GetMemberRoleRequest {
     memberId: number;
 }
@@ -533,6 +537,34 @@ export class AccountsResourceApi extends runtime.BaseAPI {
      */
     async getAvailableSubscriptions(requestParameters: GetAvailableSubscriptionsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<SubStatusDto>> {
         const response = await this.getAvailableSubscriptionsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async getMemberAccountIdRaw(requestParameters: GetMemberAccountIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters.memberId === null || requestParameters.memberId === undefined) {
+            throw new runtime.RequiredError('memberId','Required parameter requestParameters.memberId was null or undefined when calling getMemberAccountId.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/v1/accounts/{memberId}/account-id`.replace(`{${"memberId"}}`, encodeURIComponent(String(requestParameters.memberId))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.TextApiResponse(response) as any;
+    }
+
+    /**
+     */
+    async getMemberAccountId(requestParameters: GetMemberAccountIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.getMemberAccountIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
