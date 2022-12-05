@@ -27,6 +27,12 @@ const ProModal = {
   upgrade: (props: AppProps) => {
     ProModal.show({...props, type: ViewType.FREE_TO_PRO});
   },
+  upgradeWithLocations: (props: AppProps) => {
+    ProModal.show({...props, type: ViewType.FREE_TO_PRO_WITH_LOCATION});
+  },
+  upgradeWithUsers: (props: AppProps) => {
+    ProModal.show({...props, type: ViewType.FREE_TO_PRO_WITH_USERS});
+  },
   pause: (props: AppProps) => {
     ProModal.show({...props, type: ViewType.PAUSE});
   },
