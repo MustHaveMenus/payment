@@ -202,6 +202,7 @@ const App = (props: PrivateSetupProps) => {
     const dto = getPreviewUpgradeSubDto();
     if (dto.cycle === UpgradeSubscriptionDtoCycleEnum.No && !dto.users?.length && !dto.locations?.length) return;
     if ((dto.zip?.length || 0) > 0 && (dto.zip?.length || 1) < 5) return;
+    if ((props.type === ViewType.FREE_TO_PRO_WITH_USERS || props.type === ViewType.FREE_TO_PRO_WITH_LOCATION || props.type === ViewType.FREE_TO_PRO) && dto.cycle === UpgradeSubscriptionDtoCycleEnum.No) return;
 
     try {
       setPreviewLoading(true);
