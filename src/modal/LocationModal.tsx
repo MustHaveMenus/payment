@@ -86,7 +86,8 @@ const LocationModal = (props: LocationModalProps) => {
   function update(loc: LocationDto, e: KeyboardEvent | null, setter: Setter<string[]>, updateState: (value: string) => void) {
     const key = e?.key.toLowerCase();
     if (key === 'tab' || key === 'shift') return;
-    const idx = locations[LOCATIONS].indexOf(loc) - 1;
+    let idx = locations[LOCATIONS].indexOf(loc) - 1;
+    if (idx < 0) idx = 0;
     const value = (e?.target as HTMLInputElement)?.value ?? '';
     updateState(value);
 

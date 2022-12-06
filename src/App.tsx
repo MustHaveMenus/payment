@@ -103,7 +103,7 @@ const App = (props: PrivateSetupProps) => {
   createEffect(() => {
     try {
       const resp = subscription();
-      if (!resp) return;
+      if (!resp || !Object.keys(resp).length) return;
       setNextPlanBillDate(resp.planEndDate || new Date());
     } catch (e) {
       console.error(e);
@@ -266,9 +266,21 @@ const App = (props: PrivateSetupProps) => {
   }
 
   function onNext() {
-    const currentIdx = getCurrentViewIdx();
-    if (currentIdx < steps().length - 1) {
-      setView(steps()[currentIdx + 1]);
+    const cb = () => {
+      const currentIdx = getCurrentViewIdx();
+      if (currentIdx < steps().length - 1) {
+        setView(steps()[currentIdx + 1]);
+      }
+    };
+
+    if (subscription.loading || locationsServer.loading) {
+      setLoading(true);
+      setTimeout(() => {
+        setLoading(false);
+        cb();
+      }, 2000);
+    } else {
+      cb();
     }
   }
 
