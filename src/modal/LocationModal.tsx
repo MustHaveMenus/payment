@@ -4,7 +4,7 @@ import headerStyles from '../comp/ModalHeader.module.scss';
 import Modal, {StepModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import {locationPricePerMonth} from "../util/prices";
-import {createEffect, createSignal, For, onCleanup, onMount, Setter, Show} from "solid-js";
+import {createEffect, createSignal, For, onMount, Setter, Show} from "solid-js";
 import Input from "../comp/Input";
 import Select from "../comp/Select";
 import locationsState from "../state/location";
@@ -82,7 +82,7 @@ const LocationModal = (props: LocationModalProps) => {
   function update(loc: LocationDto, e: KeyboardEvent | null, setter: Setter<string[]>, updateState: (value: string) => void) {
     const key = e?.key.toLowerCase();
     if (key === 'tab' || key === 'shift') return;
-    const idx = locations[LOCATIONS].indexOf(loc);
+    const idx = locations[LOCATIONS].indexOf(loc) - 1;
     const value = (e?.target as HTMLInputElement)?.value ?? '';
     updateState(value);
 
@@ -97,12 +97,25 @@ const LocationModal = (props: LocationModalProps) => {
   const validate = () => {
     let valid = true;
     locations[LOCATIONS].filter(it => it.id === it.name).forEach(loc => {
-      if (!isValidLocation(loc)) {
-        valid = false;
+        const idx = locations[LOCATIONS].indexOf(loc) - 1;
+        if (!isValidLocation(loc)) {
+          valid = false;
+        }
+        if (loc.name && !isValidName(loc.name)) {
+          setErrorMessage(setNameErr, idx, 'A location with this name already exists.');
+          valid = false;
+        } else if (valid) {
+          setErrorMessage(setNameErr, idx, '');
+        }
       }
-    });
+    );
+
     setNextBtnDisabled(!valid);
     setAddLocBtnDisabled(!valid);
+  }
+
+  const isValidName = (name: string) => {
+    return locations[LOCATIONS].map(it => it.name).filter(it => it === name).length === 1;
   }
 
   const onUpdateName = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setNameErr, (value: string) => updateName(loc, value, true));
