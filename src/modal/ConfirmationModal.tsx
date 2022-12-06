@@ -5,9 +5,11 @@ import Button from "../comp/Button";
 import openState from "../state/open";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import mobileState from "../state/mobile";
+import {SubStatusDto} from "../generated/client";
 
 interface ConfirmationModalProps extends StepModalProps {
   onSuccess?: () => void;
+  status: SubStatusDto;
 }
 
 const ConfirmationModal = (props: ConfirmationModalProps) => {
