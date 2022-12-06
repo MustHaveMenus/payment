@@ -49,7 +49,7 @@ const App = (props: PrivateSetupProps) => {
   const {setMobile} = mobileState;
   const {opened, openModal, closeModal} = openState;
   const {member, setMember} = memberState;
-  const {addLocations, cleanLocations} = locationsState;
+  const {addLocations, fullCleanLocations} = locationsState;
   const {setLoading} = loadingState;
   const [previewLoading, setPreviewLoading] = createSignal(false);
   const {paymentInfo} = paymentInfoState;
@@ -65,6 +65,15 @@ const App = (props: PrivateSetupProps) => {
   const [cardMonth, setCardMonth] = createSignal('');
   const [cardYear, setCardYear] = createSignal('');
   const [cvc, setCVC] = createSignal('');
+
+  function clean() {
+    cleanUsers();
+    fullCleanLocations();
+    setStatus({});
+    setZip('');
+    setMember({});
+    setMemberId('');
+  }
 
   createEffect(() => {
     if (member().id) {
@@ -119,8 +128,7 @@ const App = (props: PrivateSetupProps) => {
   };
 
   onMount(async () => {
-    cleanUsers();
-    cleanLocations();
+    clean();
     detectMobile();
     setMember(await AccountsApi.getAccount(props.memberId));
   });

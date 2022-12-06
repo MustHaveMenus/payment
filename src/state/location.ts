@@ -40,7 +40,11 @@ const locationsState = createRoot(() => {
     setLocations(LOCATIONS, old => old.filter(it => it.id !== it.name));
   }
 
-  return {locations, addLocation, addLocations, updateName, updateCity, updateZip, updateAddress, updateState, updateCountry, updateAddress2, deleteLocation, cleanLocations};
+  const fullCleanLocations = () => {
+    setLocations(LOCATIONS, _ => []);
+  }
+
+  return {locations, addLocation, addLocations, updateName, updateCity, updateZip, updateAddress, updateState, updateCountry, updateAddress2, deleteLocation, cleanLocations, fullCleanLocations};
 });
 
 export default locationsState;
