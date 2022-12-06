@@ -95,11 +95,9 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(() => {
     try {
-      setLoading(true);
       const resp = subscription();
       if (!resp) return;
       setNextPlanBillDate(resp.planEndDate || new Date());
-      setLoading(false);
     } catch (e) {
       console.error(e);
     }
