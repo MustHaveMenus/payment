@@ -18,6 +18,7 @@ const ProModal = {
   hide: () => {
     if (!container) return;
     container.style.display = 'none';
+    ProModal.destroy();
   },
   show: (props: AppProps) => {
     if (!container) init(props);
