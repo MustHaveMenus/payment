@@ -10,12 +10,13 @@ import {Option, PaymentInfo} from "../type/types";
 
 interface PaymentInformationProps {
   onChange: (info: PaymentInfo) => void;
+  zip?: string;
 }
 
 const PaymentInformation = (props: PaymentInformationProps) => {
   const [number, setNumber] = createSignal('');
   const [cvc, setCVC] = createSignal('');
-  const [zip, setZIP] = createSignal('');
+  const [zip, setZIP] = createSignal(props.zip || '');
   const [expireDate, setExpireDate] = createSignal('');
   const [country, setCountry] = createSignal(Countries.at(0));
 

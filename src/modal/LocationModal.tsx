@@ -20,6 +20,7 @@ import TeamsApi from "../api/TeamsApi";
 import {handleServerError} from "../util/ErrorHandler";
 import memberState from "../state/member";
 import loadingState from "../state/loading";
+import {UnitedStates} from "../util/countries";
 
 interface LocationModalProps extends StepModalProps {
 }
@@ -132,9 +133,12 @@ const LocationModal = (props: LocationModalProps) => {
 
   const onUpdateName = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setNameErr, (value: string) => updateName(loc, value, true));
   const onUpdateAddress = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setAddressErr, (value: string) => updateAddress(loc, value));
+  const onUpdateAddressWithValue = (loc: LocationDto, v: string) => update(loc, null, setAddressErr, () => updateAddress(loc, v));
   const onUpdateAddress2 = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setAddress2Err, (value: string) => updateAddress2(loc, value));
   const onUpdateCity = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setCityErr, (value: string) => updateCity(loc, value));
+  const onUpdateCityWithValue = (loc: LocationDto, v: string) => update(loc, null, setCityErr, () => updateCity(loc, v));
   const onUpdateZip = (loc: LocationDto, e: KeyboardEvent) => update(loc, e, setZipErr, (value: string) => updateZip(loc, value));
+  const onUpdateZipWithValue = (loc: LocationDto, v: string) => update(loc, null, setZipErr, () => updateZip(loc, v));
   const onUpdateState = (loc: LocationDto, v: Option) => update(loc, null, setStateErr, () => updateState(loc, v.name!));
   const onUpdateCountry = (loc: LocationDto, v: Option) => update(loc, null, setCountryErr, () => updateCountry(loc, v.name!));
 
@@ -162,6 +166,33 @@ const LocationModal = (props: LocationModalProps) => {
   function onSkip() {
     cleanLocations();
     props.onNext?.();
+  }
+
+  function onAutocomplete(loc: LocationDto, value: string, components: any[]) {
+    if (components && components.length > 0) {
+      components.forEach((addressComponent) => {
+        if (addressComponent.types.find((type: string) => type === "country")) {
+          const countryName = addressComponent.long_name === "United States" ? UnitedStates : addressComponent.long_name;
+          onUpdateCountry(loc, {id: countryName, name: countryName});
+        }
+        if (addressComponent.types.find((type: string) => type === "administrative_area_level_1")) {
+          const state = addressComponent.long_name;
+          onUpdateState(loc, {id: state, name: state});
+        }
+        if (addressComponent.types.find((type: string) => type === "locality")) {
+          onUpdateCityWithValue(loc, addressComponent.long_name);
+        }
+        if (addressComponent.types.find((type: string) => type === "route")) {
+          const streetNo = components[0].types[0] === "street_number" ? components[0].long_name : "";
+          onUpdateAddressWithValue(loc, streetNo !== "" ? `${streetNo} ${addressComponent.long_name}` : addressComponent.long_name);
+        }
+        if (addressComponent.types.find((type: string) => type === "postal_code")) {
+          onUpdateZipWithValue(loc, addressComponent.long_name);
+        }
+      });
+    } else {
+      onUpdateAddressWithValue(loc, value || "");
+    }
   }
 
   return <Modal onBack={props.onBack}
@@ -195,7 +226,7 @@ const LocationModal = (props: LocationModalProps) => {
                                    onKeyUp={(e) => onUpdateName(loc, e)}/>
                             <div class={styles.split}>
                               <Input type={'text'} value={loc.address} placeholder={'Street Address 1'} errorMsg={addressErr()[i()]}
-                                     onKeyUp={(e) => onUpdateAddress(loc, e)} useAutocomplete/>
+                                     onKeyUp={(e) => onUpdateAddress(loc, e)} onAutocomplete={(a, b) => onAutocomplete(loc, a, b)}/>
                               <Input type={'text'} value={loc.address2} placeholder={'Street Address 2'} errorMsg={address2Err()[i()]}
                                      onKeyUp={(e) => onUpdateAddress2(loc, e)}/>
                             </div>
