@@ -359,7 +359,7 @@ const App = (props: PrivateSetupProps) => {
                                                                              onBack={props.type === ViewType.CANCEL ? undefined : onBack}/></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>
 
-      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess} type={props.type} idx={getCurrentViewIdx()} status={status()}/></Match>
+      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess} type={props.type} idx={getCurrentViewIdx()} status={status()} users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length}/></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()}
                                                                              onSuccess={props.onSuccess}/></Match>
       <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()}

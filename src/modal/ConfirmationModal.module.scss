@@ -26,9 +26,43 @@ $leftMargin: 37.5px;
     text-align: center;
   }
 
-  button {
-    margin-top: 32px;
-    width: 336px;
+  .receipt {
+    @include normalText();
+    margin-top: 16px;
+    line-height: 1.6;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    padding: $margin-md;
+    border-radius: 6px;
+    background-color: $color-light-grey;
+    row-gap: 10px;
+
+    div {
+      width: 290px;
+      > span {
+        display: block;
+      }
+
+      &:first-child {
+        border-bottom: 1px solid $color-medium-grey2;
+        padding-bottom: 10px;
+      }
+    }
+  }
+
+  .btnWrapper {
+    button {
+      margin-top: 32px;
+      width: 336px;
+    }
+
+    &.secondary {
+      button {
+        background-color: $color-purple;
+        @include hover();
+      }
+    }
   }
 
   &.mobile {

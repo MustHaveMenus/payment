@@ -6,15 +6,33 @@ import openState from "../state/open";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import mobileState from "../state/mobile";
 import {SubStatusDto} from "../generated/client";
+import {createEffect, createSignal, Show} from "solid-js";
+import {ViewType} from "../type/types";
+import Price from "../comp/Price";
 
 interface ConfirmationModalProps extends StepModalProps {
   onSuccess?: () => void;
   status: SubStatusDto;
+  users: number;
+  locations: number;
 }
 
 const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {closeModal} = openState;
   const {mobile} = mobileState;
+  const [addonUpgrade, setAddonUpgrade] = createSignal(false);
+  const [addonsLabel, setAddonsLabel] = createSignal('');
+
+  createEffect(() => {
+    setAddonUpgrade(props.type === ViewType.ADD_LOCATION_ADDON || props.type === ViewType.ADD_USER_ADDON);
+  });
+
+  createEffect(() => {
+    const locations = `${props.locations} Location${props.locations > 1 ? 's' : ''}`;
+    const users = `${props.users} User${props.users > 1 ? 's' : ''}`;
+
+    setAddonsLabel([locations, users].join(', '));
+  });
 
   function onDone() {
     props.onSuccess?.();
@@ -23,15 +41,33 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
 
   const doneBtn = () => <Button label={'Done'} onClick={onDone}/>;
 
-  const mobileFooter = () => mobile() ? <div class={footerStyles.borderedFooter}>{doneBtn()}</div> : undefined;
-  const desktopFooter = () => !mobile() ? doneBtn() : <></>
+  const mobileFooter = () => mobile() ? <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>{doneBtn()}</div> : undefined;
+  const desktopFooter = () => !mobile() ? <div classList={{[styles.btnWrapper]: true, [styles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>{doneBtn()}</div> : <></>
 
   return <Modal footer={mobileFooter()} content={
     <div class={styles.wrapper}>
       <img src={party} alt={''}/>
       <span class={styles.textMd}>You're all set!</span>
-      <span class={styles.textSm}>We sent you a confirmation.</span>
-      <span class={styles.textLg}>We hope you enjoy your free trial!</span>
+      <Show when={addonUpgrade()} keyed fallback={
+        <>
+          <span class={styles.textSm}>We sent you a confirmation.</span>
+          <span class={styles.textLg}>We hope you enjoy your free trial!</span>
+        </>
+      }>
+        <>
+          <span class={styles.textSm}>We sent you an email confirmation and detailed receipt.</span>
+          <div class={styles.receipt}>
+            <div>
+              <span><b>Add-ons:</b> {addonsLabel()}</span>
+              <span><b>Monthly Charge:</b> <Price price={props.status.addonsTotal || 0}/></span>
+            </div>
+            <div>
+              <span><b>Tax:</b> <Price price={props.status.addonsTotal || 0}/></span>
+              <span><b>Total due today:</b> <Price price={props.status.addonsTotal || 0}/></span>
+            </div>
+          </div>
+        </>
+      </Show>
 
       {desktopFooter()}
     </div>
