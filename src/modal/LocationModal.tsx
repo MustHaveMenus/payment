@@ -195,7 +195,7 @@ const LocationModal = (props: LocationModalProps) => {
                                    onKeyUp={(e) => onUpdateName(loc, e)}/>
                             <div class={styles.split}>
                               <Input type={'text'} value={loc.address} placeholder={'Street Address 1'} errorMsg={addressErr()[i()]}
-                                     onKeyUp={(e) => onUpdateAddress(loc, e)}/>
+                                     onKeyUp={(e) => onUpdateAddress(loc, e)} useAutocomplete/>
                               <Input type={'text'} value={loc.address2} placeholder={'Street Address 2'} errorMsg={address2Err()[i()]}
                                      onKeyUp={(e) => onUpdateAddress2(loc, e)}/>
                             </div>
