@@ -113,8 +113,7 @@ const TeamModal = (props: TeamModalProps) => {
     }
   }
 
-  function onUpdateEmail(user: User, e: KeyboardEvent) {
-    const value = (e.target as HTMLInputElement)?.value ?? '';
+  function onUpdateEmail(user: User, value: string) {
     updateEmail(user, value);
     const idx = team[USERS].indexOf(user);
 
@@ -176,7 +175,7 @@ const TeamModal = (props: TeamModalProps) => {
 
                             <div class={styles.formContent}>
                               <Input type={'text'} value={user.email} placeholder={'Email address'} errorMsg={emailErr()[i()]}
-                                     onKeyUp={(e) => onUpdateEmail(user, e)}/>
+                                     onInputChange={(e) => onUpdateEmail(user, e)}/>
                             </div>
                           </div>
                           <div>
