@@ -106,7 +106,10 @@ const LocationModal = (props: LocationModalProps) => {
   const validate = () => {
     let valid = true;
     locations[LOCATIONS].filter(it => it.id === it.name).forEach(loc => {
-        const idx = locations[LOCATIONS].indexOf(loc) - 1;
+        let idx = locations[LOCATIONS].indexOf(loc) - 1;
+        if (idx < 0) {
+          idx = 0;
+        }
         if (!isValidLocation(loc)) {
           valid = false;
         }
