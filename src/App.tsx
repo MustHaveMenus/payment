@@ -48,12 +48,12 @@ const App = (props: PrivateSetupProps) => {
   const {setMobile} = mobileState;
   const {opened, openModal, closeModal} = openState;
   const {member, setMember} = memberState;
-  const {addLocations} = locationsState;
+  const {addLocations, cleanLocations} = locationsState;
   const {setLoading} = loadingState;
   const [previewLoading, setPreviewLoading] = createSignal(false);
   const {paymentInfo} = paymentInfoState;
   const {paymentType} = paymentTypeState;
-  const {team} = teamState;
+  const {team, cleanUsers} = teamState;
   const {locations} = locationsState;
   const [status, setStatus] = createSignal({} as SubStatusDto);
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
@@ -117,6 +117,8 @@ const App = (props: PrivateSetupProps) => {
   };
 
   onMount(async () => {
+    cleanUsers();
+    cleanLocations();
     detectMobile();
     setMember(await AccountsApi.getAccount(props.memberId));
   });
