@@ -110,6 +110,7 @@ const TeamModal = (props: TeamModalProps) => {
       props.onNext?.();
     } catch (e) {
       await handleServerError(e);
+      setLoading(false);
     }
   }
 

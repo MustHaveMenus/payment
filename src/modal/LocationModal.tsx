@@ -154,6 +154,7 @@ const LocationModal = (props: LocationModalProps) => {
       setLoading(false);
       props.onNext?.();
     } catch (e) {
+      setLoading(false);
       await handleServerError(e);
     }
   }
