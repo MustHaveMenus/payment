@@ -90,10 +90,12 @@ const LocationModal = (props: LocationModalProps) => {
     const value = (e?.target as HTMLInputElement)?.value ?? '';
     updateState(value);
 
-    if (isNotEmpty(value)) {
-      setErrorMessage(setter, idx, '');
-    } else {
-      setErrorMessage(setter, idx, 'Please complete this field.');
+    if (e) {
+      if (isNotEmpty(value)) {
+        setErrorMessage(setter, idx, '');
+      } else {
+        setErrorMessage(setter, idx, 'Please complete this field.');
+      }
     }
     validate();
   }
