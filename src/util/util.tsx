@@ -53,7 +53,7 @@ export const countryValues = Countries.map(it => {
 
 export const stateValues = Object.keys(States).map(it => {
   return {
-    id: States[it],
+    id: it,
     name: it
   }
 });

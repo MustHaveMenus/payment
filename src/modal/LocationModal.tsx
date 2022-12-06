@@ -19,6 +19,7 @@ import {Option, ViewType} from "../type/types";
 import TeamsApi from "../api/TeamsApi";
 import {handleServerError} from "../util/ErrorHandler";
 import memberState from "../state/member";
+import loadingState from "../state/loading";
 
 interface LocationModalProps extends StepModalProps {
 }
@@ -26,6 +27,7 @@ interface LocationModalProps extends StepModalProps {
 const LocationModal = (props: LocationModalProps) => {
   const {mobile} = mobileState;
   const {member} = memberState;
+  const {setLoading} = loadingState;
   const {
     locations,
     addLocation,
@@ -144,7 +146,9 @@ const LocationModal = (props: LocationModalProps) => {
   async function onNext() {
     if (!member() || !member().teamId) return;
     try {
+      setLoading(true);
       await TeamsApi.validateLocation(member().teamId!, locations[LOCATIONS].filter(it => it.id === it.name));
+      setLoading(false);
       props.onNext?.();
     } catch (e) {
       await handleServerError(e);

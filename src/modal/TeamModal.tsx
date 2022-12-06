@@ -13,17 +13,23 @@ import {EMAIL, LOCATIONS, USERS} from "../util/constants";
 import {User, ViewType} from "../type/types";
 import teamState from "../state/team";
 import locationState from "../state/location";
-import {LocationDto} from "../generated/client";
+import {InviteUserDto, LocationDto} from "../generated/client";
 import mobileState from "../state/mobile";
 import TeamCircleIcon from "../comp/svg/TeamCircleIcon";
 import {isAddonFlow, isEmail, isNotEmpty, isValidUser} from "../util/util";
+import UsersApi from "../api/UsersApi";
+import memberState from "../state/member";
+import {handleServerError} from "../util/ErrorHandler";
+import loadingState from "../state/loading";
 
 interface TeamModalProps extends StepModalProps {
 }
 
 const TeamModal = (props: TeamModalProps) => {
   const {mobile} = mobileState;
+  const {member} = memberState;
   const {locations} = locationState;
+  const {setLoading} = loadingState;
   const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers} = teamState;
   const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
   const [addUserBtnDisabled, setAddUserBtnDisabled] = createSignal(true);
@@ -62,19 +68,26 @@ const TeamModal = (props: TeamModalProps) => {
     return remainingLocations(user).at(0)!;
   }
 
+  const isValidEmail = (email: string) => {
+    return team[USERS].map(it => it.email).filter(it => it === email).length === 1;
+  }
+
   const validate = () => {
     let valid = true;
     team[USERS].forEach(u => {
       if (!isValidUser(u)) {
         valid = false;
       }
+      const idx = team[USERS].indexOf(u);
+      if (u.email && !isValidEmail(u.email)) {
+        setErrorMessage(setEmailErr, idx, 'A user with this email address already exists.');
+        valid = false;
+      } else if (valid) {
+        setErrorMessage(setEmailErr, idx, '');
+      }
     });
     setNextBtnDisabled(!valid);
     setAddUserBtnDisabled(!valid);
-  }
-
-  function validateAndProceed() {
-    props.onNext?.();
   }
 
   function remainingLocations(user: User) {
@@ -85,6 +98,19 @@ const TeamModal = (props: TeamModalProps) => {
   function onSkip() {
     cleanUsers();
     props.onNext?.();
+  }
+
+  async function onNext() {
+    try {
+      setLoading(true);
+      await UsersApi.validateTeamUsers(team[USERS].map(it => {
+        return {email: it.email, ownerId: member().id} as InviteUserDto
+      }));
+      setLoading(false);
+      props.onNext?.();
+    } catch (e) {
+      await handleServerError(e);
+    }
   }
 
   function onUpdateEmail(user: User, e: KeyboardEvent) {
@@ -190,7 +216,7 @@ const TeamModal = (props: TeamModalProps) => {
                 }
                 footer={
                   <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>
-                    <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
+                    <Button onClick={onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
                     <Show when={allowSkip()} keyed>
                       <span onClick={onSkip}>Skip this step {'>'}</span>
                     </Show>
