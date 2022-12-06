@@ -1,12 +1,12 @@
 import styles from './ConfirmationModal.module.scss';
 import party from '../assets/party.webp';
-import Modal, {GenericModalProps} from "../comp/Modal";
+import Modal, {StepModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import openState from "../state/open";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import mobileState from "../state/mobile";
 
-interface ConfirmationModalProps extends GenericModalProps {
+interface ConfirmationModalProps extends StepModalProps {
   onSuccess?: () => void;
 }
 
