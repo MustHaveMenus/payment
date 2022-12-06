@@ -44,6 +44,7 @@ const App = (props: PrivateSetupProps) => {
   const [memberId, setMemberId] = createSignal('');
   const [expireDate, setExpireDate] = createSignal(new Date());
   const [nextPlanBillDate, setNextPlanBillDate] = createSignal(new Date());
+  const [pauseEndDate, setPauseEndDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
   const {opened, openModal, closeModal} = openState;
@@ -105,6 +106,7 @@ const App = (props: PrivateSetupProps) => {
       const resp = subscription();
       if (!resp || !Object.keys(resp).length) return;
       setNextPlanBillDate(resp.planEndDate || new Date());
+      setPauseEndDate(resp.pauseEndDate || new Date());
     } catch (e) {
       console.error(e);
     }
@@ -225,8 +227,11 @@ const App = (props: PrivateSetupProps) => {
   async function onSubscribe() {
     if (!member() || !member().id) return;
     try {
+      const dto = getUpgradeSubDto();
+      if (!dto.zip) return;
+
       setLoading(true);
-      await AccountsApi.upgradeSubscriptionPlan(member().id!, getUpgradeSubDto());
+      await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
       setLoading(false);
       onNext();
     } catch (e: any) {
@@ -242,6 +247,7 @@ const App = (props: PrivateSetupProps) => {
       const resp = await AccountsApi.pauseSubscription(member().id!, period);
       setEmail(resp.email || '');
       setExpireDate(resp.planEndDate || new Date());
+      setPauseEndDate(resp.pauseEndDate || new Date());
       setLoading(false);
     } catch (e: any) {
       setLoading(false);
@@ -365,7 +371,7 @@ const App = (props: PrivateSetupProps) => {
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()}
                                                                              onSuccess={props.onSuccess}/></Match>
       <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()}
-                                                                         resumeDate={nextPlanBillDate()} onSuccess={props.onSuccess}/></Match>
+                                                                         resumeDate={pauseEndDate()} onSuccess={props.onSuccess}/></Match>
 
 
       <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
