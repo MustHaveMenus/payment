@@ -22,16 +22,45 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {mobile} = mobileState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
   const [addonsLabel, setAddonsLabel] = createSignal('');
+  const [userSubtotal, setUserSubtotal] = createSignal(0.0);
+  const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
+  const [grandTotal, setGrandTotal] = createSignal(0.0);
+  const [subtotal, setSubtotal] = createSignal(0.0);
 
   createEffect(() => {
     setAddonUpgrade(props.type === ViewType.ADD_LOCATION_ADDON || props.type === ViewType.ADD_USER_ADDON);
   });
 
   createEffect(() => {
-    const locations = `${props.locations} Location${props.locations > 1 ? 's' : ''}`;
-    const users = `${props.users} User${props.users > 1 ? 's' : ''}`;
+    const locations = !props.locations ? '' : `${props.locations} Location${props.locations > 1 ? 's' : ''}`;
+    const users = !props.users ? '' : `${props.users} User${props.users > 1 ? 's' : ''}`;
 
     setAddonsLabel([locations, users].join(', '));
+  });
+
+  createEffect(() => {
+    if (!props.status.addons || !props.users) return;
+    setUserSubtotal((props.status.addons.find(it => it.type === 'USER')?.total || 0) * props.users);
+  });
+
+  createEffect(() => {
+    if (!props.status.addons || !props.locations) return;
+    setLocationSubtotal((props.status.addons.find(it => it.type === 'LOCATION')?.total || 0) * props.locations);
+  });
+
+  createEffect(() => {
+    if (!props.status) return;
+    setGrandTotal(subtotal() + (props.status.totalTax || 0));
+  });
+
+  createEffect(() => {
+    if (!props.status || !props.status.grandTotal) return;
+
+    if (addonUpgrade()) {
+      setSubtotal(userSubtotal() + locationSubtotal());
+    } else {
+      setSubtotal(props.status.grandTotal || 0);
+    }
   });
 
   function onDone() {
@@ -59,11 +88,11 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
           <div class={styles.receipt}>
             <div>
               <span><b>Add-ons:</b> {addonsLabel()}</span>
-              <span><b>Monthly Charge:</b> <Price price={props.status.addonsTotal || 0}/></span>
+              <span><b>Monthly Charge:</b> <Price price={grandTotal()}/></span>
             </div>
             <div>
-              <span><b>Tax:</b> <Price price={props.status.addonsTotal || 0}/></span>
-              <span><b>Total due today:</b> <Price price={props.status.addonsTotal || 0}/></span>
+              <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
+              <span><b>Total due today:</b> <Price price={grandTotal()}/></span>
             </div>
           </div>
         </>
