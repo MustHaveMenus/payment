@@ -67,7 +67,8 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        <SubscriptionDetails users={team[USERS].length} locations={1}/>
+        TODO
+        <SubscriptionDetails users={team[USERS].length} locations={1} loading={false} status={{}}/>
       </div>
 
       {rightSideFooter()}

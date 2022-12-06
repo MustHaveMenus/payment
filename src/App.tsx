@@ -20,7 +20,7 @@ import PauseConfirmationModal from "./modal/PauseConfirmationModal";
 import loadingState from "./state/loading";
 import {handleServerError} from "./util/ErrorHandler";
 import {Alert} from "./index";
-import {getCycle, isNumeric} from "./util/util";
+import {getCycle} from "./util/util";
 import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum} from "./generated/client";
 import paymentInfoState from "./state/paymentInfo";
 import paymentTypeState from "./state/paymentType";
@@ -41,12 +41,13 @@ export interface PrivateSetupProps extends AppProps {
 const App = (props: PrivateSetupProps) => {
   const [steps, setSteps] = createSignal([] as View[]);
   const [email, setEmail] = createSignal('');
+  const [memberId, setMemberId] = createSignal('');
   const [expireDate, setExpireDate] = createSignal(new Date());
   const [nextPlanBillDate, setNextPlanBillDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
   const {opened, openModal, closeModal} = openState;
-  const {memberId, setMemberId} = memberState;
+  const {member, setMember} = memberState;
   const {addLocations} = locationsState;
   const {setLoading} = loadingState;
   const [previewLoading, setPreviewLoading] = createSignal(false);
@@ -63,6 +64,12 @@ const App = (props: PrivateSetupProps) => {
   const [cardMonth, setCardMonth] = createSignal('');
   const [cardYear, setCardYear] = createSignal('');
   const [cvc, setCVC] = createSignal('');
+
+  createEffect(() => {
+    if (member().id) {
+      setMemberId(member().id!);
+    }
+  });
 
   createEffect(() => {
     const info = paymentInfo();
@@ -111,11 +118,7 @@ const App = (props: PrivateSetupProps) => {
 
   onMount(async () => {
     detectMobile();
-    if (isNumeric(props.memberId)) {
-      setMemberId(await AccountsApi.getAccountId(parseInt(props.memberId)));
-    } else {
-      setMemberId(props.memberId);
-    }
+    setMember(await AccountsApi.getAccount(props.memberId));
   });
 
   createEffect(() => {
@@ -132,10 +135,11 @@ const App = (props: PrivateSetupProps) => {
   });
 
   createEffect(async () => {
+    if (!member() || !member().id) return;
     if (props.type === ViewType.REACTIVATE) {
       try {
         setLoading(true);
-        await AccountsApi.reactivateSubscription(memberId());
+        await AccountsApi.reactivateSubscription(member().id!);
         Alert.show({text: 'Subscription successfully reactivated'});
         setLoading(false);
         props.onSuccess?.();
@@ -149,10 +153,11 @@ const App = (props: PrivateSetupProps) => {
   });
 
   createEffect(async () => {
+    if (!member() || !member().id) return;
     if (props.type === ViewType.RESUME) {
       try {
         setLoading(true);
-        await AccountsApi.resumeSubscription(memberId());
+        await AccountsApi.resumeSubscription(member().id!);
         Alert.show({text: 'Subscription successfully resumed'});
         setLoading(false);
         props.onSuccess?.();
@@ -176,7 +181,7 @@ const App = (props: PrivateSetupProps) => {
         return {
           email: it.email,
           locations: it.locations.filter(it => it).map(it => it.name),
-          ownerId: memberId()
+          ownerId: member().id
         }
       }) as InviteUserDto[]
     } as UpgradeSubscriptionDto;
@@ -196,6 +201,7 @@ const App = (props: PrivateSetupProps) => {
   }
 
   async function previewInvoice() {
+    if (!member() || !member().id) return;
     if (view() !== View.PAYMENT) return;
     const dto = getPreviewUpgradeSubDto();
     if (dto.cycle === UpgradeSubscriptionDtoCycleEnum.No && !dto.users?.length && !dto.locations?.length) return;
@@ -204,7 +210,7 @@ const App = (props: PrivateSetupProps) => {
 
     try {
       setPreviewLoading(true);
-      setStatus(await AccountsApi.upgradeSubscriptionPlan(memberId(), dto));
+      setStatus(await AccountsApi.upgradeSubscriptionPlan(member().id!, dto));
       setPreviewLoading(false);
     } catch (e: any) {
       setPreviewLoading(false);
@@ -215,9 +221,10 @@ const App = (props: PrivateSetupProps) => {
   createEffect(previewInvoice);
 
   async function onSubscribe() {
+    if (!member() || !member().id) return;
     try {
       setLoading(true);
-      await AccountsApi.upgradeSubscriptionPlan(memberId(), getUpgradeSubDto());
+      await AccountsApi.upgradeSubscriptionPlan(member().id!, getUpgradeSubDto());
       setLoading(false);
       onNext();
     } catch (e: any) {
@@ -227,9 +234,10 @@ const App = (props: PrivateSetupProps) => {
   }
 
   async function onPause(period: number) {
+    if (!member() || !member().id) return;
     try {
       setLoading(true);
-      const resp = await AccountsApi.pauseSubscription(memberId(), period);
+      const resp = await AccountsApi.pauseSubscription(member().id!, period);
       setEmail(resp.email || '');
       setExpireDate(resp.planEndDate || new Date());
       setLoading(false);
@@ -240,9 +248,10 @@ const App = (props: PrivateSetupProps) => {
   }
 
   async function onCancel() {
+    if (!member() || !member().id) return;
     try {
       setLoading(true);
-      const resp = await AccountsApi.cancelSubscription(memberId());
+      const resp = await AccountsApi.cancelSubscription(member().id!);
       setEmail(resp.email || '');
       setExpireDate(resp.planEndDate || new Date());
       setLoading(false);

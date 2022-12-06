@@ -16,12 +16,16 @@ import TrashIcon from "../comp/svg/TrashIcon";
 import generalStyles from "../style/general.module.scss";
 import LocationCircleIcon from "../comp/svg/LocationCircleIcon";
 import {Option, ViewType} from "../type/types";
+import TeamsApi from "../api/TeamsApi";
+import {handleServerError} from "../util/ErrorHandler";
+import memberState from "../state/member";
 
 interface LocationModalProps extends StepModalProps {
 }
 
 const LocationModal = (props: LocationModalProps) => {
   const {mobile} = mobileState;
+  const {member} = memberState;
   const {
     locations,
     addLocation,
@@ -134,6 +138,15 @@ const LocationModal = (props: LocationModalProps) => {
     });
   }
 
+  async function onNext() {
+    if (!member() || !member().teamId) return;
+    try {
+      await TeamsApi.validateLocation(member().teamId!, locations[LOCATIONS].filter(it => it.id === it.name));
+      props.onNext?.();
+    } catch (e) {
+      await handleServerError(e);
+    }
+  }
 
   function onSkip() {
     cleanLocations();
@@ -198,7 +211,7 @@ const LocationModal = (props: LocationModalProps) => {
                 }
                 footer={
                   <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>
-                    <Button onClick={props.onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
+                    <Button onClick={onNext} disabled={nextBtnDisabled()} label={'Next'}></Button>
                     <Show when={allowSkip()} keyed>
                       <span onClick={onSkip}>Skip this step {'>'}</span>
                     </Show>

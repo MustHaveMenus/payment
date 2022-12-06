@@ -1,19 +1,19 @@
-import {AccountsResourceApi, LocationDto, SubStatusDto, SubStatusDtoPlanCycleEnum, UpgradeSubscriptionDto,} from "../generated/client";
+import {AccountsResourceApi, LocationDto, MemberDto, SubStatusDto, SubStatusDtoPlanCycleEnum, UpgradeSubscriptionDto,} from "../generated/client";
 import {apiConfig, ops} from "./config";
 
 const api = new AccountsResourceApi(apiConfig);
 
 const AccountsApi = {
-  getAccountId(memberId: number): Promise<string> {
+  getAccount(memberId: string): Promise<MemberDto> {
     if (!memberId) return Promise.reject();
-    return api.getMemberAccountId({memberId}, ops());
+    return api.getAccount({memberId}, ops());
   },
   getSubscription(memberId: string): Promise<SubStatusDto> {
-    if (!memberId) return Promise.reject();
+    if (!memberId) return Promise.resolve({});
     return api.getSubscription({memberId}, ops());
   },
   getLocations(memberId: string): Promise<LocationDto[]> {
-    if (!memberId) return Promise.reject();
+    if (!memberId) return Promise.resolve([]);
     return api.getUserLocations({memberId}, ops());
   },
   upgradeSubscriptionPlan(memberId: string, upgradeSubscriptionDto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
