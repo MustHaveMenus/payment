@@ -204,10 +204,11 @@ const App = (props: PrivateSetupProps) => {
 
   async function previewInvoice() {
     if (!member() || !member().id) return;
-    if (view() !== View.PAYMENT) return;
+    if (view() !== View.PAYMENT && view() !== View.PAYMENT_REACTIVATE) return;
     const dto = getPreviewUpgradeSubDto();
     if (dto.cycle === UpgradeSubscriptionDtoCycleEnum.No && !dto.users?.length && !dto.locations?.length) return;
     if ((dto.zip?.length || 0) > 0 && (dto.zip?.length || 1) < 5) return;
+    if (!dto.zip?.length && view() === View.PAYMENT_REACTIVATE) return;
     if ((props.type === ViewType.FREE_TO_PRO_WITH_USERS || props.type === ViewType.FREE_TO_PRO_WITH_LOCATION || props.type === ViewType.FREE_TO_PRO) && dto.cycle === UpgradeSubscriptionDtoCycleEnum.No) return;
 
     try {
