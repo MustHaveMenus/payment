@@ -52,9 +52,9 @@ const AccountsApi = {
     if (!memberId) return Promise.reject();
     return api.pauseSubscription({memberId, body: period}, ops());
   },
-  resumeSubscription(memberId: string): Promise<SubStatusDto> {
+  resumeSubscription(memberId: string, dto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
-    return api.resumeSubscription({memberId}, ops());
+    return api.resumeSubscription({memberId, upgradeSubscriptionDto: dto}, ops());
   },
 };
 

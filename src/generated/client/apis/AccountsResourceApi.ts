@@ -169,6 +169,7 @@ export interface RemoveSubscriptionAddonRequest {
 
 export interface ResumeSubscriptionRequest {
     memberId: string;
+    upgradeSubscriptionDto: UpgradeSubscriptionDto;
 }
 
 export interface SaveFullBillingInfoRequest {
@@ -947,15 +948,22 @@ export class AccountsResourceApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('memberId','Required parameter requestParameters.memberId was null or undefined when calling resumeSubscription.');
         }
 
+        if (requestParameters.upgradeSubscriptionDto === null || requestParameters.upgradeSubscriptionDto === undefined) {
+            throw new runtime.RequiredError('upgradeSubscriptionDto','Required parameter requestParameters.upgradeSubscriptionDto was null or undefined when calling resumeSubscription.');
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
             path: `/api/v1/accounts/{memberId}/subscription/resume`.replace(`{${"memberId"}}`, encodeURIComponent(String(requestParameters.memberId))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: UpgradeSubscriptionDtoToJSON(requestParameters.upgradeSubscriptionDto),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SubStatusDtoFromJSON(jsonValue));

@@ -19,7 +19,6 @@ import PauseModal from "./modal/PauseModal";
 import PauseConfirmationModal from "./modal/PauseConfirmationModal";
 import loadingState from "./state/loading";
 import {handleServerError} from "./util/ErrorHandler";
-import {Alert} from "./index";
 import {getCycle} from "./util/util";
 import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum} from "./generated/client";
 import paymentInfoState from "./state/paymentInfo";
@@ -154,23 +153,23 @@ const App = (props: PrivateSetupProps) => {
     }
   });
 
-  createEffect(async () => {
-    if (!member() || !member().id) return;
-    if (props.type === ViewType.RESUME) {
-      try {
-        setLoading(true);
-        await AccountsApi.resumeSubscription(member().id!);
-        Alert.show({text: 'Subscription successfully resumed'});
-        setLoading(false);
-        props.onSuccess?.();
-        closeModal();
-        props.onClose();
-      } catch (e: any) {
-        setLoading(false);
-        await handleServerError(e);
-      }
-    }
-  });
+  // createEffect(async () => {
+  //   if (!member() || !member().id) return;
+  //   if (props.type === ViewType.RESUME) {
+  //     try {
+  //       setLoading(true);
+  //       await AccountsApi.resumeSubscription(member().id!);
+  //       Alert.show({text: 'Subscription successfully resumed'});
+  //       setLoading(false);
+  //       props.onSuccess?.();
+  //       closeModal();
+  //       props.onClose();
+  //     } catch (e: any) {
+  //       setLoading(false);
+  //       await handleServerError(e);
+  //     }
+  //   }
+  // });
 
   const getPreviewUpgradeSubDto = () => {
     return {
@@ -233,7 +232,7 @@ const App = (props: PrivateSetupProps) => {
       if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
         await AccountsApi.recreateSubscription(member().id!, dto);
       } else if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
-        setStatus(await AccountsApi.reactivateSubscription(member().id!, dto));
+        setStatus(await AccountsApi.resumeSubscription(member().id!, dto));
       } else {
         await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
       }
