@@ -112,6 +112,18 @@ export interface SubStatusDto {
     pauseEndDate?: Date;
     /**
      * 
+     * @type {Date}
+     * @memberof SubStatusDto
+     */
+    trialStart?: Date;
+    /**
+     * 
+     * @type {Date}
+     * @memberof SubStatusDto
+     */
+    trialEnd?: Date;
+    /**
+     * 
      * @type {boolean}
      * @memberof SubStatusDto
      */
@@ -234,6 +246,8 @@ export function SubStatusDtoFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'planTotal': !exists(json, 'planTotal') ? undefined : json['planTotal'],
         'pauseStartDate': !exists(json, 'pauseStartDate') ? undefined : (new Date(json['pauseStartDate'])),
         'pauseEndDate': !exists(json, 'pauseEndDate') ? undefined : (new Date(json['pauseEndDate'])),
+        'trialStart': !exists(json, 'trialStart') ? undefined : (new Date(json['trialStart'])),
+        'trialEnd': !exists(json, 'trialEnd') ? undefined : (new Date(json['trialEnd'])),
         'addonsUpgradeInProgress': !exists(json, 'addonsUpgradeInProgress') ? undefined : json['addonsUpgradeInProgress'],
         'addonsCycle': !exists(json, 'addonsCycle') ? undefined : json['addonsCycle'],
         'addonsEndDate': !exists(json, 'addonsEndDate') ? undefined : (new Date(json['addonsEndDate'])),
@@ -267,6 +281,8 @@ export function SubStatusDtoToJSON(value?: SubStatusDto | null): any {
         'planTotal': value.planTotal,
         'pauseStartDate': value.pauseStartDate === undefined ? undefined : (value.pauseStartDate.toISOString()),
         'pauseEndDate': value.pauseEndDate === undefined ? undefined : (value.pauseEndDate.toISOString()),
+        'trialStart': value.trialStart === undefined ? undefined : (value.trialStart.toISOString()),
+        'trialEnd': value.trialEnd === undefined ? undefined : (value.trialEnd.toISOString()),
         'addonsUpgradeInProgress': value.addonsUpgradeInProgress,
         'addonsCycle': value.addonsCycle,
         'addonsEndDate': value.addonsEndDate === undefined ? undefined : (value.addonsEndDate.toISOString()),

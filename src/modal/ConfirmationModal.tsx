@@ -106,7 +106,7 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
             <Show when={addonUpgrade()} keyed>
               <div class={styles.bottomBorder}>
                 <span><b>Add-ons:</b> {addonsLabel()}</span>
-                <span><b>{paymentType() === PaymentTypeEnum.Monthly ? 'Monthly' : 'Annual'} Charge:</b> <Price price={grandTotal()}/></span>
+                <span><b>{paymentType() === PaymentTypeEnum.Monthly ? 'Monthly' : 'Yearly'} Charge:</b> <Price price={grandTotal()}/></span>
               </div>
               <div>
                 <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
