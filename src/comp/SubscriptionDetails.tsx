@@ -1,23 +1,26 @@
 import styles from "./SubscriptionDetails.module.scss";
 import {createEffect, createSignal, Show} from "solid-js";
 import paymentTypeState from "../state/paymentType";
-import {PaymentTypeEnum} from "../type/types";
+import {PaymentTypeEnum, ViewType} from "../type/types";
 import {SubStatusDto, SubStatusDtoAddonsCycleEnum} from "../generated/client";
 import {Spinner} from "./Spinner";
 import Price from "./Price";
 import FormattedDate from "./FormattedDate";
 import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/constants";
+import {isReactivateFlow} from "../util/util";
 
 interface SubscriptionDetailsProps {
   users: number;
   locations: number;
   status: SubStatusDto;
   loading: boolean;
+  type: ViewType;
 }
 
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const {paymentType} = paymentTypeState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
+  const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [subtotal, setSubtotal] = createSignal(0.0);
   const [grandTotal, setGrandTotal] = createSignal(0.0);
   const [userSubtotal, setUserSubtotal] = createSignal(0.0);
@@ -25,6 +28,10 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
 
   createEffect(() => {
     setAddonUpgrade(paymentType() == PaymentTypeEnum.None);
+  });
+
+  createEffect(() => {
+    setReactivateFlow(isReactivateFlow(props.type));
   });
 
   createEffect(() => {
@@ -112,14 +119,23 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
           <div><Price price={props.status.totalTax || 0}/></div>
         </div>
 
-        <div class={`${styles.paymentDetailsEntry} ${styles.topMargin}`}>
-          <div>Due <FormattedDate date={new Date(props.status.nextPlanBillingDate!)}/></div>
-          <div><Price price={grandTotal()}/></div>
-        </div>
-        <div class={styles.paymentDetailsEntry}>
-          <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>
-          <div><b><Price price={0}/></b></div>
-        </div>
+        <Show when={reactivateFlow()} keyed fallback={
+          <>
+            <div class={`${styles.paymentDetailsEntry} ${styles.topMargin}`}>
+              <div>Due <FormattedDate date={new Date(props.status.nextPlanBillingDate!)}/></div>
+              <div><Price price={grandTotal()}/></div>
+            </div>
+            <div class={styles.paymentDetailsEntry}>
+              <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>
+              <div><b><Price price={0}/></b></div>
+            </div>
+          </>
+        }>
+          <div class={styles.paymentDetailsEntry}>
+            <div><b>Total due today:</b></div>
+            <div><b><Price price={grandTotal()}/></b></div>
+          </div>
+        </Show>
       </div>
     </Show>
   </>

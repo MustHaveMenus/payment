@@ -10,9 +10,10 @@ import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import CardOnFile from "../comp/CardOnFile";
 import PaymentInformation from "../comp/PaymentInformation";
-import {PaymentInfo} from "../type/types";
+import {PaymentInfo, ViewType} from "../type/types";
 
 interface PaymentModalProps extends GenericModalProps {
+  type: ViewType;
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
@@ -68,7 +69,7 @@ const PaymentModal = (props: PaymentModalProps) => {
 
       <div class={styles.right}>
         TODO
-        <SubscriptionDetails users={team[USERS].length} locations={1} loading={false} status={{}}/>
+        <SubscriptionDetails users={team[USERS].length} locations={1} loading={false} status={{}} type={props.type}/>
       </div>
 
       {rightSideFooter()}

@@ -105,7 +105,7 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length} status={props.status} loading={props.previewLoading}/>
+        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length} status={props.status} loading={props.previewLoading} type={props.type}/>
       </div>
 
       {rightSideFooter()}
