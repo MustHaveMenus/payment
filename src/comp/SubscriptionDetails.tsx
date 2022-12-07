@@ -8,6 +8,7 @@ import Price from "./Price";
 import FormattedDate from "./FormattedDate";
 import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/constants";
 import {isReactivateFlow} from "../util/util";
+import currentSubscriptionState from "../state/currentSubscription";
 
 interface SubscriptionDetailsProps {
   users: number;
@@ -25,6 +26,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const [grandTotal, setGrandTotal] = createSignal(0.0);
   const [userSubtotal, setUserSubtotal] = createSignal(0.0);
   const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
+  const [dueDate, setDueDate] = createSignal(new Date());
+  const {currentSubscription} = currentSubscriptionState;
 
   createEffect(() => {
     setAddonUpgrade(paymentType() == PaymentTypeEnum.None);
@@ -57,6 +60,15 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   createEffect(() => {
     if (!props.status) return;
     setGrandTotal(subtotal() + (props.status.totalTax || 0));
+  });
+
+  createEffect(() => {
+    if (!props.status) return;
+    let date = props.status.nextPlanBillingDate!;
+    if (currentSubscription() && currentSubscription().trialEnd && (new Date() < currentSubscription()!.trialEnd!)) {
+      date = currentSubscription().trialEnd!;
+    }
+    setDueDate(new Date(date || ''));
   });
 
   function getPaymentType(status: SubStatusDtoAddonsCycleEnum) {
@@ -122,7 +134,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
         <Show when={reactivateFlow()} keyed fallback={
           <>
             <div class={`${styles.paymentDetailsEntry} ${styles.topMargin}`}>
-              <div>Due <FormattedDate date={new Date(props.status.nextPlanBillingDate!)}/></div>
+              <div>Due <FormattedDate date={dueDate()}/></div>
               <div><Price price={grandTotal()}/></div>
             </div>
             <div class={styles.paymentDetailsEntry}>

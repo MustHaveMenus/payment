@@ -26,6 +26,7 @@ import paymentTypeState from "./state/paymentType";
 import {LOCATIONS, USERS} from "./util/constants";
 import teamState from "./state/team";
 import {Countries} from "./util/countries";
+import currentSubscriptionState from "./state/currentSubscription";
 
 export interface AppProps {
   type: ViewType;
@@ -56,6 +57,7 @@ const App = (props: PrivateSetupProps) => {
   const {paymentType} = paymentTypeState;
   const {team, cleanUsers} = teamState;
   const {locations} = locationsState;
+  const {setCurrentSubscription} = currentSubscriptionState;
   const [status, setStatus] = createSignal({} as SubStatusDto);
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
   const [subscription] = createResource(memberId, AccountsApi.getSubscription);
@@ -119,6 +121,7 @@ const App = (props: PrivateSetupProps) => {
       if (!resp || !Object.keys(resp).length) return;
       setNextPlanBillDate(resp.planEndDate || new Date());
       setPauseEndDate(resp.pauseEndDate || new Date());
+      setCurrentSubscription(resp);
       if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
         setStatus(resp);
         setLoading(false);
