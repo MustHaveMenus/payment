@@ -154,6 +154,7 @@ export interface PauseSubscriptionRequest {
 
 export interface ReactivateSubscriptionRequest {
     memberId: string;
+    upgradeSubscriptionDto: UpgradeSubscriptionDto;
 }
 
 export interface RecreateSubscriptionPlanRequest {
@@ -842,15 +843,22 @@ export class AccountsResourceApi extends runtime.BaseAPI {
             throw new runtime.RequiredError('memberId','Required parameter requestParameters.memberId was null or undefined when calling reactivateSubscription.');
         }
 
+        if (requestParameters.upgradeSubscriptionDto === null || requestParameters.upgradeSubscriptionDto === undefined) {
+            throw new runtime.RequiredError('upgradeSubscriptionDto','Required parameter requestParameters.upgradeSubscriptionDto was null or undefined when calling reactivateSubscription.');
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
             path: `/api/v1/accounts/{memberId}/subscription/reactivate`.replace(`{${"memberId"}}`, encodeURIComponent(String(requestParameters.memberId))),
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
+            body: UpgradeSubscriptionDtoToJSON(requestParameters.upgradeSubscriptionDto),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => SubStatusDtoFromJSON(jsonValue));

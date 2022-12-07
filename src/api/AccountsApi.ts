@@ -1,10 +1,11 @@
 import {
   AccountsResourceApi,
+  LightCardDto,
   LocationDto,
   MemberDto,
   PaymentDetailsDto,
   SubStatusDto,
-  SubStatusDtoPlanCycleEnum,
+  UpdateCardDto,
   UpgradeSubscriptionDto,
 } from "../generated/client";
 import {apiConfig, ops} from "./config";
@@ -15,6 +16,9 @@ const AccountsApi = {
   getAccount(memberId: string): Promise<MemberDto> {
     if (!memberId) return Promise.reject();
     return api.getAccount({memberId}, ops());
+  },
+  updateAccountPaymentDetailsCard(memberId: string, dto: UpdateCardDto): Promise<LightCardDto> {
+    return api.updateAccountPaymentDetailsCard({memberId, updateCardDto: dto}, ops());
   },
   getPaymentDetails(memberId: string): Promise<PaymentDetailsDto> {
     if (!memberId) return Promise.reject();
@@ -36,9 +40,9 @@ const AccountsApi = {
     if (!memberId) return Promise.reject();
     return api.cancelSubscription({memberId}, ops());
   },
-  reactivateSubscription(memberId: string): Promise<SubStatusDto> {
+  reactivateSubscription(memberId: string, dto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
-    return api.reactivateSubscription({memberId}, ops());
+    return api.reactivateSubscription({memberId, upgradeSubscriptionDto: dto}, ops());
   },
   recreateSubscription(memberId: string, dto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();

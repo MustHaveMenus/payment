@@ -156,26 +156,6 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(async () => {
     if (!member() || !member().id) return;
-
-    // TODO:
-    // if (props.type === ViewType.REACTIVATE) {
-    //   try {
-    //     setLoading(true);
-    //     await AccountsApi.reactivateSubscription(member().id!);
-    //     Alert.show({text: 'Subscription successfully reactivated'});
-    //     setLoading(false);
-    //     props.onSuccess?.();
-    //     closeModal();
-    //     props.onClose();
-    //   } catch (e: any) {
-    //     setLoading(false);
-    //     await handleServerError(e);
-    //   }
-    // }
-  });
-
-  createEffect(async () => {
-    if (!member() || !member().id) return;
     if (props.type === ViewType.RESUME) {
       try {
         setLoading(true);
@@ -246,12 +226,13 @@ const App = (props: PrivateSetupProps) => {
     if (!member() || !member().id) return;
     try {
       const dto = getUpgradeSubDto();
-      if (!dto.zip) return;
 
       setLoading(true);
 
       if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
         await AccountsApi.recreateSubscription(member().id!, dto);
+      } else if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
+        setStatus(await AccountsApi.reactivateSubscription(member().id!, dto));
       } else {
         await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
       }
@@ -389,7 +370,9 @@ const App = (props: PrivateSetupProps) => {
                                                                              onBack={props.type === ViewType.CANCEL ? undefined : onBack}/></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>
 
-      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess} type={props.type} idx={getCurrentViewIdx()} status={status()} users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length}/></Match>
+      <Match when={View.CONFIRMATION === view()} keyed><ConfirmationModal onSuccess={props.onSuccess} type={props.type} idx={getCurrentViewIdx()}
+                                                                          status={status()} users={team[USERS].length}
+                                                                          locations={locations[LOCATIONS].filter(it => it.id === it.name).length}/></Match>
       <Match when={View.CANCELLED === view()} keyed><CancelConfirmationModal email={email()} expireDate={expireDate()}
                                                                              onSuccess={props.onSuccess}/></Match>
       <Match when={View.PAUSED === view()} keyed><PauseConfirmationModal email={email()} pauseDate={nextPlanBillDate()}
@@ -397,7 +380,9 @@ const App = (props: PrivateSetupProps) => {
 
 
       <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade} status={status()}/></Match>
-      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={getOnBack()} onNext={getOnNext()} type={props.type}/></Match>
+      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onPay={onSubscribe} onBack={getOnBack()} onNext={getOnNext()}
+                                                                                     type={props.type} status={status()}
+                                                                                     previewLoading={previewLoading()}/></Match>
     </Switch>
   </>
 }

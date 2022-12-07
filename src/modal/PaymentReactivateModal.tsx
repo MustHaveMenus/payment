@@ -1,35 +1,43 @@
 import styles from './PaymentReactivateModal.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal, onMount, Show} from "solid-js";
-import {USERS} from "../util/constants";
-import teamState from "../state/team";
+import {createEffect, createSignal, onMount, Show} from "solid-js";
 import mobileState from "../state/mobile";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import CardOnFile from "../comp/CardOnFile";
 import PaymentInformation from "../comp/PaymentInformation";
-import {PaymentInfo, ViewType} from "../type/types";
+import {PaymentInfo, PaymentTypeEnum, ViewType} from "../type/types";
 import AccountsApi from "../api/AccountsApi";
 import memberState from "../state/member";
 import loadingState from "../state/loading";
 import {handleServerError} from "../util/ErrorHandler";
+import paymentInfoState from "../state/paymentInfo";
+import {isValidPaymentInfo} from "../util/util";
+import {SubStatusDto, SubStatusDtoPlanCycleEnum} from "../generated/client";
+import paymentTypeState from "../state/paymentType";
 
 interface PaymentModalProps extends GenericModalProps {
   type: ViewType;
+  onPay: () => void;
+  status: SubStatusDto;
+  previewLoading: boolean;
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
-  const {team} = teamState;
   const {member} = memberState;
   const {setLoading} = loadingState;
+  const {paymentInfo, setPaymentInfo} = paymentInfoState;
+  const {setPaymentType} = paymentTypeState;
   const [btnDisabled, setBtnDisabled] = createSignal(false);
   const [showPaymentForm, setShowPaymentForm] = createSignal(false);
   const [cardLast4, setCardLast4] = createSignal('');
   const [cardExprMonth, setCardExprMonth] = createSignal(0);
   const [cardExprYear, setCardExprYear] = createSignal(0);
+  const [userNr, setUserNr] = createSignal(0);
+  const [locNr, setLocNr] = createSignal(0);
 
   onMount(async () => {
     if (!member() || !member().id) return;
@@ -44,11 +52,21 @@ const PaymentModal = (props: PaymentModalProps) => {
       await handleServerError(e);
       setLoading(false);
     }
-  })
+  });
 
+  createEffect(() => {
+    if (!props.status || !props.status.addons) return;
+    setUserNr(props.status.addons.find(it => it.type === 'USER')?.quantity || 0);
+    setLocNr(props.status.addons.find(it => it.type === 'LOCATION')?.quantity || 0);
+    setPaymentType(props.status.planCycle === SubStatusDtoPlanCycleEnum.Monthly ? PaymentTypeEnum.Monthly : PaymentTypeEnum.Annually);
+  });
+
+  createEffect(() => {
+    setBtnDisabled(showPaymentForm() && !isValidPaymentInfo(paymentInfo()));
+  });
 
   const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
-    <Button label={'Reactivate Now'} secondary disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
+    <Button label={'Reactivate Now'} secondary disabled={btnDisabled()} onClick={props.onPay}/>
   </div>;
 
   const agreementMsg = () => <div class={styles.agreementWrapper}><Agreement/></div>;
@@ -66,7 +84,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   }
 
   function onPaymentInfoChange(info: PaymentInfo) {
-    console.log(info);
+    setPaymentInfo(info);
   }
 
   return <Modal onBack={props.onBack} footer={modalFooter()} content={
@@ -93,8 +111,7 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        TODO
-        <SubscriptionDetails users={team[USERS].length} locations={1} loading={false} status={{}} type={props.type}/>
+        <SubscriptionDetails users={userNr()} locations={locNr()} loading={props.previewLoading} status={props.status} type={props.type}/>
       </div>
 
       {rightSideFooter()}
