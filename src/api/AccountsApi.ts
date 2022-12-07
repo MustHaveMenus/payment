@@ -30,7 +30,7 @@ const AccountsApi = {
   },
   recreateSubscription(memberId: string, dto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
-    return api.recreateSubscriptionPlan({memberId, upgradeSubscriptionDto: dto});
+    return api.recreateSubscriptionPlan({memberId, upgradeSubscriptionDto: dto}, ops());
   },
   pauseSubscription(memberId: string, period: number): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
