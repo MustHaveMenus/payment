@@ -1,4 +1,12 @@
-import {AccountsResourceApi, LocationDto, MemberDto, SubStatusDto, SubStatusDtoPlanCycleEnum, UpgradeSubscriptionDto,} from "../generated/client";
+import {
+  AccountsResourceApi,
+  LocationDto,
+  MemberDto,
+  PaymentDetailsDto,
+  SubStatusDto,
+  SubStatusDtoPlanCycleEnum,
+  UpgradeSubscriptionDto,
+} from "../generated/client";
 import {apiConfig, ops} from "./config";
 
 const api = new AccountsResourceApi(apiConfig);
@@ -7,6 +15,10 @@ const AccountsApi = {
   getAccount(memberId: string): Promise<MemberDto> {
     if (!memberId) return Promise.reject();
     return api.getAccount({memberId}, ops());
+  },
+  getPaymentDetails(memberId: string): Promise<PaymentDetailsDto> {
+    if (!memberId) return Promise.reject();
+    return api.getAccountPaymentDetails({memberId}, ops());
   },
   getSubscription(memberId: string): Promise<SubStatusDto> {
     if (!memberId) return Promise.resolve({});

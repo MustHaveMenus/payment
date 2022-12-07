@@ -133,3 +133,8 @@ export const isNumeric = (str: string) => {
     return false;
   }
 }
+
+export const getDaysUntil = (date: Date) => {
+  const now = new Date();
+  return parseInt(((date.getTime() - now.getTime()) / (1000 * 3600 * 24)) + '');
+}

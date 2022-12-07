@@ -113,10 +113,17 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(() => {
     try {
+      if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
+        setLoading(true);
+      }
       const resp = subscription();
       if (!resp || !Object.keys(resp).length) return;
       setNextPlanBillDate(resp.planEndDate || new Date());
       setPauseEndDate(resp.pauseEndDate || new Date());
+      if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
+        setStatus(resp);
+        setLoading(false);
+      }
     } catch (e) {
       console.error(e);
     }
@@ -378,8 +385,6 @@ const App = (props: PrivateSetupProps) => {
                                                                 status={status()} previewLoading={previewLoading()}
                                                                 onPay={onSubscribe}/></Match>
 
-
-      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={getOnBack()} onNext={getOnNext()}/></Match>
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade}
                                                                              onBack={props.type === ViewType.CANCEL ? undefined : onBack}/></Match>
       <Match when={View.CONFIRM_PAUSE === view()} keyed><PauseModal pauseDate={nextPlanBillDate()} onDecision={onDecisionMade}/></Match>
@@ -391,7 +396,8 @@ const App = (props: PrivateSetupProps) => {
                                                                          resumeDate={pauseEndDate()} onSuccess={props.onSuccess}/></Match>
 
 
-      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade}/></Match>
+      <Match when={View.OVERVIEW_REACTIVATE === view()} keyed><OverviewReactivateModal onDecision={onDecisionMade} status={status()}/></Match>
+      <Match when={View.PAYMENT_REACTIVATE === view()} keyed><PaymentReactivateModal onBack={getOnBack()} onNext={getOnNext()} type={props.type}/></Match>
     </Switch>
   </>
 }

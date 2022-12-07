@@ -1,7 +1,7 @@
 import styles from './PaymentReactivateModal.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
-import {createSignal, Show} from "solid-js";
+import {createSignal, onMount, Show} from "solid-js";
 import {USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
@@ -11,6 +11,10 @@ import Agreement from "../comp/Agreement";
 import CardOnFile from "../comp/CardOnFile";
 import PaymentInformation from "../comp/PaymentInformation";
 import {PaymentInfo, ViewType} from "../type/types";
+import AccountsApi from "../api/AccountsApi";
+import memberState from "../state/member";
+import loadingState from "../state/loading";
+import {handleServerError} from "../util/ErrorHandler";
 
 interface PaymentModalProps extends GenericModalProps {
   type: ViewType;
@@ -19,8 +23,29 @@ interface PaymentModalProps extends GenericModalProps {
 const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
   const {team} = teamState;
+  const {member} = memberState;
+  const {setLoading} = loadingState;
   const [btnDisabled, setBtnDisabled] = createSignal(false);
   const [showPaymentForm, setShowPaymentForm] = createSignal(false);
+  const [cardLast4, setCardLast4] = createSignal('');
+  const [cardExprMonth, setCardExprMonth] = createSignal(0);
+  const [cardExprYear, setCardExprYear] = createSignal(0);
+
+  onMount(async () => {
+    if (!member() || !member().id) return;
+    setLoading(true);
+    try {
+      const paymentDetails = await AccountsApi.getPaymentDetails(member().id!);
+      setCardLast4(paymentDetails.card?.ending || '');
+      setCardExprMonth(paymentDetails.card?.exprMonth || 0);
+      setCardExprYear(paymentDetails.card?.exprYear || 0);
+      setLoading(false);
+    } catch (e) {
+      await handleServerError(e);
+      setLoading(false);
+    }
+  })
+
 
   const subscribeBtn = () => <div class={mobile() ? footerStyles.btnWrapper : styles.btnWrapper}>
     <Button label={'Reactivate Now'} secondary disabled={btnDisabled()} onClick={btnDisabled() ? undefined : props.onNext}/>
@@ -55,7 +80,7 @@ const PaymentModal = (props: PaymentModalProps) => {
               fallback={
                 <>
                   <div class={styles.cardOnFileWrapper}>
-                    <CardOnFile card={{exprMonth: 10, exprYear: 26, ending: '1234'}}/>
+                    <CardOnFile card={{exprMonth: cardExprMonth(), exprYear: cardExprYear(), ending: cardLast4()}}/>
                   </div>
                   <span class={styles.updatePaymentBtn} onClick={onUpdatePayment}>Update payment method</span>
                 </>

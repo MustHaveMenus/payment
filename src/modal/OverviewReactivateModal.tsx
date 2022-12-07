@@ -2,17 +2,25 @@ import styles from './OverviewReactivateModal.module.scss';
 import Modal, {GenericModalProps} from "../comp/Modal";
 import Button from "../comp/Button";
 import mobileState from "../state/mobile";
-import {createSignal} from "solid-js";
+import {createEffect, createSignal, Show} from "solid-js";
 import footerStyles from "../comp/ModalFooter.module.scss";
 import {Decision} from "../type/types";
+import {SubStatusDto} from "../generated/client";
+import {getDaysUntil} from "../util/util";
 
 interface OverviewReactivateModalProps extends GenericModalProps {
   onDecision: (dec: Decision) => void;
+  status: SubStatusDto;
 }
 
 const OverviewReactivateModal = (props: OverviewReactivateModalProps) => {
   const [daysLeftUntilReactivate, setDaysLeftUntilReactivate] = createSignal(0);
   const {mobile} = mobileState;
+
+  createEffect(() => {
+    if (!props || !props.status) return;
+    setDaysLeftUntilReactivate(getDaysUntil(props.status.pauseEndDate || new Date()));
+  });
 
   const cancelBtn = () => <Button label={'Cancel Account'} secondaryOutlined onClick={() => props.onDecision(Decision.CANCEL)}/>;
   const reactivateBtn = () => <Button label={'Reactivate Now'} secondary onClick={() => props.onDecision(Decision.REACTIVATE)}/>;
@@ -35,7 +43,9 @@ const OverviewReactivateModal = (props: OverviewReactivateModalProps) => {
     <section class={styles.topSection}>
       <span class={styles.topHeader}>Welcome Back!</span>
       <span class={styles.topSubheader}>Your subscription has been <b>paused</b>.</span>
-      <span class={styles.topSubheader}>You have {daysLeftUntilReactivate()} days left until it gets automatically reactivated.</span>
+      <Show when={daysLeftUntilReactivate() > 0} keyed>
+        <span class={styles.topSubheader}>You have {daysLeftUntilReactivate()} days left until it gets automatically reactivated.</span>
+      </Show>
     </section>
   </>
 
