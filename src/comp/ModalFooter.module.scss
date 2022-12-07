@@ -33,6 +33,13 @@ $leftMargin: 31px;
         @include hover();
       }
     }
+
+    &.tertiary {
+      button {
+        background-color: $color-primary;
+        @include hover();
+      }
+    }
   }
 
   .reactivateOverview {
@@ -74,6 +81,12 @@ $leftMargin: 31px;
         &.secondary {
           button {
             background-color: $color-purple;
+          }
+        }
+
+        &.tertiary {
+          button {
+            background-color: $color-primary;
           }
         }
       }

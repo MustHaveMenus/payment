@@ -64,8 +64,10 @@ const PaymentModal = (props: PaymentModalProps) => {
   const subscribeBtn = () => <div classList={{
     [styles.btnWrapper]: !mobile(),
     [styles.secondary]: !mobile() && props.type === ViewType.ADD_LOCATION_ADDON,
+    [styles.tertiary]: !mobile() && props.type === ViewType.REACTIVATE_FROM_CANCELLED,
     [footerStyles.btnWrapper]: mobile(),
-    [footerStyles.secondary]: mobile() && props.type === ViewType.ADD_LOCATION_ADDON
+    [footerStyles.secondary]: mobile() && props.type === ViewType.ADD_LOCATION_ADDON,
+    [footerStyles.tertiary]: mobile() && props.type === ViewType.REACTIVATE_FROM_CANCELLED
   }}>
     <Button label={'Subscribe'} disabled={btnDisabled()} onClick={props.onPay}/>
   </div>;
@@ -94,6 +96,7 @@ const PaymentModal = (props: PaymentModalProps) => {
         }>
           <span class={styles.topHeader}>Welcome Back!</span>
           <span class={styles.topSubheader}>Your account is in <b>{friendlyStatus()} status</b>. Enter your card information below to restart your account.</span>
+          <PaymentType/>
         </Show>
         <div class={styles.paymentInformationWrapper}>
           <PaymentInformation onChange={onPaymentInfoChange}/>

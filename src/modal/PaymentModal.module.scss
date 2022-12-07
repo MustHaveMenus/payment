@@ -10,6 +10,22 @@
     .paymentInformationWrapper {
       margin-top: $margin;
     }
+
+    .btnWrapper {
+      width: 100%;
+
+      &.secondary {
+        button {
+          background-color: $color-purple;
+        }
+      }
+
+      &.tertiary {
+        button {
+          background-color: $color-primary;
+        }
+      }
+    }
   }
 
   .right {

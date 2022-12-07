@@ -162,6 +162,12 @@
         background-color: $color-purple;
       }
     }
+
+    &.tertiary {
+      button {
+        $color-primary: #e42436;
+      }
+    }
   }
 }
 
