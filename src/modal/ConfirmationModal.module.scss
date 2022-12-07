@@ -44,7 +44,7 @@ $leftMargin: 37.5px;
         display: block;
       }
 
-      &:first-child {
+      &.bottomBorder {
         border-bottom: 1px solid $color-medium-grey2;
         padding-bottom: 10px;
       }
@@ -60,6 +60,13 @@ $leftMargin: 37.5px;
     &.secondary {
       button {
         background-color: $color-purple;
+        @include hover();
+      }
+    }
+
+    &.tertiary {
+      button {
+        background-color: $color-primary;
         @include hover();
       }
     }

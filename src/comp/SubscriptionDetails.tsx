@@ -6,6 +6,7 @@ import {SubStatusDto, SubStatusDtoAddonsCycleEnum} from "../generated/client";
 import {Spinner} from "./Spinner";
 import Price from "./Price";
 import FormattedDate from "./FormattedDate";
+import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/constants";
 
 interface SubscriptionDetailsProps {
   users: number;
@@ -72,7 +73,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
             <span>Subscription</span>
           </div>
           <div class={styles.paymentDetailsEntry}>
-            <div>{paymentType() === PaymentTypeEnum.Monthly ? 'Pro Monthly' : 'Pro Annual'}</div>
+            <div>{paymentType() === PaymentTypeEnum.Monthly ? SUBSCRIPTION_NAME_MONTHLY : SUBSCRIPTION_NAME_ANNUALY}</div>
             <div><Price price={props.status.planTotal || 0} type={paymentType()}/></div>
           </div>
         </div>

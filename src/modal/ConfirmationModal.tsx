@@ -7,8 +7,11 @@ import footerStyles from "../comp/ModalFooter.module.scss";
 import mobileState from "../state/mobile";
 import {SubStatusDto} from "../generated/client";
 import {createEffect, createSignal, Show} from "solid-js";
-import {ViewType} from "../type/types";
+import {PaymentTypeEnum, ViewType} from "../type/types";
 import Price from "../comp/Price";
+import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/constants";
+import paymentTypeState from "../state/paymentType";
+import FormattedDate from "../comp/FormattedDate";
 
 interface ConfirmationModalProps extends StepModalProps {
   onSuccess?: () => void;
@@ -20,7 +23,9 @@ interface ConfirmationModalProps extends StepModalProps {
 const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {closeModal} = openState;
   const {mobile} = mobileState;
+  const {paymentType} = paymentTypeState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
+  const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [addonsLabel, setAddonsLabel] = createSignal('');
   const [userSubtotal, setUserSubtotal] = createSignal(0.0);
   const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
@@ -29,6 +34,10 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
 
   createEffect(() => {
     setAddonUpgrade(props.type === ViewType.ADD_LOCATION_ADDON || props.type === ViewType.ADD_USER_ADDON);
+  });
+
+  createEffect(() => {
+    setReactivateFlow(props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED || props.type === ViewType.REACTIVATE_FROM_PAUSED);
   });
 
   createEffect(() => {
@@ -70,14 +79,22 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
 
   const doneBtn = () => <Button label={'Done'} onClick={onDone}/>;
 
-  const mobileFooter = () => mobile() ? <div classList={{[footerStyles.borderedFooter]: true, [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>{doneBtn()}</div> : undefined;
-  const desktopFooter = () => !mobile() ? <div classList={{[styles.btnWrapper]: true, [styles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON}}>{doneBtn()}</div> : <></>
+  const mobileFooter = () => mobile() ? <div classList={{
+    [footerStyles.borderedFooter]: true,
+    [footerStyles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON,
+    [footerStyles.tertiary]: reactivateFlow(),
+  }}>{doneBtn()}</div> : undefined;
+  const desktopFooter = () => !mobile() ? <div classList={{
+    [styles.btnWrapper]: true,
+    [styles.secondary]: props.type === ViewType.ADD_LOCATION_ADDON,
+    [styles.tertiary]: reactivateFlow(),
+  }}>{doneBtn()}</div> : <></>
 
   return <Modal footer={mobileFooter()} content={
     <div class={styles.wrapper}>
       <img src={party} alt={''}/>
       <span class={styles.textMd}>You're all set!</span>
-      <Show when={addonUpgrade()} keyed fallback={
+      <Show when={addonUpgrade() || reactivateFlow()} keyed fallback={
         <>
           <span class={styles.textSm}>We sent you a confirmation.</span>
           <span class={styles.textLg}>We hope you enjoy your free trial!</span>
@@ -86,14 +103,23 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
         <>
           <span class={styles.textSm}>We sent you an email confirmation and detailed receipt.</span>
           <div class={styles.receipt}>
-            <div>
-              <span><b>Add-ons:</b> {addonsLabel()}</span>
-              <span><b>Monthly Charge:</b> <Price price={grandTotal()}/></span>
-            </div>
-            <div>
-              <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
-              <span><b>Total due today:</b> <Price price={grandTotal()}/></span>
-            </div>
+            <Show when={addonUpgrade()} keyed>
+              <div class={styles.bottomBorder}>
+                <span><b>Add-ons:</b> {addonsLabel()}</span>
+                <span><b>Monthly Charge:</b> <Price price={grandTotal()}/></span>
+              </div>
+              <div>
+                <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
+                <span><b>Total due today:</b> <Price price={grandTotal()}/></span>
+              </div>
+            </Show>
+            <Show when={reactivateFlow()} keyed>
+              <div>
+                <span><b>Subscription:</b> {paymentType() === PaymentTypeEnum.Monthly ? SUBSCRIPTION_NAME_MONTHLY : SUBSCRIPTION_NAME_ANNUALY}</span>
+                <span><b>Renewal Date:</b> <FormattedDate date={props.status.nextPlanBillingDate || new Date()}/></span>
+                <span><b>Total paid today:</b> <Price price={props.status.grandTotalWithTax || 0}/></span>
+              </div>
+            </Show>
           </div>
         </>
       </Show>
