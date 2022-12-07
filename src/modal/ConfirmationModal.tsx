@@ -44,7 +44,7 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
     const locations = !props.locations ? '' : `${props.locations} Location${props.locations > 1 ? 's' : ''}`;
     const users = !props.users ? '' : `${props.users} User${props.users > 1 ? 's' : ''}`;
 
-    setAddonsLabel([locations, users].join(', '));
+    setAddonsLabel([locations, users].filter(it => it).join(', '));
   });
 
   createEffect(() => {
