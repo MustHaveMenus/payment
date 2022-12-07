@@ -47,7 +47,7 @@ const App = (props: PrivateSetupProps) => {
   const [pauseEndDate, setPauseEndDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
-  const {opened, openModal, closeModal} = openState;
+  const {opened, openModal} = openState;
   const {member, setMember} = memberState;
   const {addLocations, fullCleanLocations} = locationsState;
   const {setLoading} = loadingState;
