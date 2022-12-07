@@ -122,6 +122,10 @@ export const isAddonFlow = (type: ViewType) => {
   return type === ViewType.ADD_USER_ADDON || type === ViewType.ADD_LOCATION_ADDON;
 }
 
+export const isReactivateFlow = (type: ViewType) => {
+  return type === ViewType.REACTIVATE_FROM_CANCELLED || type === ViewType.REACTIVATE_FROM_PAUSED || type === ViewType.REACTIVATE_FROM_DECLINED;
+}
+
 export const isNumeric = (str: string) => {
   try {
     return !isNaN(Number(str)) && !isNaN(parseFloat(str));

@@ -28,6 +28,10 @@ const AccountsApi = {
     if (!memberId) return Promise.reject();
     return api.reactivateSubscription({memberId}, ops());
   },
+  recreateSubscription(memberId: string, dto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
+    if (!memberId) return Promise.reject();
+    return api.recreateSubscriptionPlan({memberId, upgradeSubscriptionDto: dto});
+  },
   pauseSubscription(memberId: string, period: number): Promise<SubStatusDto> {
     if (!memberId) return Promise.reject();
     return api.pauseSubscription({memberId, body: period}, ops());

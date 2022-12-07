@@ -32,6 +32,7 @@ export interface AppProps {
   type: ViewType;
   memberId: string;
   onSuccess?: () => void;
+  closable?: boolean;
 }
 
 export interface PrivateSetupProps extends AppProps {
@@ -148,20 +149,22 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(async () => {
     if (!member() || !member().id) return;
-    if (props.type === ViewType.REACTIVATE) {
-      try {
-        setLoading(true);
-        await AccountsApi.reactivateSubscription(member().id!);
-        Alert.show({text: 'Subscription successfully reactivated'});
-        setLoading(false);
-        props.onSuccess?.();
-        closeModal();
-        props.onClose();
-      } catch (e: any) {
-        setLoading(false);
-        await handleServerError(e);
-      }
-    }
+
+    // TODO:
+    // if (props.type === ViewType.REACTIVATE) {
+    //   try {
+    //     setLoading(true);
+    //     await AccountsApi.reactivateSubscription(member().id!);
+    //     Alert.show({text: 'Subscription successfully reactivated'});
+    //     setLoading(false);
+    //     props.onSuccess?.();
+    //     closeModal();
+    //     props.onClose();
+    //   } catch (e: any) {
+    //     setLoading(false);
+    //     await handleServerError(e);
+    //   }
+    // }
   });
 
   createEffect(async () => {
@@ -239,7 +242,13 @@ const App = (props: PrivateSetupProps) => {
       if (!dto.zip) return;
 
       setLoading(true);
-      await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
+
+      if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+        await AccountsApi.recreateSubscription(member().id!, dto);
+      } else {
+        await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
+      }
+
       setLoading(false);
       onNext();
     } catch (e: any) {

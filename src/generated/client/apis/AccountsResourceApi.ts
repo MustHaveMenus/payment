@@ -156,6 +156,11 @@ export interface ReactivateSubscriptionRequest {
     memberId: string;
 }
 
+export interface RecreateSubscriptionPlanRequest {
+    memberId: string;
+    upgradeSubscriptionDto: UpgradeSubscriptionDto;
+}
+
 export interface RemoveSubscriptionAddonRequest {
     memberId: string;
     body: string;
@@ -855,6 +860,41 @@ export class AccountsResourceApi extends runtime.BaseAPI {
      */
     async reactivateSubscription(requestParameters: ReactivateSubscriptionRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SubStatusDto> {
         const response = await this.reactivateSubscriptionRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     */
+    async recreateSubscriptionPlanRaw(requestParameters: RecreateSubscriptionPlanRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<SubStatusDto>> {
+        if (requestParameters.memberId === null || requestParameters.memberId === undefined) {
+            throw new runtime.RequiredError('memberId','Required parameter requestParameters.memberId was null or undefined when calling recreateSubscriptionPlan.');
+        }
+
+        if (requestParameters.upgradeSubscriptionDto === null || requestParameters.upgradeSubscriptionDto === undefined) {
+            throw new runtime.RequiredError('upgradeSubscriptionDto','Required parameter requestParameters.upgradeSubscriptionDto was null or undefined when calling recreateSubscriptionPlan.');
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        const response = await this.request({
+            path: `/api/v1/accounts/{memberId}/subscription/recreate`.replace(`{${"memberId"}}`, encodeURIComponent(String(requestParameters.memberId))),
+            method: 'POST',
+            headers: headerParameters,
+            query: queryParameters,
+            body: UpgradeSubscriptionDtoToJSON(requestParameters.upgradeSubscriptionDto),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => SubStatusDtoFromJSON(jsonValue));
+    }
+
+    /**
+     */
+    async recreateSubscriptionPlan(requestParameters: RecreateSubscriptionPlanRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<SubStatusDto> {
+        const response = await this.recreateSubscriptionPlanRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

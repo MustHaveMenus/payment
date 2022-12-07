@@ -12,7 +12,7 @@ import SubscriptionDetails from "../comp/SubscriptionDetails";
 import Agreement from "../comp/Agreement";
 import locationsState from "../state/location";
 import {PaymentInfo, ViewType} from "../type/types";
-import {isAddonFlow, isValidPaymentInfo} from "../util/util";
+import {isAddonFlow, isReactivateFlow, isValidPaymentInfo} from "../util/util";
 import paymentInfoState from "../state/paymentInfo";
 import {SubStatusDto} from "../generated/client";
 
@@ -30,9 +30,27 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {paymentInfo, setPaymentInfo} = paymentInfoState;
 
   const [addonFlow, setAddonFlow] = createSignal(true);
+  const [reactivateFlow, setReactivateFlow] = createSignal(false);
+  const [friendlyStatus, setFriendlyStatus] = createSignal('');
 
   createEffect(() => {
     setAddonFlow(isAddonFlow(props.type));
+  });
+
+  createEffect(() => {
+    setReactivateFlow(isReactivateFlow(props.type));
+  });
+
+  createEffect(() => {
+    if (props.type === ViewType.REACTIVATE_FROM_DECLINED) {
+      setFriendlyStatus('declined');
+    }
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      setFriendlyStatus('cancelled');
+    }
+    if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
+      setFriendlyStatus('paused');
+    }
   });
 
   function onPaymentInfoChange(info: PaymentInfo) {
@@ -64,13 +82,18 @@ const PaymentModal = (props: PaymentModalProps) => {
   return <Modal onBack={props.onBack} footer={modalFooter()} content={
     <div classList={{[styles.wrapper]: true, [styles.mobile]: mobile()}}>
       <div class={styles.left}>
-        <Show when={!addonFlow()} keyed fallback={
-          <span class={styles.topHeader}>Payment Info</span>
+        <Show when={reactivateFlow()} keyed fallback={
+          <Show when={!addonFlow()} keyed fallback={
+            <span class={styles.topHeader}>Payment Info</span>
+          }>
+            <span class={styles.topHeader}>Try Pro Plan for free</span>
+            <span class={styles.topSubheader}>30-day free trial, cancel at any time</span>
+            <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
+            <PaymentType/>
+          </Show>
         }>
-          <span class={styles.topHeader}>Try Pro Plan for free</span>
-          <span class={styles.topSubheader}>30-day free trial, cancel at any time</span>
-          <span class={styles.topSubheader}>We'll remind you before your trial ends</span>
-          <PaymentType/>
+          <span class={styles.topHeader}>Welcome Back!</span>
+          <span class={styles.topSubheader}>Your account is in <b>{friendlyStatus()} status</b>. Enter your card information below to restart your account.</span>
         </Show>
         <div class={styles.paymentInformationWrapper}>
           <PaymentInformation onChange={onPaymentInfoChange}/>

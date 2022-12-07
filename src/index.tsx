@@ -40,8 +40,14 @@ const ProModal = {
   cancel: (props: AppProps) => {
     ProModal.show({...props, type: ViewType.CANCEL});
   },
-  reactivate: (props: AppProps) => {
-    ProModal.show({...props, type: ViewType.REACTIVATE});
+  reactivateFromCancelled: (props: AppProps) => {
+    ProModal.show({...props, type: ViewType.REACTIVATE_FROM_CANCELLED});
+  },
+  reactivateFromDeclined: (props: AppProps) => {
+    ProModal.show({...props, type: ViewType.REACTIVATE_FROM_DECLINED});
+  },
+  reactivateFromPaused: (props: AppProps) => {
+    ProModal.show({...props, type: ViewType.REACTIVATE_FROM_PAUSED});
   },
   resume: (props: AppProps) => {
     ProModal.show({...props, type: ViewType.RESUME});
