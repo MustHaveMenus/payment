@@ -27,6 +27,9 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const [userSubtotal, setUserSubtotal] = createSignal(0.0);
   const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
   const [dueDate, setDueDate] = createSignal(new Date());
+  const [trialEnded, setTrialEnded] = createSignal(true);
+  const [trialStarted, setTrialStarted] = createSignal(false);
+  const [hadTrial, setHadTrial] = createSignal(false);
   const {currentSubscription} = currentSubscriptionState;
 
   createEffect(() => {
@@ -41,7 +44,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     if (!props.status || !props.status.grandTotal) return;
 
     if (addonUpgrade()) {
-      setSubtotal(userSubtotal() + locationSubtotal());
+      //setSubtotal(userSubtotal() + locationSubtotal());
+      setSubtotal(props.status.grandTotal);
     } else {
       setSubtotal(props.status.grandTotal || 0);
     }
@@ -69,6 +73,17 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
       date = currentSubscription().trialEnd!;
     }
     setDueDate(new Date(date || ''));
+  });
+
+  createEffect(() => {
+    if (!currentSubscription() || !currentSubscription().trialEnd) return;
+    setTrialEnded(new Date() > currentSubscription().trialEnd!);
+    setHadTrial(true);
+  });
+
+  createEffect(() => {
+    if (!currentSubscription() || !currentSubscription().trialStart) return;
+    setTrialStarted(new Date() > currentSubscription().trialStart!);
   });
 
   function getPaymentType(status: SubStatusDtoAddonsCycleEnum) {
@@ -138,8 +153,10 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
               <div><Price price={grandTotal()}/></div>
             </div>
             <div class={styles.paymentDetailsEntry}>
-              <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>
-              <div><b><Price price={0}/></b></div>
+              <Show keyed when={!hadTrial()}>
+                <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>
+                <div><b><Price price={0}/></b></div>
+              </Show>
             </div>
           </>
         }>

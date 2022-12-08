@@ -107,6 +107,19 @@ export const getCycle = (type: PaymentTypeEnum) => {
       return SubStatusDtoPlanCycleEnum.Monthly;
     case PaymentTypeEnum.None:
       return SubStatusDtoPlanCycleEnum.No;
+    default:
+      return SubStatusDtoPlanCycleEnum.No
+  }
+}
+
+export const getPaymentTypeCycle = (e: SubStatusDtoPlanCycleEnum) => {
+  switch (e) {
+    case "Monthly":
+      return PaymentTypeEnum.Monthly;
+    case "Yearly":
+      return PaymentTypeEnum.Annually;
+    default:
+      return PaymentTypeEnum.None;
   }
 }
 

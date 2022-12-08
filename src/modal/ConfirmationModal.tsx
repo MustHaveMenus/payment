@@ -10,8 +10,9 @@ import {createEffect, createSignal, Show} from "solid-js";
 import {PaymentTypeEnum, ViewType} from "../type/types";
 import Price from "../comp/Price";
 import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/constants";
-import paymentTypeState from "../state/paymentType";
 import FormattedDate from "../comp/FormattedDate";
+import {getPaymentTypeCycle} from "../util/util";
+import currentSubscriptionState from "../state/currentSubscription";
 
 interface ConfirmationModalProps extends StepModalProps {
   onSuccess?: () => void;
@@ -23,7 +24,6 @@ interface ConfirmationModalProps extends StepModalProps {
 const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {closeModal} = openState;
   const {mobile} = mobileState;
-  const {paymentType} = paymentTypeState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [addonsLabel, setAddonsLabel] = createSignal('');
@@ -31,6 +31,9 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
   const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
   const [grandTotal, setGrandTotal] = createSignal(0.0);
   const [subtotal, setSubtotal] = createSignal(0.0);
+  const [cycle, setCycle] = createSignal(PaymentTypeEnum.None);
+  const [dueDate, setDueDate] = createSignal(new Date());
+  const {currentSubscription} = currentSubscriptionState;
 
   createEffect(() => {
     setAddonUpgrade(props.type === ViewType.ADD_LOCATION_ADDON || props.type === ViewType.ADD_USER_ADDON);
@@ -66,10 +69,24 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
     if (!props.status || !props.status.grandTotal) return;
 
     if (addonUpgrade()) {
-      setSubtotal(userSubtotal() + locationSubtotal());
+      setSubtotal(props.status.grandTotal || 0);
     } else {
       setSubtotal(props.status.grandTotal || 0);
     }
+  });
+
+  createEffect(() => {
+    if (!props.status || !props.status.planCycle) return;
+    setCycle(getPaymentTypeCycle(props.status.planCycle));
+  });
+
+  createEffect(() => {
+    if (!props.status) return;
+    let date = props.status.nextPlanBillingDate!;
+    if (currentSubscription() && currentSubscription().trialEnd && (new Date() < currentSubscription()!.trialEnd!)) {
+      date = currentSubscription().trialEnd!;
+    }
+    setDueDate(new Date(date || ''));
   });
 
   function onDone() {
@@ -106,16 +123,16 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
             <Show when={addonUpgrade()} keyed>
               <div class={styles.bottomBorder}>
                 <span><b>Add-ons:</b> {addonsLabel()}</span>
-                <span><b>{paymentType() === PaymentTypeEnum.Monthly ? 'Monthly' : 'Yearly'} Charge:</b> <Price price={grandTotal()}/></span>
+                <span><b>{cycle() === PaymentTypeEnum.Monthly ? 'Monthly' : 'Yearly'} Charge:</b> <Price price={locationSubtotal() + userSubtotal()}/></span>
               </div>
               <div>
                 <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
-                <span><b>Total due today:</b> <Price price={grandTotal()}/></span>
+                <span><b>Total due <FormattedDate date={dueDate()}/>:</b> <Price price={grandTotal()}/></span>
               </div>
             </Show>
             <Show when={reactivateFlow()} keyed>
               <div>
-                <span><b>Subscription:</b> {paymentType() === PaymentTypeEnum.Monthly ? SUBSCRIPTION_NAME_MONTHLY : SUBSCRIPTION_NAME_ANNUALY}</span>
+                <span><b>Subscription:</b> {cycle() === PaymentTypeEnum.Monthly ? SUBSCRIPTION_NAME_MONTHLY : SUBSCRIPTION_NAME_ANNUALY}</span>
                 <span><b>Renewal Date:</b> <FormattedDate date={props.status.nextPlanBillingDate || new Date()}/></span>
                 <span><b>Total paid today:</b> <Price price={props.status.grandTotalWithTax || 0}/></span>
               </div>
