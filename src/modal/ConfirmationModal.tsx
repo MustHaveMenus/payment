@@ -34,6 +34,10 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
   const [cycle, setCycle] = createSignal(PaymentTypeEnum.None);
   const [dueDate, setDueDate] = createSignal(new Date());
   const {currentSubscription} = currentSubscriptionState;
+  const [hadTrial, setHadTrial] = createSignal(false);
+  const [trialEnded, setTrialEnded] = createSignal(true);
+  const [trialStarted, setTrialStarted] = createSignal(false);
+  const [inTrial, setInTrial] = createSignal(false);
 
   createEffect(() => {
     setAddonUpgrade(props.type === ViewType.ADD_LOCATION_ADDON || props.type === ViewType.ADD_USER_ADDON);
@@ -89,6 +93,21 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
     setDueDate(new Date(date || ''));
   });
 
+  createEffect(() => {
+    if (!currentSubscription() || !currentSubscription().trialEnd) return;
+    setTrialEnded(new Date() > currentSubscription().trialEnd!);
+    setHadTrial(true);
+  });
+
+  createEffect(() => {
+    if (!currentSubscription() || !currentSubscription().trialStart) return;
+    setTrialStarted(new Date() > currentSubscription().trialStart!);
+  });
+
+  createEffect(() => {
+    setInTrial(trialStarted() && !trialEnded());
+  });
+
   function onDone() {
     props.onSuccess?.();
     closeModal();
@@ -127,7 +146,12 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
               </div>
               <div>
                 <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
-                <span><b>Total due <FormattedDate date={dueDate()}/>:</b> <Price price={grandTotal()}/></span>
+                <Show when={inTrial()} keyed fallback={
+                  <span><b>Due Today:</b> <Price price={grandTotal()}/></span>
+                }>
+                  <span><b>Due <FormattedDate date={dueDate()}/>:</b> <Price price={grandTotal()}/></span>
+                  <span><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b> <Price price={0}/></span>
+                </Show>
               </div>
             </Show>
             <Show when={reactivateFlow()} keyed>
