@@ -128,7 +128,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
 
   createEffect(() => {
     if (!props.status) return;
-    if (inTrial() || !hadTrial()) {
+    if ((inTrial() || !hadTrial()) && !reactivateFlow()) {
       setDueToday(0);
       setDueDateAmount(grandTotal() || 0);
       setShowTrialForToday(true);

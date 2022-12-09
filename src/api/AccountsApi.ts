@@ -6,7 +6,7 @@ import {
   PaymentDetailsDto,
   SubStatusDto,
   UpdateCardDto,
-  UpgradeSubscriptionDto,
+  UpgradeSubscriptionDto, UserDetailsDto,
 } from "../generated/client";
 import {apiConfig, ops} from "./config";
 
@@ -31,6 +31,9 @@ const AccountsApi = {
   getLocations(memberId: string): Promise<LocationDto[]> {
     if (!memberId) return Promise.resolve([]);
     return api.getUserLocations({memberId}, ops());
+  },
+  getAllUsersDetails(memberId: string): Promise<UserDetailsDto> {
+    return api.getAllUsersDetails({memberId}, ops());
   },
   upgradeSubscriptionPlan(memberId: string, upgradeSubscriptionDto: UpgradeSubscriptionDto): Promise<SubStatusDto> {
     if (!memberId || !upgradeSubscriptionDto) return Promise.reject();

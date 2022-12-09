@@ -20,7 +20,7 @@ import PauseConfirmationModal from "./modal/PauseConfirmationModal";
 import loadingState from "./state/loading";
 import {handleServerError} from "./util/ErrorHandler";
 import {getCycle} from "./util/util";
-import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum} from "./generated/client";
+import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum, UserDetailsDto} from "./generated/client";
 import paymentInfoState from "./state/paymentInfo";
 import paymentTypeState from "./state/paymentType";
 import {LOCATIONS, USERS} from "./util/constants";
@@ -62,6 +62,7 @@ const App = (props: PrivateSetupProps) => {
   const [status, setStatus] = createSignal({} as SubStatusDto);
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
   const [subscription] = createResource(memberId, AccountsApi.getSubscription);
+  const [usersServer, setUsersServer] = createSignal({} as UserDetailsDto);
   const [zip, setZip] = createSignal('');
   const [country, setCountry] = createSignal(Countries[0]);
   const [cardNumber, setCardNumber] = createSignal('');
@@ -82,6 +83,11 @@ const App = (props: PrivateSetupProps) => {
     if (member().id) {
       setMemberId(member().id!);
     }
+  });
+
+  createEffect(async () => {
+    if (!memberId() || props.type !== ViewType.REACTIVATE_FROM_CANCELLED) return;
+    setUsersServer(await AccountsApi.getAllUsersDetails(memberId()));
   });
 
   createEffect(() => {
@@ -176,7 +182,7 @@ const App = (props: PrivateSetupProps) => {
   // });
 
   const getPreviewUpgradeSubDto = () => {
-    return {
+    const dto = {
       preview: true,
       cycle: getCycle(paymentType()),
       zip: zip(),
@@ -190,6 +196,20 @@ const App = (props: PrivateSetupProps) => {
         }
       }) as InviteUserDto[]
     } as UpgradeSubscriptionDto;
+
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      dto.locations = locations[LOCATIONS].filter(it => it.id);
+      dto.locations.splice(-1);
+
+      dto.users = usersServer().users?.map(it => {
+        return {
+          email: it.email,
+          ownerId: member().id
+        } as InviteUserDto
+      });
+    }
+
+    return dto;
   }
 
   const getUpgradeSubDto = () => {
@@ -213,6 +233,7 @@ const App = (props: PrivateSetupProps) => {
     if ((dto.zip?.length || 0) > 0 && (dto.zip?.length || 1) < 5) return;
     if (!dto.zip?.length && view() === View.PAYMENT_REACTIVATE) return;
     if ((props.type === ViewType.FREE_TO_PRO_WITH_USERS || props.type === ViewType.FREE_TO_PRO_WITH_LOCATION || props.type === ViewType.FREE_TO_PRO) && dto.cycle === UpgradeSubscriptionDtoCycleEnum.No) return;
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED && !usersServer().owner) return;
 
     try {
       setPreviewLoading(true);
@@ -404,7 +425,7 @@ const App = (props: PrivateSetupProps) => {
       <Match when={View.TEAM === view()} keyed><TeamModal onBack={getOnBack()} onNext={getOnNext()} type={props.type}
                                                           idx={getCurrentViewIdx()}/></Match>
       <Match when={View.PAYMENT === view()} keyed><PaymentModal onBack={getOnBack()} onNext={getOnNext()} type={props.type} idx={getCurrentViewIdx()}
-                                                                status={status()} previewLoading={previewLoading()}
+                                                                status={status()} previewLoading={previewLoading()} existingUserDetails={usersServer()}
                                                                 onPay={onSubscribe}/></Match>
 
       <Match when={View.CONFIRM_CANCEL === view()} keyed><ConfirmCancelModal onDecision={onDecisionMade}

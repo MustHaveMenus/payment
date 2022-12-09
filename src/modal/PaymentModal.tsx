@@ -14,12 +14,13 @@ import locationsState from "../state/location";
 import {PaymentInfo, ViewType} from "../type/types";
 import {isAddonFlow, isReactivateFlow, isValidPaymentInfo} from "../util/util";
 import paymentInfoState from "../state/paymentInfo";
-import {SubStatusDto} from "../generated/client";
+import {SubStatusDto, UserDetailsDto} from "../generated/client";
 
 interface PaymentModalProps extends StepModalProps {
   onPay: () => void;
   status: SubStatusDto;
   previewLoading: boolean;
+  existingUserDetails?: UserDetailsDto;
 }
 
 const PaymentModal = (props: PaymentModalProps) => {
@@ -32,6 +33,26 @@ const PaymentModal = (props: PaymentModalProps) => {
   const [addonFlow, setAddonFlow] = createSignal(true);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [friendlyStatus, setFriendlyStatus] = createSignal('');
+  const [locNr, setLocNr] = createSignal(0);
+  const [userNr, setUserNr] = createSignal(0);
+
+  createEffect(() => {
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      const locs = locations[LOCATIONS].filter(it => it.id);
+      locs.splice(-1);
+      setLocNr(locs.length);
+    } else {
+      setLocNr(locations[LOCATIONS].filter(it => it.id === it.name).length);
+    }
+  });
+
+  createEffect(() => {
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      setUserNr(props.existingUserDetails?.users?.length || 0);
+    } else {
+      setUserNr(team[USERS].length);
+    }
+  });
 
   createEffect(() => {
     setAddonFlow(isAddonFlow(props.type));
@@ -105,7 +126,7 @@ const PaymentModal = (props: PaymentModalProps) => {
       </div>
 
       <div class={styles.right}>
-        <SubscriptionDetails users={team[USERS].length} locations={locations[LOCATIONS].filter(it => it.id === it.name).length} status={props.status} loading={props.previewLoading} type={props.type}/>
+        <SubscriptionDetails users={userNr()} locations={locNr()} status={props.status} loading={props.previewLoading} type={props.type}/>
       </div>
 
       {rightSideFooter()}
