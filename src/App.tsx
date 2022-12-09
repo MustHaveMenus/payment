@@ -267,6 +267,25 @@ const App = (props: PrivateSetupProps) => {
     }
   });
 
+  createEffect(async () => {
+    if (!member() || !member().id) return;
+
+    if (props.type === ViewType.REACTIVATE) {
+      try {
+        setLoading(true);
+        await AccountsApi.reactivateSubscription(member().id!, {});
+        Alert.show({text: 'Subscription successfully reactivated'});
+        setLoading(false);
+        props.onSuccess?.();
+        closeModal();
+        props.onClose();
+      } catch (e: any) {
+        setLoading(false);
+        await handleServerError(e);
+      }
+    }
+  });
+
   async function onPause(period: number) {
     if (!member() || !member().id) return;
     try {

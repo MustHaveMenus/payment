@@ -52,6 +52,9 @@ const ProModal = {
   resume: (props: AppProps) => {
     ProModal.show({...props, type: ViewType.RESUME});
   },
+  reactivate: (props: AppProps) => {
+    ProModal.show({...props, type: ViewType.REACTIVATE});
+  },
   addLocation: (props: AppProps) => {
     ProModal.show({...props, type: ViewType.ADD_LOCATION_ADDON});
   },
