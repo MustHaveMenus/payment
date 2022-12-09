@@ -5,10 +5,10 @@ import {PaymentTypeEnum, ViewType} from "../type/types";
 import {SubStatusDto, SubStatusDtoAddonsCycleEnum} from "../generated/client";
 import {Spinner} from "./Spinner";
 import Price from "./Price";
-import FormattedDate from "./FormattedDate";
 import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/constants";
 import {isReactivateFlow} from "../util/util";
 import currentSubscriptionState from "../state/currentSubscription";
+import FormattedDate from "./FormattedDate";
 
 interface SubscriptionDetailsProps {
   users: number;
@@ -23,14 +23,31 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [subtotal, setSubtotal] = createSignal(0.0);
+  const [tax, setTax] = createSignal(0.0);
   const [grandTotal, setGrandTotal] = createSignal(0.0);
+  const [dueToday, setDueToday] = createSignal(undefined as number | undefined);
+  const [dueDateAmount, setDueDateAmount] = createSignal(undefined as number | undefined);
+  const [showTrialForToday, setShowTrialForToday] = createSignal(false);
   const [userSubtotal, setUserSubtotal] = createSignal(0.0);
   const [locationSubtotal, setLocationSubtotal] = createSignal(0.0);
-  const [dueDate, setDueDate] = createSignal(new Date());
+  const [dueDate, setDueDate] = createSignal(undefined as Date | undefined);
   const [trialEnded, setTrialEnded] = createSignal(true);
   const [trialStarted, setTrialStarted] = createSignal(false);
   const [hadTrial, setHadTrial] = createSignal(false);
+  const [inTrial, setInTrial] = createSignal(false);
+  const [showDueToday, setShowDueToday] = createSignal(false);
+  const [showDueOnDate, setShowDueOnDate] = createSignal(false);
   const {currentSubscription} = currentSubscriptionState;
+
+  createEffect(() => {
+    if (!props.status.plan) return;
+    console.log('props.status', props.status)
+    console.log('current sub', currentSubscription());
+  });
+
+  createEffect(() => {
+    setTax(props.status.totalTax || 0);
+  });
 
   createEffect(() => {
     setAddonUpgrade(paymentType() == PaymentTypeEnum.None);
@@ -41,6 +58,7 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   });
 
   createEffect(() => {
+    console.log(props.status.grandTotal);
     if (!props.status || !props.status.grandTotal) return;
 
     if (addonUpgrade()) {
@@ -49,6 +67,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     } else {
       setSubtotal(props.status.grandTotal || 0);
     }
+
+    console.log('subtotal', props.status.grandTotal);
   });
 
   createEffect(() => {
@@ -63,7 +83,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
 
   createEffect(() => {
     if (!props.status) return;
-    setGrandTotal(subtotal() + (props.status.totalTax || 0));
+    setGrandTotal(subtotal() + tax());
+    console.log('grand total', subtotal() + tax());
   });
 
   createEffect(() => {
@@ -78,12 +99,43 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   createEffect(() => {
     if (!currentSubscription() || !currentSubscription().trialEnd) return;
     setTrialEnded(new Date() > currentSubscription().trialEnd!);
-    setHadTrial(true);
+    console.log('trial ended', new Date() > currentSubscription().trialEnd!)
   });
 
   createEffect(() => {
     if (!currentSubscription() || !currentSubscription().trialStart) return;
     setTrialStarted(new Date() > currentSubscription().trialStart!);
+    console.log('trial started', new Date() > currentSubscription().trialStart!)
+  });
+
+  createEffect(() => {
+    setInTrial(trialStarted() && !trialEnded());
+    console.log('in trial', trialStarted() && !trialEnded())
+  });
+
+  createEffect(() => {
+    setHadTrial(trialStarted() && trialEnded());
+    console.log('had trial', trialStarted() && trialEnded())
+  })
+
+  createEffect(() => {
+    setShowDueToday(dueToday() !== undefined);
+  });
+
+  createEffect(() => {
+    setShowDueOnDate(!!(dueDate() && dueDateAmount()));
+  });
+
+  createEffect(() => {
+    if (!props.status) return;
+    if (inTrial() || !hadTrial()) {
+      setDueToday(0);
+      setDueDateAmount(grandTotal() || 0);
+      setShowTrialForToday(true);
+    } else {
+      setDueToday(grandTotal() || 0);
+      setShowTrialForToday(false);
+    }
   });
 
   function getPaymentType(status: SubStatusDtoAddonsCycleEnum) {
@@ -136,6 +188,11 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
           </Show>
         </div>
       </Show>
+
+
+
+
+
       <div class={`${styles.paymentDetails} ${styles.topBorder}`}>
         <div class={styles.paymentDetailsEntry}>
           <div>Subtotal:</div>
@@ -143,28 +200,39 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
         </div>
         <div class={styles.paymentDetailsEntry}>
           <div>Tax:</div>
-          <div><Price price={props.status.totalTax || 0}/></div>
+          <div><Price price={tax()}/></div>
         </div>
 
-        <Show when={reactivateFlow()} keyed fallback={
-          <>
-            <div class={`${styles.paymentDetailsEntry} ${styles.topMargin}`}>
-              <div>Due <FormattedDate date={dueDate()}/></div>
-              <div><Price price={grandTotal()}/></div>
-            </div>
-            <div class={styles.paymentDetailsEntry}>
-              <Show keyed when={!hadTrial()}>
-                <div><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b></div>
-                <div><b><Price price={0}/></b></div>
-              </Show>
-            </div>
-          </>
-        }>
-          <div class={styles.paymentDetailsEntry}>
-            <div><b>Total due today:</b></div>
-            <div><b><Price price={grandTotal()}/></b></div>
+
+
+
+        <Show keyed when={showDueOnDate()}>
+          <div classList={{
+            [styles.paymentDetailsEntry]: true,
+            [styles.total]: true,
+            [styles.topMargin]: showDueToday()
+          }}>
+            <div>Due <FormattedDate date={dueDate()!}/></div>
+            <div><Price price={dueDateAmount()!}/></div>
           </div>
         </Show>
+
+        <Show when={showDueToday()} keyed>
+          <div classList={{
+            [styles.paymentDetailsEntry]: true,
+            [styles.total]: true
+          }}>
+            <div>
+              Due today
+                <Show when={showTrialForToday()} keyed>
+                  <span class={styles.trialDays}> (30 days free)</span>
+                </Show>
+                :
+            </div>
+            <div><Price price={dueToday()!}/></div>
+          </div>
+        </Show>
+
       </div>
     </Show>
   </>

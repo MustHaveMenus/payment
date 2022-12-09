@@ -147,10 +147,10 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
               <div>
                 <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
                 <Show when={inTrial()} keyed fallback={
-                  <span><b>Due Today:</b> <Price price={grandTotal()}/></span>
+                  <span><b>Due today:</b> <Price price={grandTotal()}/></span>
                 }>
                   <span><b>Due <FormattedDate date={dueDate()}/>:</b> <Price price={grandTotal()}/></span>
-                  <span><b>Due Today <span class={styles.trialDays}>(30 days free)</span>:</b> <Price price={0}/></span>
+                  <span><b>Due today <span class={styles.trialDays}>(30 days free)</span>:</b> <Price price={0}/></span>
                 </Show>
               </div>
             </Show>
