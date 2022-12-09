@@ -27,6 +27,7 @@ import {LOCATIONS, USERS} from "./util/constants";
 import teamState from "./state/team";
 import {Countries} from "./util/countries";
 import currentSubscriptionState from "./state/currentSubscription";
+import {Alert} from "./index";
 
 export interface AppProps {
   type: ViewType;
@@ -48,7 +49,7 @@ const App = (props: PrivateSetupProps) => {
   const [pauseEndDate, setPauseEndDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
-  const {opened, openModal} = openState;
+  const {opened, openModal, closeModal} = openState;
   const {member, setMember} = memberState;
   const {addLocations, fullCleanLocations} = locationsState;
   const {setLoading} = loadingState;
@@ -247,6 +248,24 @@ const App = (props: PrivateSetupProps) => {
       await handleServerError(e);
     }
   }
+
+  createEffect(async () => {
+    if (!member() || !member().id) return;
+    if (props.type === ViewType.RESUME) {
+      try {
+        setLoading(true);
+        await AccountsApi.resumeSubscription(member().id!, {});
+        Alert.show({text: 'Subscription successfully resumed'});
+        setLoading(false);
+        props.onSuccess?.();
+        closeModal();
+        props.onClose();
+      } catch (e: any) {
+        setLoading(false);
+        await handleServerError(e);
+      }
+    }
+  });
 
   async function onPause(period: number) {
     if (!member() || !member().id) return;
