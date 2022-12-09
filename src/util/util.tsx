@@ -82,7 +82,8 @@ export const isValidPaymentInfo = (info: PaymentInfo) => {
     isNotEmpty(info.cvc) &&
     isNotEmpty(info.zip) &&
     isNotEmptyNumber(info.year) &&
-    isNotEmptyNumber(info.month);
+    isNotEmptyNumber(info.month) &&
+    isValidCard(info.month, info.year);
 }
 
 export const isValidLocation = (loc: LocationDto) => {
@@ -150,4 +151,23 @@ export const isNumeric = (str: string) => {
 export const getDaysUntil = (date: Date) => {
   const now = new Date();
   return parseInt(((date.getTime() - now.getTime()) / (1000 * 3600 * 24)) + '');
+}
+
+export const isValidCard = (month: number, year: number) => {
+  let valid = true;
+  if (month && year) {
+    const date = new Date();
+    const currentYear = parseInt(`${new Date().getFullYear()}`.substring(2));
+    if (year < currentYear || (year === currentYear && month < date.getMonth())) {
+      valid = false;
+    }
+  }
+  return valid;
+}
+export const getMonthYear = (expireDate: string) => {
+  const splitted = expireDate.split('/');
+  const month = parseInt(splitted[0]) || 0;
+  const year = parseInt(splitted[1]) || 0;
+
+  return {month, year};
 }

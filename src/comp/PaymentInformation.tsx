@@ -5,7 +5,7 @@ import CreditCardNumberInput from "./CreditCardInput";
 import CreditCardExpireDateInput from "./CreditCardExpireDateInput";
 import Select from "./Select";
 import Input from "./Input";
-import {countryValues} from "../util/util";
+import {countryValues, getMonthYear} from "../util/util";
 import {Option, PaymentInfo} from "../type/types";
 
 interface PaymentInformationProps {
@@ -20,10 +20,10 @@ const PaymentInformation = (props: PaymentInformationProps) => {
   const [expireDate, setExpireDate] = createSignal('');
   const [country, setCountry] = createSignal(Countries.at(0));
 
+
+
   createEffect(() => {
-    const splitted = expireDate().split('/');
-    const month = parseInt(splitted[0]) || 0;
-    const year = parseInt(splitted[1]) || 0;
+    const {month, year} = getMonthYear(expireDate());
 
     props.onChange({
       number: number(),

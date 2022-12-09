@@ -10,6 +10,7 @@ interface InputProps {
   onChange?: (v: string) => void;
   onInputChange?: (v: string) => void;
   errorMsg?: string;
+  skipErrorMessage?: boolean;
   onAutocomplete?: (value: string, addrComponents: any[]) => void;
 }
 
@@ -29,7 +30,7 @@ const Input = (props: InputProps) => {
 
   return <div class={styles.inputWrapper}>
     <input ref={inputRef} classList={{[styles.input]: true, [styles.error]: !!props.errorMsg}} type={props.type || 'text'} placeholder={props.placeholder} maxLength={props.maxLength} onKeyUp={e => {props.onKeyUp?.(e); props.onChange?.((e.target as HTMLInputElement).value)}} value={props.value || ''} onChange={e => props.onInputChange?.((e.target as HTMLInputElement).value)}/>
-    <Show when={props.errorMsg} keyed>
+    <Show when={props.errorMsg && !props.skipErrorMessage} keyed>
       <span class={styles.errorMsg}>{props.errorMsg}</span>
     </Show>
   </div>
