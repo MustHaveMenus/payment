@@ -58,7 +58,7 @@ const App = (props: PrivateSetupProps) => {
   const {paymentType} = paymentTypeState;
   const {team, cleanUsers} = teamState;
   const {locations} = locationsState;
-  const {setCurrentSubscription} = currentSubscriptionState;
+  const {currentSubscription, setCurrentSubscription} = currentSubscriptionState;
   const [status, setStatus] = createSignal({} as SubStatusDto);
   const [locationsServer] = createResource(memberId, AccountsApi.getLocations);
   const [subscription] = createResource(memberId, AccountsApi.getSubscription);
@@ -121,7 +121,7 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(() => {
     try {
-      if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
+      if (props.type === ViewType.REACTIVATE_FROM_PAUSED || props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
         setLoading(true);
       }
       const resp = subscription();
@@ -129,7 +129,7 @@ const App = (props: PrivateSetupProps) => {
       setNextPlanBillDate(resp.planEndDate || new Date());
       setPauseEndDate(resp.pauseEndDate || new Date());
       setCurrentSubscription(resp);
-      if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
+      if (props.type === ViewType.REACTIVATE_FROM_PAUSED || props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
         setStatus(resp);
         setLoading(false);
       }
@@ -162,24 +162,6 @@ const App = (props: PrivateSetupProps) => {
       openModal();
     }
   });
-
-  // createEffect(async () => {
-  //   if (!member() || !member().id) return;
-  //   if (props.type === ViewType.RESUME) {
-  //     try {
-  //       setLoading(true);
-  //       await AccountsApi.resumeSubscription(member().id!);
-  //       Alert.show({text: 'Subscription successfully resumed'});
-  //       setLoading(false);
-  //       props.onSuccess?.();
-  //       closeModal();
-  //       props.onClose();
-  //     } catch (e: any) {
-  //       setLoading(false);
-  //       await handleServerError(e);
-  //     }
-  //   }
-  // });
 
   const getPreviewUpgradeSubDto = () => {
     const dto = {
@@ -233,7 +215,7 @@ const App = (props: PrivateSetupProps) => {
     if ((dto.zip?.length || 0) > 0 && (dto.zip?.length || 1) < 5) return;
     if (!dto.zip?.length && view() === View.PAYMENT_REACTIVATE) return;
     if ((props.type === ViewType.FREE_TO_PRO_WITH_USERS || props.type === ViewType.FREE_TO_PRO_WITH_LOCATION || props.type === ViewType.FREE_TO_PRO) && dto.cycle === UpgradeSubscriptionDtoCycleEnum.No) return;
-    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED && !usersServer().owner) return;
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED && (!usersServer().owner || !currentSubscription()?.status)) return;
 
     try {
       setPreviewLoading(true);
