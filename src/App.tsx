@@ -20,7 +20,14 @@ import PauseConfirmationModal from "./modal/PauseConfirmationModal";
 import loadingState from "./state/loading";
 import {handleServerError} from "./util/ErrorHandler";
 import {getCycle} from "./util/util";
-import {InviteUserDto, SubStatusDto, UpgradeSubscriptionDto, UpgradeSubscriptionDtoCycleEnum, UserDetailsDto} from "./generated/client";
+import {
+  AddOnDtoTypeEnum,
+  InviteUserDto,
+  SubStatusDto,
+  UpgradeSubscriptionDto,
+  UpgradeSubscriptionDtoCycleEnum,
+  UserDetailsDto
+} from "./generated/client";
 import paymentInfoState from "./state/paymentInfo";
 import paymentTypeState from "./state/paymentType";
 import {LOCATIONS, USERS} from "./util/constants";
@@ -28,12 +35,14 @@ import teamState from "./state/team";
 import {Countries} from "./util/countries";
 import currentSubscriptionState from "./state/currentSubscription";
 import {Alert} from "./index";
+import flowState from "./state/flow";
 
 export interface AppProps {
   type: ViewType;
   memberId: string;
   onSuccess?: () => void;
   closable?: boolean;
+  flow?: string;
 }
 
 export interface PrivateSetupProps extends AppProps {
@@ -49,6 +58,7 @@ const App = (props: PrivateSetupProps) => {
   const [pauseEndDate, setPauseEndDate] = createSignal(new Date());
   const {view, setView} = viewState;
   const {setMobile} = mobileState;
+  const {setFlow, isAvailableSeatFlow} = flowState;
   const {opened, openModal, closeModal} = openState;
   const {member, setMember} = memberState;
   const {addLocations, fullCleanLocations} = locationsState;
@@ -83,6 +93,10 @@ const App = (props: PrivateSetupProps) => {
     if (member().id) {
       setMemberId(member().id!);
     }
+  });
+
+  createEffect(() => {
+    setFlow(props.flow || '');
   });
 
   createEffect(async () => {
@@ -241,6 +255,8 @@ const App = (props: PrivateSetupProps) => {
         await AccountsApi.recreateSubscription(member().id!, dto);
       } else if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
         setStatus(await AccountsApi.resumeSubscription(member().id!, dto));
+      } else if (isAvailableSeatFlow()) {
+        await AccountsApi.addAddon(member().id!, 1, AddOnDtoTypeEnum.User);
       } else {
         await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
       }

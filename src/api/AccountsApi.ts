@@ -1,5 +1,5 @@
 import {
-  AccountsResourceApi,
+  AccountsResourceApi, AddOnDtoTypeEnum,
   LightCardDto,
   LocationDto,
   MemberDto,
@@ -59,6 +59,10 @@ const AccountsApi = {
     if (!memberId) return Promise.reject();
     return api.resumeSubscription({memberId, upgradeSubscriptionDto: dto}, ops());
   },
+  addAddon(memberId: string, quantity: number, addonType: AddOnDtoTypeEnum) {
+    if (!memberId) return Promise.reject();
+    return api.addSubscriptionAddon({memberId, preview: false, quantity, body: addonType}, ops());
+  }
 };
 
 export default AccountsApi;

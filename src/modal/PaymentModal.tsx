@@ -3,7 +3,7 @@ import Modal, {StepModalProps} from "../comp/Modal";
 import PaymentInformation from "../comp/PaymentInformation";
 import PaymentType from "../comp/PaymentType";
 import Button from "../comp/Button";
-import {createEffect, createSignal, Show} from "solid-js";
+import {createEffect, createSignal, onMount, Show} from "solid-js";
 import {LOCATIONS, USERS} from "../util/constants";
 import teamState from "../state/team";
 import mobileState from "../state/mobile";
@@ -15,6 +15,12 @@ import {PaymentInfo, ViewType} from "../type/types";
 import {isAddonFlow, isReactivateFlow, isValidPaymentInfo} from "../util/util";
 import paymentInfoState from "../state/paymentInfo";
 import {SubStatusDto, UserDetailsDto} from "../generated/client";
+import flowState from "../state/flow";
+import CardOnFile from "../comp/CardOnFile";
+import AccountsApi from "../api/AccountsApi";
+import {handleServerError} from "../util/ErrorHandler";
+import memberState from "../state/member";
+import loadingState from "../state/loading";
 
 interface PaymentModalProps extends StepModalProps {
   onPay: () => void;
@@ -26,15 +32,35 @@ interface PaymentModalProps extends StepModalProps {
 const PaymentModal = (props: PaymentModalProps) => {
   const {mobile} = mobileState;
   const {team} = teamState;
+  const {member} = memberState;
   const {locations} = locationsState;
+  const {isAvailableSeatFlow} = flowState;
   const [btnDisabled, setBtnDisabled] = createSignal(true);
   const {paymentInfo, setPaymentInfo} = paymentInfoState;
-
+  const {setLoading} = loadingState;
   const [addonFlow, setAddonFlow] = createSignal(true);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [friendlyStatus, setFriendlyStatus] = createSignal('');
+  const [cardLast4, setCardLast4] = createSignal('');
+  const [cardExprMonth, setCardExprMonth] = createSignal(0);
+  const [cardExprYear, setCardExprYear] = createSignal(0);
   const [locNr, setLocNr] = createSignal(0);
   const [userNr, setUserNr] = createSignal(0);
+
+  onMount(async () => {
+    if (!member() || !member().id) return;
+    setLoading(true);
+    try {
+      const paymentDetails = await AccountsApi.getPaymentDetails(member().id!);
+      setCardLast4(paymentDetails.card?.ending || '');
+      setCardExprMonth(paymentDetails.card?.exprMonth || 0);
+      setCardExprYear(paymentDetails.card?.exprYear || 0);
+      setLoading(false);
+    } catch (e) {
+      await handleServerError(e);
+      setLoading(false);
+    }
+  });
 
   createEffect(() => {
     if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
@@ -79,7 +105,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   }
 
   createEffect(() => {
-    setBtnDisabled(!isValidPaymentInfo(paymentInfo()));
+    setBtnDisabled(!isAvailableSeatFlow() && !isValidPaymentInfo(paymentInfo()));
   });
 
   const subscribeBtn = () => <div classList={{
@@ -120,7 +146,11 @@ const PaymentModal = (props: PaymentModalProps) => {
           <PaymentType/>
         </Show>
         <div class={styles.paymentInformationWrapper}>
-          <PaymentInformation onChange={onPaymentInfoChange}/>
+          <Show when={isAvailableSeatFlow()} keyed fallback={<PaymentInformation onChange={onPaymentInfoChange}/>}>
+            <div class={styles.cardOnFileWrapper}>
+              <CardOnFile card={{exprMonth: cardExprMonth(), exprYear: cardExprYear(), ending: cardLast4()}}/>
+            </div>
+          </Show>
         </div>
         {leftSideFooter()}
       </div>

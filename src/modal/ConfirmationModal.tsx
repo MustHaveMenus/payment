@@ -13,6 +13,7 @@ import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/cons
 import FormattedDate from "../comp/FormattedDate";
 import {getPaymentTypeCycle} from "../util/util";
 import currentSubscriptionState from "../state/currentSubscription";
+import flowState from "../state/flow";
 
 interface ConfirmationModalProps extends StepModalProps {
   onSuccess?: () => void;
@@ -24,6 +25,7 @@ interface ConfirmationModalProps extends StepModalProps {
 const ConfirmationModal = (props: ConfirmationModalProps) => {
   const {closeModal} = openState;
   const {mobile} = mobileState;
+  const {isAvailableSeatFlow} = flowState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [addonsLabel, setAddonsLabel] = createSignal('');
@@ -147,7 +149,12 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
               <div>
                 <span><b>Tax:</b> <Price price={props.status.totalTax || 0}/></span>
                 <Show when={inTrial()} keyed fallback={
-                  <span><b>Due today:</b> <Price price={grandTotal()}/></span>
+                  <Show when={isAvailableSeatFlow()} keyed fallback={
+                    <span><b>Due today:</b> <Price price={grandTotal()}/></span>
+                  }>
+                    <span><b>Due <FormattedDate date={dueDate()}/>:</b> <Price price={grandTotal()}/></span>
+                    <span><b>Due today:</b> <Price price={0}/></span>
+                  </Show>
                 }>
                   <span><b>Due <FormattedDate date={dueDate()}/>:</b> <Price price={grandTotal()}/></span>
                   <span><b>Due today <span class={styles.trialDays}>(30 days free)</span>:</b> <Price price={0}/></span>

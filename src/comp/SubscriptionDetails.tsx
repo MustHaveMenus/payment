@@ -9,6 +9,7 @@ import {SUBSCRIPTION_NAME_ANNUALY, SUBSCRIPTION_NAME_MONTHLY} from "../util/cons
 import {isReactivateFlow} from "../util/util";
 import currentSubscriptionState from "../state/currentSubscription";
 import FormattedDate from "./FormattedDate";
+import flowState from "../state/flow";
 
 interface SubscriptionDetailsProps {
   users: number;
@@ -20,6 +21,7 @@ interface SubscriptionDetailsProps {
 
 const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   const {paymentType} = paymentTypeState;
+  const {isAvailableSeatFlow} = flowState;
   const [addonUpgrade, setAddonUpgrade] = createSignal(false);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
   const [subtotal, setSubtotal] = createSignal(0.0);
@@ -128,10 +130,12 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
 
   createEffect(() => {
     if (!props.status) return;
-    if ((inTrial() || !hadTrial()) && !reactivateFlow()) {
+    if (((inTrial() || !hadTrial()) && !reactivateFlow()) || isAvailableSeatFlow()) {
       setDueToday(0);
       setDueDateAmount(grandTotal() || 0);
-      setShowTrialForToday(true);
+      if (!isAvailableSeatFlow()) {
+        setShowTrialForToday(true);
+      }
     } else {
       setDueToday(grandTotal() || 0);
       setShowTrialForToday(false);

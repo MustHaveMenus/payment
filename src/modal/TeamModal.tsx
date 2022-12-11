@@ -21,6 +21,7 @@ import UsersApi from "../api/UsersApi";
 import memberState from "../state/member";
 import {handleServerError} from "../util/ErrorHandler";
 import loadingState from "../state/loading";
+import flowState from "../state/flow";
 
 interface TeamModalProps extends StepModalProps {
 }
@@ -30,6 +31,7 @@ const TeamModal = (props: TeamModalProps) => {
   const {member} = memberState;
   const {locations} = locationState;
   const {setLoading} = loadingState;
+  const {isAvailableSeatFlow} = flowState;
   const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers, updateLocationAtIdx} = teamState;
   const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
   const [addUserBtnDisabled, setAddUserBtnDisabled] = createSignal(true);
@@ -218,9 +220,11 @@ const TeamModal = (props: TeamModalProps) => {
                         </div>
                       }</For>
 
-                      <div class={styles.addUserWrapper}>
-                        <Button label={'+ Add Another User'} onClick={() => onAddNewUser()} disabled={addUserBtnDisabled()}/>
-                      </div>
+                      <Show when={!isAvailableSeatFlow()} keyed>
+                        <div class={styles.addUserWrapper}>
+                          <Button label={'+ Add Another User'} onClick={() => onAddNewUser()} disabled={addUserBtnDisabled()}/>
+                        </div>
+                      </Show>
                     </div>
                   </div>
                 }
