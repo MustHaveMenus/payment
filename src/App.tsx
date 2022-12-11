@@ -36,6 +36,7 @@ import {Countries} from "./util/countries";
 import currentSubscriptionState from "./state/currentSubscription";
 import {Alert} from "./index";
 import flowState from "./state/flow";
+import UsersApi from "./api/UsersApi";
 
 export interface AppProps {
   type: ViewType;
@@ -257,6 +258,7 @@ const App = (props: PrivateSetupProps) => {
         setStatus(await AccountsApi.resumeSubscription(member().id!, dto));
       } else if (isAvailableSeatFlow()) {
         await AccountsApi.addAddon(member().id!, 1, AddOnDtoTypeEnum.User);
+        await UsersApi.inviteUser(dto.users!);
       } else {
         await AccountsApi.upgradeSubscriptionPlan(member().id!, dto);
       }
