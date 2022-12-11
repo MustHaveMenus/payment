@@ -30,7 +30,7 @@ const TeamModal = (props: TeamModalProps) => {
   const {member} = memberState;
   const {locations} = locationState;
   const {setLoading} = loadingState;
-  const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers} = teamState;
+  const {team, addUser, deleteUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers, updateLocationAtIdx} = teamState;
   const [nextBtnDisabled, setNextBtnDisabled] = createSignal(true);
   const [addUserBtnDisabled, setAddUserBtnDisabled] = createSignal(true);
   const [emailErr, setEmailErr] = createSignal([] as string[]);
@@ -50,6 +50,16 @@ const TeamModal = (props: TeamModalProps) => {
 
   createEffect(() => {
     setAddonFlow(isAddonFlow(props.type));
+  });
+
+  createEffect(() => {
+    if (locations[LOCATIONS].length) {
+      team[USERS].forEach(u => {
+        if (u.locations && u.locations.length && u.locations[0] === undefined) {
+          updateLocationAtIdx(u, locations[LOCATIONS][0], 0);
+        }
+      });
+    }
   });
 
   function newUser() {

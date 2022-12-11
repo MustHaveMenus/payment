@@ -24,6 +24,12 @@ const teamState = createRoot(() => {
     const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(loc) ?? -1;
     setTeam(USERS, userIdx, LOCATIONS, prev => removeIndex(prev, locationIdx));
   }
+
+  const updateLocationAtIdx = (user: User, loc: LocationDto, locIdx: number) => {
+    const userIdx = team[USERS].indexOf(user);
+    setTeam(USERS, userIdx, LOCATIONS, prev => replaceAtIndex(prev, locIdx, loc));
+  }
+
   const updateLocation = (user: User, oldLoc: LocationDto, loc: LocationDto) => {
     const userIdx = team[USERS].indexOf(user);
     const locationIdx = team[USERS].at(userIdx)?.locations.indexOf(oldLoc) ?? -1;
@@ -37,7 +43,7 @@ const teamState = createRoot(() => {
     setTeam(USERS, _ => []);
   }
 
-  return {team, deleteUser, addUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers};
+  return {team, deleteUser, addUser, addLocation, deleteLocation, updateLocation, updateEmail, cleanUsers, updateLocationAtIdx};
 });
 
 export default teamState;
