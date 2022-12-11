@@ -229,6 +229,7 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(previewInvoice);
 
+  // Handles the conversion from free / cancelled / ... to premium.
   async function onSubscribe() {
     if (!member() || !member().id) return;
     try {
@@ -245,6 +246,11 @@ const App = (props: PrivateSetupProps) => {
       }
 
       setLoading(false);
+
+      if (!!window.rewardful) {
+        window.rewardful('convert', { email: member().email });
+      }
+
       onNext();
     } catch (e: any) {
       setLoading(false);
