@@ -158,7 +158,7 @@ export const isValidCard = (month: number, year: number) => {
   if (month && year) {
     const date = new Date();
     const currentYear = parseInt(`${new Date().getFullYear()}`.substring(2));
-    if (year < currentYear || (year === currentYear && month <= date.getMonth())) {
+    if (year < currentYear || (year === currentYear && month < date.getMonth() + 1)) {
       valid = false;
     }
   }
