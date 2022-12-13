@@ -42,7 +42,7 @@ export interface AppProps {
   type: ViewType;
   memberId: string;
   onSuccess?: () => void;
-  closable?: boolean;
+  onDismiss?: () => void;
   flow?: string;
 }
 

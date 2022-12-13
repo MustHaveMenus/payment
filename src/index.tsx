@@ -3,6 +3,7 @@ import {render} from 'solid-js/web';
 import App, {AppProps} from './App';
 import AlertModal, {AlertModalProps} from "./comp/AlertModal";
 import {ViewType} from "./type/types";
+import {isReactivateFlow} from "./util/util";
 
 let container: HTMLElement | undefined = undefined;
 let destroy: ((() => void) | undefined) = undefined;
@@ -11,7 +12,12 @@ const init = (props: AppProps) => {
   container = document.createElement("div");
   container.classList.add('pro-modal');
   document.body.append(container);
-  destroy = render(() => <App {...props} onClose={ProModal.hide}/>, container);
+  destroy = render(() => <App {...props} onClose={() => {
+    ProModal.hide();
+    if (isReactivateFlow(props.type)) {
+      props.onDismiss?.();
+    }
+  }}/>, container);
 }
 
 const ProModal = {
