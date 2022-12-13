@@ -75,7 +75,11 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
     if (!props.status || !props.status.grandTotal) return;
 
     if (addonUpgrade()) {
-      setSubtotal(props.status.grandTotal || 0);
+      if (props.status.paymentProvider === 'recurly') {
+        setSubtotal(props.status.dueToday || props.status.grandTotal);
+      } else {
+        setSubtotal(props.status.grandTotal || 0);
+      }
     } else {
       setSubtotal(props.status.grandTotal || 0);
     }
@@ -83,7 +87,11 @@ const ConfirmationModal = (props: ConfirmationModalProps) => {
 
   createEffect(() => {
     if (!props.status || !props.status.planCycle) return;
-    setCycle(getPaymentTypeCycle(props.status.planCycle));
+    if (props.status.paymentProvider === 'recurly') {
+      setCycle(PaymentTypeEnum.Monthly);
+    } else {
+      setCycle(getPaymentTypeCycle(props.status.planCycle));
+    }
   });
 
   createEffect(() => {

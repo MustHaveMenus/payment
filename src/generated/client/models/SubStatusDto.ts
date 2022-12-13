@@ -164,6 +164,12 @@ export interface SubStatusDto {
      * @memberof SubStatusDto
      */
     addons?: Array<AddOnDto>;
+    /**
+     * 
+     * @type {string}
+     * @memberof SubStatusDto
+     */
+    paymentProvider?: string;
 }
 
 
@@ -255,6 +261,7 @@ export function SubStatusDtoFromJSONTyped(json: any, ignoreDiscriminator: boolea
         'addonsTotal': !exists(json, 'addonsTotal') ? undefined : json['addonsTotal'],
         'addonsPendingChange': !exists(json, 'addonsPendingChange') ? undefined : json['addonsPendingChange'],
         'addons': !exists(json, 'addons') ? undefined : ((json['addons'] as Array<any>).map(AddOnDtoFromJSON)),
+        'paymentProvider': !exists(json, 'paymentProvider') ? undefined : json['paymentProvider'],
     };
 }
 
@@ -290,6 +297,7 @@ export function SubStatusDtoToJSON(value?: SubStatusDto | null): any {
         'addonsTotal': value.addonsTotal,
         'addonsPendingChange': value.addonsPendingChange,
         'addons': value.addons === undefined ? undefined : ((value.addons as Array<any>).map(AddOnDtoToJSON)),
+        'paymentProvider': value.paymentProvider,
     };
 }
 

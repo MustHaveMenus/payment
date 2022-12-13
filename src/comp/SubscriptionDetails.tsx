@@ -64,8 +64,11 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     if (!props.status || !props.status.grandTotal) return;
 
     if (addonUpgrade()) {
-      //setSubtotal(userSubtotal() + locationSubtotal());
-      setSubtotal(props.status.grandTotal);
+      if (props.status.paymentProvider === 'recurly') {
+        setSubtotal(props.status.dueToday || props.status.grandTotal);
+      } else {
+        setSubtotal(props.status.grandTotal);
+      }
     } else {
       setSubtotal(props.status.grandTotal || 0);
     }

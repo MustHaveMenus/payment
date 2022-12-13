@@ -40,6 +40,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   const {setLoading} = loadingState;
   const [addonFlow, setAddonFlow] = createSignal(true);
   const [reactivateFlow, setReactivateFlow] = createSignal(false);
+  const [isRecurlyAddonFlow, setRecurlyAddonFlow] = createSignal(false);
   const [friendlyStatus, setFriendlyStatus] = createSignal('');
   const [cardLast4, setCardLast4] = createSignal('');
   const [cardExprMonth, setCardExprMonth] = createSignal(0);
@@ -85,6 +86,12 @@ const PaymentModal = (props: PaymentModalProps) => {
   });
 
   createEffect(() => {
+    if (addonFlow()) {
+      setRecurlyAddonFlow(props.status.paymentProvider === 'recurly');
+    }
+  });
+
+  createEffect(() => {
     setReactivateFlow(isReactivateFlow(props.type));
   });
 
@@ -105,7 +112,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   }
 
   createEffect(() => {
-    setBtnDisabled(!isAvailableSeatFlow() && !isValidPaymentInfo(paymentInfo()));
+    setBtnDisabled(!isAvailableSeatFlow() && !isRecurlyAddonFlow() && !isValidPaymentInfo(paymentInfo()));
   });
 
   const subscribeBtn = () => <div classList={{
@@ -146,7 +153,7 @@ const PaymentModal = (props: PaymentModalProps) => {
           <PaymentType/>
         </Show>
         <div class={styles.paymentInformationWrapper}>
-          <Show when={isAvailableSeatFlow()} keyed fallback={<PaymentInformation onChange={onPaymentInfoChange}/>}>
+          <Show when={isAvailableSeatFlow() || isRecurlyAddonFlow()} keyed fallback={<PaymentInformation onChange={onPaymentInfoChange}/>}>
             <div class={styles.cardOnFileWrapper}>
               <CardOnFile card={{exprMonth: cardExprMonth(), exprYear: cardExprYear(), ending: cardLast4()}}/>
             </div>
