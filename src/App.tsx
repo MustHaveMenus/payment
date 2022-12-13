@@ -245,7 +245,7 @@ const App = (props: PrivateSetupProps) => {
   createEffect(previewInvoice);
 
   // Handles the conversion from free / cancelled / ... to premium.
-  async function onSubscribe() {
+  async function onSubscribe(callNext: boolean = true) {
     if (!member() || !member().id) return;
     try {
       const dto = getUpgradeSubDto();
@@ -269,10 +269,13 @@ const App = (props: PrivateSetupProps) => {
         window.rewardful('convert', { email: member().email });
       }
 
-      onNext();
+      if (callNext) {
+        await onNext();
+      }
     } catch (e: any) {
       setLoading(false);
       await handleServerError(e);
+      if (!callNext) throw e;
     }
   }
 
@@ -346,8 +349,15 @@ const App = (props: PrivateSetupProps) => {
     return steps().findIndex((it => it === view()));
   }
 
-  function onNext() {
-    const cb = () => {
+  async function onNext() {
+    const cb = async () => {
+      if (isAvailableSeatFlow()) {
+        if (view() === View.TEAM) {
+          setLoading(true);
+          setStatus(await AccountsApi.upgradeSubscriptionPlan(member().id!, getPreviewUpgradeSubDto()));
+          await onSubscribe(false);
+        }
+      }
       const currentIdx = getCurrentViewIdx();
       if (currentIdx < steps().length - 1) {
         setView(steps()[currentIdx + 1]);
@@ -356,12 +366,12 @@ const App = (props: PrivateSetupProps) => {
 
     if (subscription.loading || locationsServer.loading) {
       setLoading(true);
-      setTimeout(() => {
+      setTimeout(async () => {
         setLoading(false);
-        cb();
+        await cb();
       }, 2000);
     } else {
-      cb();
+      await cb();
     }
   }
 
@@ -376,7 +386,13 @@ const App = (props: PrivateSetupProps) => {
     if (view() === View.CONFIRM_PAUSE) {
       setSteps(Steps[props.type]);
     }
-  })
+  });
+
+  createEffect(() => {
+    if (isAvailableSeatFlow() && steps().includes(View.PAYMENT)) {
+      setSteps(s => s.filter(it => it !== View.PAYMENT));
+    }
+  });
 
   async function onDecisionMade(dec: Decision, params?: DecisionParams) {
     switch (dec) {
@@ -397,7 +413,7 @@ const App = (props: PrivateSetupProps) => {
       }
       case Decision.CONFIRM_CANCEL: {
         await onCancel();
-        onNext();
+        await onNext();
         break;
       }
       case Decision.BACK_TO_ACCOUNT: {
@@ -407,7 +423,7 @@ const App = (props: PrivateSetupProps) => {
       }
       case Decision.CONFIRM_PAUSE: {
         await onPause(params?.period || 0);
-        onNext();
+        await onNext();
         break;
       }
     }
