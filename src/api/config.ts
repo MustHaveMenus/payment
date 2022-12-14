@@ -17,7 +17,7 @@ const getApiPath = () => {
   const host = window.location.host;
   if (host === 'test.mhmfun.com') {
     return 'https://test.mhmfun.com/account-test';
-  } else if (host === 'staging.mhmfun.com') {
+  } else if (host === 'staging.mhmfun.com' || window.location.href.includes('/xstage')) {
     return 'https://www.musthavemenus.com/account-stage';
   } else if (host === 'www.musthavemenus.com') {
     return 'https://www.musthavemenus.com/account';
