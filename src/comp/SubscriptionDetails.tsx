@@ -60,7 +60,6 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   });
 
   createEffect(() => {
-    console.log(props.status.grandTotal);
     if (!props.status || !props.status.grandTotal) return;
 
     if (addonUpgrade()) {
@@ -72,8 +71,6 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
     } else {
       setSubtotal(props.status.grandTotal || 0);
     }
-
-    console.log('subtotal', props.status.grandTotal);
   });
 
   createEffect(() => {
@@ -89,7 +86,6 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   createEffect(() => {
     if (!props.status) return;
     setGrandTotal(subtotal() + tax());
-    console.log('grand total', subtotal() + tax());
   });
 
   createEffect(() => {
@@ -104,23 +100,19 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   createEffect(() => {
     if (!currentSubscription() || !currentSubscription().trialEnd) return;
     setTrialEnded(new Date() > currentSubscription().trialEnd!);
-    console.log('trial ended', new Date() > currentSubscription().trialEnd!)
   });
 
   createEffect(() => {
     if (!currentSubscription() || !currentSubscription().trialStart) return;
     setTrialStarted(new Date() > currentSubscription().trialStart!);
-    console.log('trial started', new Date() > currentSubscription().trialStart!)
   });
 
   createEffect(() => {
     setInTrial(trialStarted() && !trialEnded());
-    console.log('in trial', trialStarted() && !trialEnded())
   });
 
   createEffect(() => {
     setHadTrial(trialStarted() && trialEnded());
-    console.log('had trial', trialStarted() && trialEnded())
   })
 
   createEffect(() => {

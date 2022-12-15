@@ -194,7 +194,7 @@ const App = (props: PrivateSetupProps) => {
       }) as InviteUserDto[]
     } as UpgradeSubscriptionDto;
 
-    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) {
       dto.locations = locations[LOCATIONS].filter(it => it.id);
       dto.locations.splice(-1);
 
