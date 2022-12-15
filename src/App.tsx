@@ -101,7 +101,7 @@ const App = (props: PrivateSetupProps) => {
   });
 
   createEffect(async () => {
-    if (!memberId() || props.type !== ViewType.REACTIVATE_FROM_CANCELLED) return;
+    if (!memberId() || (props.type !== ViewType.REACTIVATE_FROM_CANCELLED && props.type !== ViewType.REACTIVATE_FROM_DECLINED)) return;
     setUsersServer(await AccountsApi.getAllUsersDetails(memberId()));
   });
 
@@ -136,7 +136,7 @@ const App = (props: PrivateSetupProps) => {
 
   createEffect(() => {
     try {
-      if (props.type === ViewType.REACTIVATE_FROM_PAUSED || props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      if (props.type === ViewType.REACTIVATE_FROM_PAUSED || props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) {
         setLoading(true);
       }
       const resp = subscription();
@@ -144,7 +144,7 @@ const App = (props: PrivateSetupProps) => {
       setNextPlanBillDate(resp.planEndDate || new Date());
       setPauseEndDate(resp.pauseEndDate || new Date());
       setCurrentSubscription(resp);
-      if (props.type === ViewType.REACTIVATE_FROM_PAUSED || props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      if (props.type === ViewType.REACTIVATE_FROM_PAUSED || props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) {
         setStatus(resp);
         setLoading(false);
       }
@@ -230,7 +230,7 @@ const App = (props: PrivateSetupProps) => {
     if ((dto.zip?.length || 0) > 0 && (dto.zip?.length || 1) < 5) return;
     if (!dto.zip?.length && view() === View.PAYMENT_REACTIVATE) return;
     if ((props.type === ViewType.FREE_TO_PRO_WITH_USERS || props.type === ViewType.FREE_TO_PRO_WITH_LOCATION || props.type === ViewType.FREE_TO_PRO) && dto.cycle === UpgradeSubscriptionDtoCycleEnum.No) return;
-    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED && (!usersServer().owner || !currentSubscription()?.status)) return;
+    if ((props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) && (!usersServer().owner || !currentSubscription()?.status)) return;
 
     try {
       setPreviewLoading(true);
