@@ -252,7 +252,7 @@ const App = (props: PrivateSetupProps) => {
 
       setLoading(true);
 
-      if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+      if (props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) {
         await AccountsApi.recreateSubscription(member().id!, dto);
       } else if (props.type === ViewType.REACTIVATE_FROM_PAUSED) {
         setStatus(await AccountsApi.resumeSubscription(member().id!, dto));

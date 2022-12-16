@@ -64,7 +64,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   });
 
   createEffect(() => {
-    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) {
       const locs = locations[LOCATIONS].filter(it => it.id);
       locs.splice(-1);
       setLocNr(locs.length);
@@ -74,7 +74,7 @@ const PaymentModal = (props: PaymentModalProps) => {
   });
 
   createEffect(() => {
-    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED) {
+    if (props.type === ViewType.REACTIVATE_FROM_CANCELLED || props.type === ViewType.REACTIVATE_FROM_DECLINED) {
       setUserNr(props.existingUserDetails?.users?.length || 0);
     } else {
       setUserNr(team[USERS].length);
