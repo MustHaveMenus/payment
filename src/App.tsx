@@ -342,6 +342,7 @@ const App = (props: PrivateSetupProps) => {
     } catch (e: any) {
       setLoading(false);
       await handleServerError(e);
+      throw e;
     }
   }
 
