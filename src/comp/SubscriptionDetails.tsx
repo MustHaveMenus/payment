@@ -112,7 +112,8 @@ const SubscriptionDetails = (props: SubscriptionDetailsProps) => {
   });
 
   createEffect(() => {
-    setHadTrial(trialStarted() && trialEnded());
+    if (!currentSubscription()) return;
+    setHadTrial(!!currentSubscription().trialStart && !!currentSubscription().trialEnd && trialStarted() && trialEnded());
   })
 
   createEffect(() => {
