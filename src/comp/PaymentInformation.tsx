@@ -43,7 +43,7 @@ const PaymentInformation = (props: PaymentInformationProps) => {
     <CreditCardNumberInput value={number()} onChange={v => setNumber(v)}/>
     <div class={styles.split}>
       <CreditCardExpireDateInput value={expireDate()} onChange={v => setExpireDate(v)}/>
-      <Input type={'text'} placeholder={'CVC'} value={cvc()} maxLength={4} onChange={v => setCVC(v)}/>
+      <Input type={'text'} placeholder={'CVC'} value={cvc()} maxLength={4} onChange={v => setCVC(v)} excludeFS/>
     </div>
 
     <Select values={countryValues} onChange={onCountryChange} value={{id: (country() ?? ''), name: (country() ?? '')}}/>

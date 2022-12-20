@@ -12,6 +12,7 @@ interface InputProps {
   errorMsg?: string;
   skipErrorMessage?: boolean;
   onAutocomplete?: (value: string, addrComponents: any[]) => void;
+  excludeFS?: boolean;
 }
 
 const Input = (props: InputProps) => {
@@ -29,7 +30,11 @@ const Input = (props: InputProps) => {
   });
 
   return <div class={styles.inputWrapper}>
-    <input ref={inputRef} classList={{[styles.input]: true, [styles.error]: !!props.errorMsg}} type={props.type || 'text'} placeholder={props.placeholder} maxLength={props.maxLength} onKeyUp={e => {props.onKeyUp?.(e); props.onChange?.((e.target as HTMLInputElement).value)}} value={props.value || ''} onChange={e => props.onInputChange?.((e.target as HTMLInputElement).value)}/>
+    <input ref={inputRef} classList={{
+      [styles.input]: true,
+      [styles.error]: !!props.errorMsg,
+      'fs-exclude': !!props.excludeFS
+    }} type={props.type || 'text'} placeholder={props.placeholder} maxLength={props.maxLength} onKeyUp={e => {props.onKeyUp?.(e); props.onChange?.((e.target as HTMLInputElement).value)}} value={props.value || ''} onChange={e => props.onInputChange?.((e.target as HTMLInputElement).value)}/>
     <Show when={props.errorMsg && !props.skipErrorMessage} keyed>
       <span class={styles.errorMsg}>{props.errorMsg}</span>
     </Show>

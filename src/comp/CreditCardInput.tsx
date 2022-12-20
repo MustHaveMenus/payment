@@ -18,7 +18,7 @@ const CreditCardNumberInput = (props: CreditCardNumberInputProps) => {
     setDisplayedValue(formatCreditCard(props.value));
   });
 
-  return <Input type={"text"} placeholder={'Card Number'} value={displayedValue()} maxLength={23}
+  return <Input type={"text"} placeholder={'Card Number'} value={displayedValue()} maxLength={23} excludeFS
                 onKeyUp={e => onInputChange((e.target as HTMLInputElement).value)}/>;
 }
 
